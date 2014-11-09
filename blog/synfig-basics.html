@@ -1,0 +1,77 @@
+
+<!--
+{
+	"title": "Synfig basics",
+	"excerpt": "Here's a basic tutorial to get you started with Synfig, because it's pretty complex if you don't know how to begin.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2010/09/window-done-220x220.jpg",
+	"category": "blog",
+	"date": "2010-09-15"
+}
+-->
+
+If you want to make an animation, chances are, you've heard of Flash. It's really cool, but seriously, Flash is expensive. But there's a good free alternative called <strong>Synfig </strong>that can achieve results similar to those of Flash with relative ease. Here's a basic tutorial to get you started with Synfig, because it's pretty complex if you don't know how to begin.
+
+Here's what we'll be making:
+
+<img class="alignnone" title="BALLER." src="http://www.davepagurek.com/bball.gif" alt="Sample Synfig video. Crappy, yes, but simple." width="480" height="270" />
+
+It's not pristine, but it's made to be simple so that it's easier to follow along with the instructions.
+<h2>1. Download Synfig</h2>
+Go to the <a title="Download Synfig" href="http://www.synfig.org/en/current-release" target="_blank">Synfig download page</a> to get a Synfig release for your operating system. Save the setup file and instill it to your computer. Now, go to your start menu or home menu or applications folder and open up Synfig.
+
+That was easy.
+<h2>2. Getting Started</h2>
+You've got Synfig open now? Good. It should look like this when you start:
+
+<img class="aligncenter size-full wp-image-1057" title="synfig" src="http://www.davepagurek.com/wp-content/uploads/2010/09/synfig.jpg" alt="Synfig workspace" width="950" height="730" />
+
+To start, click on the arrow on the top-left of the canvas (in between the two rulers) and select <strong>Edit &gt; Properties. </strong>Now, a window should pop up with some basic info about your movie, such as the <strong>frames per second </strong>(under the "time" tab; how many still images per second are played back in your movie), the <strong>image size </strong>(under the "image" tab; the size of the canvas), and the <strong>start and end times </strong>(under the "time" tab; leave the start time be, but you can extend/contract the end time.) For our purposes, I'm going to leave everything at the default settings, but for future reference you may wish to change these. Anyway, moving on.
+
+So, first, we'll make a background. Select the gradient tool. <img class="alignnone size-full wp-image-1058" title="gradient" src="http://www.davepagurek.com/wp-content/uploads/2010/09/gradient.jpg" alt="Gradient tool." width="166" height="96" />
+
+Next, click on the gradient sample located below the two colors in the toolbox. A menu should pop up with gradient options.
+
+<img class="alignnone size-full wp-image-1059" title="gradientmenu" src="http://www.davepagurek.com/wp-content/uploads/2010/09/gradientmenu.jpg" alt="Gradient MEnu" width="438" height="467" />
+
+Click on the little arrows along the gradient int he popup and then adjust the sliders to change its color. To add more, right-click along the gradient and select "Insert CPoint". Press "close" when you're done.
+
+Click and drag across the stage so that you have a rectangle which covers the whole canvas. When you let go, you should have a gradient-filled rectangle. Select the <strong>Transform tool. </strong>A line with a dot on each end (the dots are called "ducks") should appear on the gradient. Click and drag the ducks so that they are facing up and down so that your gradient it vertical and forms a horizon line.
+
+<img class="aligncenter size-full wp-image-1061" title="transform" src="http://www.davepagurek.com/wp-content/uploads/2010/09/transform1.jpg" alt="Transform tool and gradent ducks" width="948" height="376" />
+<h2>3. Drawing everything</h2>
+Now, select the <strong>Draw Tool. </strong>With this, you can click and drag on the canvas to draw things. If you have a tablet and nothing is happening, you may have to go to <strong>File &gt; Input Devices</strong>, select your tablet from the drop-down menu and change the mode from "disabled" to "screen". Anyway, Draw your guy, draw a basketball, and draw a basketball net. If it helps you, you can use the circle, square or polygon tools too (or maybe use the BLine tool if you're used to using Bézier curves.) Keep in mind that when you draw anything the outline will be the FIRST color on the toolbox and the fill color is the LAST one. You can change the color before you draw something by clicking on the color and using the sliders.
+
+<img class="aligncenter size-full wp-image-1062" title="draw" src="http://www.davepagurek.com/wp-content/uploads/2010/09/draw.jpg" alt="Using the draw tool" width="926" height="418" />
+
+Now, in the <strong>Groups Panel </strong>in the bottom-right, select all the outlines and regions of your guy (control-click or command-click to select multiple ones) and select "Add Layers to Group." Write "guy" in the pop-up box and hit "ok". Do the same for your ball and then your basketball net (although, call their groups "ball" and "net" instead of "guy".)
+
+<img class="aligncenter size-full wp-image-1063" title="layer" src="http://www.davepagurek.com/wp-content/uploads/2010/09/layer.jpg" alt="Adding layers to a group." width="950" height="443" />
+<h2>4. Animating</h2>
+If you're not already familiar with the concept, Synfig uses <strong>keyframes </strong>to do its animation. This means that, on certain frames of your animation, you specify where everything should be, and the computer fills in the movement in between these frames.
+
+In Synfig, to tell the program that you're ready to start keyframing, select the little green circle on the bottom-right of the canvas. If you did it right, a thin red line should appear around the canvas.
+
+<img class="alignnone size-full wp-image-1065" title="animate" src="http://www.davepagurek.com/wp-content/uploads/2010/09/animate.jpg" alt="Animate button!" width="194" height="96" />
+
+Now, select the <strong>Smooth Move </strong>tool (the four-directional arrow looking thing next to the transform tool.) . This will make all the movement in your movie look a heck of a lot better and less mechanical because it adds ease-ins and ease-outs. Now, go to the <strong>timeline panel </strong>(the long one at the bottom.) Go to the keyframe tab (the little key icon) and press the plus button. This is the first keyframe. You may now double-click on a group name from the group panel and by selecting all of its ducks (control-a or command-a) and then clicking and dragging any duck you can move it to the starting position. If you need to, you can also go back to the Transform tool to scale/rotate, so long as you go back to the smooth move tool after. When using the transform tool, if you hold CONTROL or ALT, you can rotate or scale instead of move (respectively.) Now, back to the smooth move tool.
+
+On the timeline, click on a time along the line a bit farther down from the start. The timeline scrubber (that thin blue line) should move to that spot. Press the plus button to add another keyframe. Now, by using the smooth move tool, you can reposition the groups to their next key point by selecting all the ducks and clicking and dragging them. You may find that on object with many points, the smooth move tool only skews the points. If you don't want this to happen (and you only wanted to do a geometric translation) you may have to use the transform tool. But keep in mind you can use this skewing thing to your advantage if you select only one duck. You can move individual points around to morph arms moving or something of the like. As you do this, the computer is working to fill in the gaps between the points. After you've done a bunch of keyframes, your window may look like this:
+
+<img class="alignnone size-large wp-image-1066" title="window-done" src="http://www.davepagurek.com/wp-content/uploads/2010/09/window-done-1024x819.jpg" alt="done." width="640" height="511" />
+
+You'll notice I have a lot of keyframes. Well, usually, the more complex the motion, the more keyframes you need.
+
+If you want to preview before exporting, select the <strong>preview button </strong>on top of the canvas. In the dialogue window, change the frame rate to what you set the frames per second to be in the first step (the default is 24.) Then hit OK.
+
+<img class="alignnone size-full wp-image-1067" title="preview" src="http://www.davepagurek.com/wp-content/uploads/2010/09/preview.jpg" alt="Preview button." width="381" height="188" />
+
+You should have a media player pop up. Once the rendering is finished, you can play your movie with the controls. If you think what you see needs some work, you can close the window and continue animating. If not, close the window anyway and move on to the next step.
+<h2>5. Exporting and Compiling</h2>
+Once again, click on the arrow on the top-left of the canvas. Select <strong>File &gt; Render. </strong>Now you have some options to chose from in terms of what kind of video you want. Click on the dropdown menu and change it from "auto" to the "yuv" one. This will create an mpg movie which you can upload to youtube or something of the like. Click on "change" next to the filename and save it wherever you want and call it whatever you want so long as it ends in .mpg and not the default file extension. You may also chose to export a .gif (you have to choose that option from the dropdown menu and save the file as a .gif). Click "Render" and you're good to go. Just wait for the command line window to finish processing the render before you move on.
+
+Now, since Synfig can't create multiples scenes (to the best of my knowledge - if you know how, <strong>please tell me </strong>because I'd really like to know), you have to make each scene its own project, export them separately and then use a program like Windows Movie Maker, iMovie, or <a href="http://www.kdenlive.org/" target="_blank">Kdenlive</a> (which now runs on Mac as well as Linux!) to put them all in order and export them.
+<h2>...and that's it.</h2>
+Well, now, hopefully this helped you get started with Synfig if you were having difficulties, or get you interested in wanting to try it if you haven't already :)
+
+&lt;/david&gt;
+
