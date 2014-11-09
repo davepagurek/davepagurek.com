@@ -1,0 +1,110 @@
+
+<!--
+{
+	"title": "Swarm: AS3 Experiment",
+	"excerpt": "How to dynamically create a swarm of bugs in Flash.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2011/05/particles2-220x220.jpg",
+	"category": "blog",
+	"date": "2011-05-29"
+}
+-->
+
+[swfobj src="http://www.davepagurek.com/wp-content/uploads/2011/05/swarm.swf" width="100%" height="600" align="center" allowfullscreen="true"]<p>You need Flash Player in order to view this Flah experiment.</p>[/swfobj]
+
+<p>So, what exactly is this? Well, it's a bunch of little black dots that, when all moving at once, imitate a swarm of insects. Yes, I was bored when I woke up this morning. But it can actually be pretty useful.</p>
+
+<h2>The Code</h2>
+<p>Firstly, make a new AS3 class file, and call it <strong>Bug.as</strong>. Open it, and paste in the following code:</p>
+<code lang="Actionscript">
+
+package  {
+	import flash.events.Event;
+	import flash.display.MovieClip;
+	public class Bug extends MovieClip {
+		
+		public var xspeed:Number = 0;
+		public var yspeed:Number=0;
+		public var range:Number=20;
+		public var accel:Number=0.5;
+		
+		public function Bug() {
+			this.addEventListener(Event.ENTER_FRAME, chasePoint);
+		}
+		
+		public function chasePoint(e:Event):void {
+			
+			//Move the bug
+			this.x += xspeed;
+			this.y += yspeed;
+			
+			//Make it accelerate at a random speed
+			accel=Math.random();
+			
+			//Go in the right direction
+			if (this.x<stage.mouseX) {
+				xspeed+=accel;
+				
+				//Slow down if it overshoots the target
+				if (xspeed<0) xspeed+=1;
+			}
+			if (this.x>stage.mouseX) {
+				xspeed-=accel;
+				
+				//Slow down if it overshoots the target
+				if (xspeed>0) xspeed-=1;
+			}
+			if (this.y<stage.mouseY) {
+				yspeed+=accel;
+				
+				//Slow down if it overshoots the target
+				if (yspeed<0) yspeed+=1;
+			}
+			if (this.y>stage.mouseY) {
+				yspeed-=accel;
+				
+				//Slow down if it overshoots the target
+				if (yspeed>0) yspeed-=1;
+			}
+			
+			//Make sure it's never still: If it gets too close, bounce around a bit.
+			if (Math.round(this.x/2)==Math.round(stage.mouseX/2) || Math.round(this.y/2)==Math.round(stage.mouseY/2)) {
+				xspeed+=Math.random()*range-range/2;
+				yspeed+=Math.random()*range-range/2;
+			}
+		}
+
+	}
+	
+}
+</code>
+
+<p>Now, in a new AS3 Flash file, create an image of a bug, and convert it to a MovieClip. When doing so, click the "advanced options" button, and check the "Export for Actionscript" box. Set the class name to <strong>Bug</strong> (the same name as the class file, you see.)</p>
+<p>Then, in the first frame of the main timeline, add the following actions:</p>
+<code lang="Actionscript">
+var init_x:Number=200;
+var init_y:Number=200;
+var range:Number=100;
+
+for (var i=0; i<120; i++) {
+	var bug1:Bug = new Bug();
+	bug1.x = (Math.random() * range)+init_x-range/2;
+	bug1.y = (Math.random() * range)+init_y-range/2;
+	stage.addChild(bug1);
+}
+</code>
+<h2>How it Works</h2>
+Basically, it creates a bunch of bugs in a for loop. You can change the number of bugs created by changing this line:
+<code lang="Actionscript">for (var i=0; i<120; i++) {</code>
+...to something like this:
+<code lang="Actionscript">for (var i=0; i<50; i++) {</code>
+Notice the difference in the <strong>i&lt;<em>number</em></strong> part. That's how many bugs are made.
+What point do they follow? Well, you could easily go through and change <strong>stage.mouseX</strong> and <strong>stage.mouseY</strong> to something like <strong>character.x</strong> and <strong>character.y</strong>. That way, it can follow any movieclip on your screen.
+But what if the thing you want to follow, perhaps a character in a frame-by-framed animation, is not a movieclip? Simply make a circle with Alpha=0 (so it's invisible), make it a movieclip, and make it follow the character. To the audience, it will simply look like the bugs are following the character directly.
+<p>&nbsp;</p>
+<h2>Demo</h2>
+Here's what it looks like used alongside an animation:
+<p align="Center">[swfobj src="http://www.davepagurek.com/wp-content/uploads/2011/05/swarm-Demo.swf" width="720" height="405" align="center" allowfullscreen="true"]You need Flash Player to view this demo.[/swfobj]</p>
+
+<p>Hopefully you'll be able to use this for something!</p>
+&lt;/david&gt;
+

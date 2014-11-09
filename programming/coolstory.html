@@ -1,0 +1,46 @@
+
+<!--
+{
+	"title": "CoolStory",
+	"excerpt": "A storyboarding and progress tracking webapp for animators who use Chrome.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2013/02/coolstory-220x220.jpg",
+	"category": "programming",
+	"languages": [
+		"HTML",
+		"CSS",
+		"Javascript" 
+	],
+	"browser": {
+		"url": "http://www.davepagurek.com/storyboards/",
+		"image": "http://www.davepagurek.com/wp-content/uploads/2013/02/coolstory.jpg"
+	},
+	"buttons": [
+		{
+			"url": "http://www.davepagurek.com/storyboards/",
+			"text": "Visit CoolStory"
+		} 
+	],
+	"date": "2013-02-24"
+}
+-->
+
+Ok so in the middle of NATA last summer, I made a little progress tracking program to let you know how much you have to work on your animation each day in order to finish it on time. Today, I'm able to release a (somewhat) stable beta of what I thought to be the next logical step: A program in which you make storyboards, then check off progress for each slide (rough animation, backgrounds, sound, etc) and then the program tells you how you're doing (for example: At your current rate, you will finish in 9 days.)
+
+So, I present to you, the sarcastically-named CoolStory!
+You can go <a href="http://www.davepagurek.com/storyboards/">try it right now</a> (if you use Chrome)!
+
+Firstly, this is currently for Google Chrome only. This project was also meant for me to learn Javascript and the cool new features of HTML5, but since implementation of HTML5 is still pretty radically different in all browsers, it currently only works the way I intend it to work in Chrome. In order to get Firefox to work, I need to change the colour picker and the date selectors and the way the slides load. For Opera, I need to change the way the colour picker works. For Internet Explorer, well, I have some work to do. For Safari, firstly, I need a mac, and then I need to change the date and colour pickers and possibly more. Also, right now, Chrome is the only browser that can save properly without uploading all the data to a server and then downloading it again. And that is why it is for Chrome only right now. More browsers soon to follow.
+
+However, if you do use Chrome, you're in luck! Here are the features you can use right now!
+<ul>
+<li>All the drawing tools and colour pickers and such work</li>
+<li>Add new slides with the + button in the timeline</li>
+<li>Hover over existing slides to move them up or down, remove them, or duplicate them (useful so you don't have to redraw backgrounds, until I make a better system for that.)</li>
+<li>In the settings window, set the project start and end date so that you can get a days remaining counter</li>
+<li>Under the drawing canvas for each slide, check off your progress as you go to get extra information in the settings panel</li>
+<li>Play back your storyboards using the play button in the toolbar! You can set the duration for each slide in the same area as the checkboxes (the duration also factors in to what percent of the entire project has been completed.)</li>
+<li>Save your storyboard locally as an xml file, which includes all the images and tracking metadata, speedily and without ever uploading it to a server (which means this app will eventually have offline support.)</li>
+</ul>
+
+That said, I'm finding new bugs every time I use it, so let me know if you find any so that I can fix them.
+

@@ -1,0 +1,142 @@
+
+<!--
+{
+	"title": "Fire Particles for HTML5 Canvas",
+	"excerpt": "Some cool Javascript/HTML5 particle effects.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2013/02/fire-220x220.jpg",
+	"category": "blog",
+	"date": "2013-02-24"
+}
+-->
+
+I've been doing some programming recently in Javascript, and in particular, the canvas element. Of course, being me, one of the first things I tend to do when working with graphics is make particle systems. A few years ago when I was learning Actionscript 3, I made some <a href="http://www.davepagurek.com/blog/as3-particles/">particle effects in Flash,</a> but looking back, those look pretty primitive and bad. So instead, I figured, why not try to make some good-looking fire?
+
+<h2>The Final Product</h2>
+<p data-height="363" data-theme-id="1621" data-slug-hash="Hhstl" data-user="davepvm" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/davepvm/pen/Hhstl'>Fire Particles</a> by Dave Pagurek (<a href='http://codepen.io/davepvm'>@davepvm</a>) on <a href='http://codepen.io'>CodePen</a></p>
+<script async src="http://codepen.io/assets/embed/ei.js"></script>
+<p align="center">Try moving your mouse around in the box above!</p>
+
+<h2>The Code</h2>
+First, you need to set up your HTML.
+
+<code lang="html">
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Fire!</title>
+        <script src="fire.js"></script>
+    </head>
+    <body onload="init()">
+        <canvas id="game" width="650" height="400"></canvas>
+    </body>
+</html>
+</code>
+Notice that the !DOCTYPE is html. That is the HTML5 doctype, and it allows us to use the canvas element. Also, the Javascript function init() will be called when the page is loaded. Now, in fire.js, we need to define this function.
+
+<code lang="javascript">
+var canvas;
+var stage;
+var width = 650;
+var height = 400;
+var particles = [];
+var max = 60;
+var mouseX=0;
+var mouseY=0;
+
+var speed=3;
+var size=20;
+
+//The class we will use to store particles. It includes x and y
+//coordinates, horizontal and vertical speed, and how long it's
+//been "alive" for.
+function Particle(x, y, xs, ys) {
+    this.x=x;
+    this.y=y;
+    this.xs=xs;
+    this.ys=ys;
+    this.life=0;
+}
+
+function init() {
+    
+    //Reference to the HTML element
+    canvas=document.getElementById("game");
+    
+    //See if the browser supports canvas
+    if (canvas.getContext) {
+        
+        //Get the canvas context to draw onto
+        stage = canvas.getContext("2d");
+        
+        //Makes the colors add onto each other, producing
+        //that nice white in the middle of the fire
+        stage.globalCompositeOperation="lighter";
+        
+        //Update the mouse position
+        document.addEventListener("mousemove", getMousePos);
+        
+        //Update the particles every frame
+        var timer=setInterval("update()",40);
+        
+    } else {
+        alert("Canvas not supported.");
+    }
+}
+
+function getMousePos (evt) {
+    var rect = canvas.getBoundingClientRect()
+    var root = document.documentElement;
+    
+    // return mouse position relative to the canvas
+    mouseX = evt.clientX - rect.left - root.scrollLeft;
+    mouseY = evt.clientY - rect.top - root.scrollTop;
+}
+
+function update() {
+
+    //Adds ten new particles every frame
+    for (var i=0; i<10; i++) {
+
+        //Adds a particle at the mouse position, with random horizontal and vertical speeds
+        var p = new Particle(mouseX, mouseY, (Math.random()*2*speed-speed)/2, 0-Math.random()*2*speed);
+        particles.push(p);
+    }
+    
+    //Clear the stage so we can draw the new frame
+    stage.clearRect(0, 0, width, height);
+    
+    //Cycle through all the particles to draw them
+    for (var i=0; i<particles.length; i++) {
+        
+        //Set the file colour to an RGBA value where it starts off red-orange, but progressively
+        //gets more grey and transparent the longer the particle has been alive for
+        stage.fillStyle = "rgba("+(260-(particles[i].life*2))+","+((particles[i].life*2)+50)+","+(particles[i].life*2)+","+(((max-particles[i].life)/max)*0.4)+")";
+        
+        stage.beginPath();
+        //Draw the particle as a circle, which gets slightly smaller the longer it's been alive for
+        stage.arc(particles[i].x,particles[i].y,(max-particles[i].life)/max*(size/2)+(size/2),0,2*Math.PI);
+        stage.fill();
+        
+        //Move the particle based on its horizontal and vertical speeds
+        particles[i].x+=particles[i].xs;
+        particles[i].y+=particles[i].ys;
+
+        particles[i].life++;
+        //If the particle has lived longer than we are allowing, remove it from the array.
+        if (particles[i].life >= max) {
+            particles.splice(i, 1);
+            i--;
+        }
+    }
+}
+</code>
+The comments in the code are pretty thorough, but here are the important parts you should take note of.
+
+<code lang="javascript">stage.globalCompositeOperation="lighter";</code>
+This part is what makes the overall effect look like fire and not like red-colored smoke. When a bunch of particles are on top of each other, the colors add on to each other to make the overlapped area lighter. In practice, this means that the area where the particles are created is white because there are so many of them there. It gets progressively darker away from that point as the particles spread out.
+
+<code lang="javascript">var timer=setInterval("update()",40);</code>
+This is the code that makes the update() function be called every 40 milliseconds. Inside the update() function, the particles are moved to new positions and then drawn, thus animating them.
+
+Anyway, I'm not sure how useful this effect actually is, but it is certainly cool to look at.
+

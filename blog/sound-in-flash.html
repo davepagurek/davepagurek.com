@@ -1,0 +1,55 @@
+
+<!--
+{
+	"title": "Sound in Flash",
+	"excerpt": "Ahh, Flash... so many people fail to use its sound capabilities! Here's a tutorial about using sound in Flash and how to make it stay in sync.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2010/05/Sound_Wave-220x220.jpg",
+	"category": "blog",
+	"date": "2010-05-21"
+}
+-->
+
+Ahh, Flash. One of the most superior animation programs there is. But  ohh, how so many people fail to use its sound capabilities! I'm here with a tutorial to  tell you about how you should use sound in Flash and how to make the  sound stay in sync.
+<h2>The Basics</h2>
+<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/basics1.jpg" alt=""  width="350" height="178" class="alignleft size-full wp-image-2269" />
+Okay, so you've got your audio file, be it a .wav, .mp3, .aiff, whatever. In flash, go to File &gt; Import to Library, select your file, and open it. Now, in your timeline, make a new layer for your sound. A new layer is not needed for each new sound unless you want them to overlap, which needs separate layers. Anyway, make a keyframe where you want it to start. Now, in the properties panel,open the dropdown menu next to the "sound" label and select your sound.
+
+<h2>Set it to "Stream"!</h2>
+<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/stream.jpg" alt="" width="350" height="178" class="alignright size-full wp-image-2270" />
+You see how it says "Sync" and has a dropdown? Change it from "event" to "stream". This makes the sound become attached to the video so that the sound and video never go unsynchronized (well, they still do, but I'll address that later.) Also, it allows you to "scrub" through the sound (click and drag the timeline's red bar thing) and it will play the sound for that frame. You would not believe how useful this is for lip sync! It's crazy how difficult it is to sync blindly when you don't know what sound it on what frame.
+
+<p>&lt;rant&gt; Now, the number one thing I hate about inexperienced Flash artists is that they complain that when they do this, it doesn't go through all their scenes. Ok, look guys: If you have music or something that plays continuously, it should not be split into multiple scenes in he first place. There is no way that you're going to have the same music playing through the whole video unless you're making a music video, at which point you NEED to use stream to keep everything synchronized. If you have a movie that's split up into like 30 scenes and it's less than three minutes long, you've got a serious problem. <em>Around the Sun </em>was <em>EIGHT </em>minutes, and it only had <em>SIX </em>scenes! Sure, your organization is slightly compromised, but reusing layers is NOT as bad as you think it is. In fact, it's good practice. &lt;/rant&gt; Now that I've got that out of my system, time to move on. ;)</p>
+
+<h2>Compression</h2>
+<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/pubsettings.jpg" alt="" width="350" height="178" class="alignleft size-full wp-image-2271" />
+When you first set a sound to stream and you export a movie, unless you changed something beforehand, it will sound like total crap. There's an easy way to fix this. In flash, make sure nothing is selected. In the properties panel, click the "Publish Settings" button (or if you're using CS4, select the "edit" button next to the word "Profile".)
+
+<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/streamsettings.jpg" alt="" width="350" height="400" class="alignright size-full wp-image-2272" />
+<p>Ok, now you'll see two things in the middle of the window: Audio Stream settings and Audio Event settings. Now, if you're a good child and you're using streams, you shouldn't need to touch the events one. Anyway, if you do sneak an event in, the setting are the same as the stream ones, so I don't need to go over them specifically. So, press the "Edit" button next to the Stream setting. You'll now have a few options. Most of the time, I'd go for MP3 compression that is 64 kbps, but if fast downloading isn't a problem for you, I'd go higher. But if your movie is getting long and tedious like mine have recently become, I would set it to Speech, 44kz. This has a nice quality but also helps keep the sound in sync somehow. Don't ask me why... it just does. Flash is sort of glitchy sometimes. Anyway, Press OK, test your movie, and fool around with the settings until you reach a balance of fast download time and good-quality sound.</p>
+
+
+<h2>Stay in sync</h2>
+Ok, Flash cartoons go out of sync after about 4 minutes (or less if you're using a lot of sound.) Here are the things I do to keep it in sync. You don't need all of these, maybe just one. Whichever is easiest for your use or which works for your situation.
+<h3>1. The Null sound.</h3>
+Record a sound as long as your scene with your microphone off so that it's silent. Place it at frame one of the timeline. Basically, this just keeps Flash Player busy.
+<h3>2. The Reset Sync</h3>
+This doesn't keep things in sync, but if you place these every so often, it will reset the sync each time. Make a blank keyframe which is then followed by another blank keyframe. In the first one, select the frame's actions and enter the following code:
+[cc lang="actionscript"]stop();
+//Stops the movie from playing.[/cc]
+Next, draw a dot or something outside of the stage so you can't see it after export. Select it, F8, make it a movieclip. Right-click on it and select "edit". Make a second keyframe in its timeline. In the second keyframe's actions, write the following:
+
+If it's Actionscript 1 or 2:
+[cc lang="actionscript"]_root.play();
+//Makes the movie play again.[/cc]
+If it's Actionscript 3:
+[cc lang="actionscript"] MovieClip(root).play();
+//Makes the movie play again.[/cc]
+
+What this is doing is basically stopping and then starting the movie again so that it has a chance to start afresh with the audio in sync. Keep in mind this makes EVERYTHING (sound included) stop for a frame, so you might want to put this at the end of a fade-out or in a scene where there is no movement and no sound. I used these in Around the Sun and Out of the Dumps.
+<h3>3. Ditch Flash.</h3>
+Ok, Toon Boom is better than Flash in this case becasue it has no syncronization issues. But there are other ways to ditch Flash without getting a new program. You can go File &gt; Export Movie and export an AVI or MOV. Then go into a program like Adobe Premiere, iMovie, Final Cut, or Windows Movie Maker and import the file again and compile your movie in there. For this to work, each scene should be made in separate Flash files and should be exported separately and recombined in an external program. I did this for Jack-in-a-Box'd. You can then import it back into Flash by going to File &gt; Import Video and then setting it up as a streaming video. Not the best solution if you want it to load fast and look good, but still, the option's there.
+<h2>Conclusion</h2>
+Flash's sound is annoying. But really, it's not a problem if you use these methods BEFOREHAND. It's even worse to try to make a movie go in sync after you've animated it and realize there's a problem (this happened to me in JAck-in-a-Box'd, so I had to resort to editing it in Premiere Pro.) Just be prepared, folks.
+
+&lt;/david&gt;
+

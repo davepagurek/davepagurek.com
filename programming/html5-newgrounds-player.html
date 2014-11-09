@@ -1,0 +1,58 @@
+
+<!--
+{
+	"title": "HTML5 Newgrounds Player",
+	"excerpt": "The Newgrounds Audio Player currently relies on Flash, so I built an alternative in HTML, CSS and Javascript.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2013/10/ng-audio-220x220.jpg",
+	"category": "programming",
+	"languages": [
+		"HTML",
+		"CSS",
+		"Javascript" 
+	],
+	"embed": "<iframe src=\"http://www.davepagurek.com/stuff/ng-audio-small\" width=\"100%\" height=\"75\" frameborder=\"0\"></iframe>",
+	"buttons": [
+		{
+			"url": "https://github.com/pahgawk/NewgroundsHTMLAudio",
+			"text": "View Source on GitHub"
+		} 
+	],
+	"date": "2013-10-06"
+}
+-->
+
+I've been doing a bunch of things with Javascript recently, such as <a href="http://www.davepagurek.com/programming/xcalc-js/">an equation parser and graphing calculator</a> and <a href="http://www.davepagurek.com/programming/random-bad-jokes/">a bad jokes database</a>. I also submitted a new track to the audio portal today, which got me thinking. Surely something like the Newgrounds audio player could be done with modern web technologies, right?
+
+Short answer: almost.
+
+<h3>What worked well:</h3>
+Getting the audio playing part was actually not much of a challenge. Getting the visuals to look reasonably close to the Flash version on Newgrounds took the longest, and it's still not quite the same, since I don't have the same fonts and icons, and I'm missing some glows and textures. Feature-wise, though, everything works in the newest versions of Chrome, Firefox, and IE.
+
+<h3>What didn't:</h3>
+Audio visualizations.
+
+If you've done anything like this in Flash, you'll know that you can grab the current sound sample being played in an event and update the visuals accordingly. The API for the HTML5 &lt;audio&gt; tag, on the other hand, is much (much much much) higher level than that. It lets you change the volume, pause and play, etc. That's pretty much it.
+
+HOWEVER: there may be some solutions!
+
+1. Using (currently) non-standard APIs
+We've got the <a href="https://developer.mozilla.org/en-US/docs/Web_Audio_API">Web Audio API</a>, which actually is supposed to be supported by a lot of browsers, but only recently (it apparently only works in the current nightly builds of Firefox, for example.) It doesn't work at all in IE. Basically, it only works reliably in new versions of Chrome. If the benefit of not using Flash is to get this thing working on things like mobile devices where Flash isn't an option, then using an API that is barely supported seems a little weird. That said, for the situations when a Flashless solution is best, a visualizer might not even be necessary. This looks like the way to go going forward, though, so possibly over the weekend I'll make a visualizer for the player and then only run it if the browser supports it.
+
+<em>UPDATE: I recently got a basic visualizer working, which you can see if you're running a new version of Chrome!</em>
+<p data-height="402" data-theme-id="1621" data-slug-hash="eDFij" data-user="davepvm" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/davepvm/pen/eDFij'>Newgrounds Audio Player</a> by Dave Pagurek (<a href='http://codepen.io/davepvm'>@davepvm</a>) on <a href='http://codepen.io'>CodePen</a></p>
+<script async src="http://codepen.io/assets/embed/ei.js"></script>
+
+2. Preprocessing the sound data into another format
+This one seems pretty crazy, but in a cool way. <a href="http://gskinner.com/blog/archives/2011/03/music-visualizer-in-html5-js-with-source-code.html">Grant Skinner</a> made an AIR app that takes the sound data from a file and puts it into an image, which can then be easily read by Javascript. This solution is great because once the preprocessing is done, Javascript compatibility is a lot less of an issue, since the image isn't a problem at all, and &lt;canvas&gt; support is pretty decent. The problem with this is that it means the sound files need to be preprocessed. There are lots of sound files on Newgrounds so it's definitely not a practical solution (and also I'm just doing this for fun with no affiliations, so that would be impossible for me to test with more than one or two songs anyway.)
+
+<strong>Final Thoughts</strong>
+This isn't very practical right now. It doesn't really do visualizations, so it wouldn't work that well for a desktop site, and this version of the player is pretty reliant on mouseovers, which doesn't apply to mobile. I hear audio embeds for external sites is going to become a thing, though, so possibly a visualizationless player in Javascript might work well for that, with a Flash fallback. Either way, it was a cool way to kill an afternoon.
+
+<em>UPDATE: Once again, there are now visualizations if you're on Chrome. Check those out, and leave a comment with a link if you fork the pen on CodePen and add your own visualizer!</em>
+
+<em>UPDATE 2: Here's a version with much more modular code, without a visualizer, and where it stretches to fit the width of the container: <a href="http://codepen.io/davepvm/pen/DgwlJ">http://codepen.io/davepvm/pen/DgwlJ</a></em>
+
+<em>UPDATE 3: Here it is as a video player, currently still using the old (read: worse) code. <a href="http://codepen.io/davepvm/pen/luqFk">http://codepen.io/davepvm/pen/luqFk</a></em>
+
+</dave>
+

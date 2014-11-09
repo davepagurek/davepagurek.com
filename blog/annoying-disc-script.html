@@ -1,0 +1,108 @@
+
+<!--
+{
+	"title": "Annoying Disc Script",
+	"excerpt": "For April Fool's, make someone's disc drive pop open repeatedly. It'll piss them off quickly.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2011/03/disc-220x220.jpg",
+	"category": "blog",
+	"date": "2011-03-26"
+}
+-->
+
+It's almost April Fool's Day, and by popular request I'm putting a little script on the internet that should piss people off pretty easily.
+
+So, here's basically what it does: It pops open the disc drive. It beeps. It beeps some more. If you close the disc drive, it waits a few seconds and pops it open again. There is also an alternative version that is silent (i.e. no beeps.) Right now I only have a Windows version, but if someone helps me program a Mac or Linux one then I'll post it here too :)
+
+Here's how to do it!
+
+<p>&nbsp;</p>
+<h2>1. Create the file</h2>
+Navigate to a folder on the victim's computer that is preferably hard to find and is perhaps many directories deep. You might also consider going to a spot that the victim will never suspect, such as inside a folder of Beatles songs stored a few levels deep in thheir My Music directory. So, right-click in a folder and select New &gt; Text File. Call it something like "fun.vbs" or "game.vbs" or anything you want, really, as long as it doesn't sound too suspicious and as long as it ends in .vbs (so make sure to delete the .txt part.)
+
+Right-click on this new file, and select Edit (or, if that option isn't available, go to Open With and pick your favourite plain text editor.)
+
+Then, paste in one of the two versions of the code:
+
+<h3>Noisy Version (With Beeps)</h3>
+<code>
+set wshShell = Wscript.CreateObject("wscript.Shell") 
+beep = chr(007) 
+starttime = int(timer)
+
+
+do 
+
+	timetaken = starttime-int(timer)
+	if timetaken MOD 20 = 0 then
+		Set oWMP = CreateObject("WMPlayer.OCX.7" ) 
+		Set colCDROMs = oWMP.cdromCollection 
+	
+		if colCDROMs.Count >= 1 then 
+			For i = 0 to colCDROMs.Count - 1 
+				colCDROMs.Item(i).Eject 
+				WshShell.Run "cmd /c @echo " & beep, 0
+			Next ' cdrom 
+		End If 
+	elseif timetaken MOD 10 = 0 OR timetaken MOD 13 = 0 OR timetaken MOD 16 = 0 then
+		WshShell.Run "cmd /c @echo " & beep, 0
+	end if
+
+	if timetaken > 120 then
+		starttime = int(timer)
+	end if
+
+loop
+</code>
+
+<h3>Silent Version (No Beeps)</h3>
+<code>
+set wshShell = Wscript.CreateObject("wscript.Shell") 
+
+starttime = int(timer)
+
+
+do 
+
+	timetaken = starttime-int(timer)
+	if timetaken MOD 20 = 0 then
+		Set oWMP = CreateObject("WMPlayer.OCX.7" ) 
+		Set colCDROMs = oWMP.cdromCollection 
+	
+		if colCDROMs.Count >= 1 then 
+			For i = 0 to colCDROMs.Count - 1 
+				colCDROMs.Item(i).Eject 
+			Next ' cdrom 
+		End If 
+	end if
+
+	if timetaken > 120 then
+		starttime = int(timer)
+	end if
+
+loop
+
+</code>
+
+Once you've pasted in one of those, save the file and close the text editor.
+<p>&nbsp;</p>
+<h2>2. Add Startup Script</h2>
+When the victim finds that his computer's disc drive won't stay shut for long, one of their initial reactions might be to try to reboot. So, why not add your script to the startup scripts list so that, on reboot, it will just start running again?
+
+Go to Start &gt; Run, type in "regedit" and hit enter. In Regedit, navigate to HKEY_LOCAL_MACHINE &gt; SOFTWARE &gt; Microsoft &gt; Windows &gt; CurrentVersion &gt; Run. Once in the Run area, go to Edit &gt; New &gt; String Value.
+
+Call it whatever you'd like. Once you've named it something, right-click on it and select "Modify". Under the Value Date section, put the full file path to the script you made in Step 1. For example, I wrote the following: C:\Users\Public\Music\Sample Music\disc.vbs
+
+Hit OK. Close regedit.
+<p>&nbsp;</p>
+<h2>3. Reboot</h2>
+Reboot their computer for the startup script to take effect. That's it, really. Now you can watch the poor victim suffer &gt;:D
+
+Here's how they usually react:
+<img src="http://www.davepagurek.com/wp-content/uploads/2011/03/disc.gif" alt="WHAT THE FUUUUUUUU" title="disc" width="820" height="885" class="aligncenter size-full wp-image-1840" />
+<p>&nbsp;</p>
+<h2>Tips</h2>
+If you want to test your script before you reboot, you can always just double-click on the .vbs file. Then, if you want to stop the script from running, open up the task manager (by right-clicking on the taskbar and selecting "Start Task Manager"), find the process "wscript.exe" and end it.
+
+Have fun!
+&lt;/david&gt;
+

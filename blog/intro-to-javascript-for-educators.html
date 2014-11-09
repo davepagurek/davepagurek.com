@@ -1,0 +1,227 @@
+
+<!--
+{
+	"title": "Intro to Javascript for Educators",
+	"excerpt": "A crash course in HTML, Javascript, and CSS geared for math teachers.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2014/03/javascript-crashcourse-220x220.png",
+	"category": "blog",
+	"date": "2014-03-23"
+}
+-->
+
+Programming is a useful skill to pick up, especially for teachers. It can let you set up interactive demos and make tools to accomplish tasks faster. Javascript is a good language to start with for this because it's incredibly easy for users to run Javascript programs. You don't need to worry (reasonably, anyway) about what kind of system a user is running and nothing special needs to be installed to run it. If they have a web browser, everything should be fine.
+
+A web application is divided into three distinct sections: HTML, Javascript, and CSS. HTML (Hypertext Markup Language) is used to create the structure of the application: where text, buttons, images, and other controls go. Javascript is used to add interactivity and make the program actually do things. CSS (Cascading Stylesheets) is used to change the way the HTML looks visually by changing colours, visual styles, and polishing the design of the interface in general.
+
+I'm going to show you how to create a tool to estimate the area under a graph. Here is what we will be making:
+
+<p data-height="368" data-theme-id="1621" data-slug-hash="jdyrv" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/davepvm/pen/jdyrv/'>jdyrv</a> by Dave Pagurek (<a href='http://codepen.io/davepvm'>@davepvm</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
+
+<h2>1. HTML</h2>
+
+To begin, we'll use <a href="http://brackets.io/">Brackets</a> to use as an editor. Brackets is a free and open-source Javascript editor from Adobe (the same people who make Photoshop.) Download it, open it up, go to <strong>File &gt; New</strong>, and then save the file as <strong>index.html</strong> in a folder that you will use to house all of the project files for this tool. It is called index.html because when a web browser goes to a folder on a website, if it is not told to go to a specific file yet, it will try to find an index file to go to first.
+
+Here is the basic structure of an HTML file:
+<code lang="html">
+<html>
+  <head>
+    <title>Archives - Dave Pagurek</title>
+  </head>
+  <body>
+  
+  </body>
+</html>
+</code>
+
+HTML is made up of <strong>tags</strong> (the things you see in between the greater than and less than signs.) Each tag is like a sandwich: They have an opening tag (for example, &lt;html&gt;) and a closing tag that has a slash after the first bracket (for example, &lt;/html&gt;.) The things in between the opening and closing tags are the contents of a tag. As you can see in the code above, the title of the webpage (the text you see in the tab in a web browser) is inside the title tag. The title tag itself is inside the head tag (where metadata about the page goes.) The part of the HTML that gets rendered onto the page visibly all goes in the body tag, which is currently blank. We are going to make it so that the user can enter in a beginning and end x value of a function and the number of rectangles to divide the area into, so we need to add controls for the user to do that into the body tag:
+
+<code lang="html">
+<body>
+  <h1>Area Under f(x)=x^2</h1>
+  Beginning x value: <input type="text" value="0" id="beginning" /><br />
+  Ending x value: <input type="text" value="10" id="ending" /><br />
+  Number of slices: <input type="text" value="20" id="slices" /><br />
+  <input type="button" value="Calculate" id="calculate" /><br />
+  Result: <input type="text" value="" id="result" />
+</body>
+</code>
+
+Here we see three new tags: h1, input, and br. h1 stands for Heading 1. h2 - h7 can be used to specify further subheadings. This leaves input and br. Notice that neither of them have both opening and closing tags: they each are just one tag. This is because tags that cannot have more tags inside of them close themselves by adding a slash before their closing bracket. The input tag, however, has extra content inside the tag itself. These are attributes. Any kind of tag can have attributes, but they only need to be added if you want to change their default values. The parameters for any tag can be found by looking up that tag on <a href="http://www.w3schools.com/html/html_elements.asp">w3schools</a>, a useful resource for web development in general. In the input tags, we see the following attributes:
+
+<ul>
+<li><strong>type="text"</strong> tells us that this input can have text typed in it (as opposed to being a checkbox or something.)</li>
+<li><strong>value="0"</strong> tells us that the input starts with the number 0 typed in it.</li>
+<li><strong>id="beginning"</strong> is the name we are giving to this specific tag so that we can reference this specific input later on when we're adding Javascript. Every id that you give to a tag must be unique for this reason.</li>
+</ul>
+
+The br tag is simply a line break, like hitting enter in a word processor. Whitespace in HTML code is generally ignored, so when we want things to shift onto the next line, hitting enter alone will not work and we need to add a br tag. This is useful because it means you can indent your code to make it easier to read without having it mess up the look of your application.
+
+You can preview your application in its current state by saving and going to <strong>File &gt; Live Preview</strong>. This will open up a Chrome window with your application. Keep this window open because now, any time you save any of the files in your project, this window will automatically refresh and show you the new changes. Your application doesn't look very pretty yet, but that's what CSS is for. We will save that for last, though, as adding interactivity through Javascript is more important.
+
+The last thing we need to do before moving on to adding Javascript is link the HTML file to the Javascript file that we are going to make. Linking files like this goes inside the head tag:
+<code lang="html">
+<head>
+  <title>
+    Area Under a Graph
+  </title>
+  <script src="area.js" type="text/javascript"></script>
+</head>
+</code>
+
+Save the file, and then go to <strong>File &gt; New</strong>. Save this new file as area.js in the same directory as the HTML file.
+
+<h2>Javascript</h2>
+In the area.js file, we are going to add all of our interactivity. Javascript looks completely different from HTML because Javascript is a programming language whereas HTML is simply for markup. To explain how Javascript works, let's take a look a piece of example code which is not related to the application we are making. Here is some theoretical code to make a function f(x)=x+2.
+
+<code lang="javascript">
+//Creates a function f which varies based on the parameter x
+var f = function(x) {
+  //When the function is run, the result will be x plus 2.
+  return x+2;
+};
+
+var result; //Defines a new variable named "result"
+result = f(2); //sets the variable "result" equal to 4
+result = f(-2); //sets the variable "result" equal to 0
+//etc
+</code>
+
+The first thing to note is that any line beginning with // is called a <strong>comment</strong> and is ignored when the program is run. Comments are useful for annotating your code so it's easier for you and others to understand what's going on. Now, let's dig into the way Javascript syntax works.
+
+In Javascript, we make variables. There are different types of variables, such as Objects, Numbers, Strings, Arrays, and Functions. A function in Javascript is like a subroutine, or a smaller part of a program. A function has similar syntax to mathematical functions. When we define a function, in the round brackets after the word "function", we specify the parameters of the function. In this case, our function f varies with x, so we put an x in the brackets. It then returns x+2, so that when f(2) is written in the program, it is effectively replaced with 4, as demonstrated lower down in the example code. Not all functions need to return anything: Sometimes you just use functions more like subroutines and less like mathematical functions. Before moving on, I should note that at the end of each complete statement, there is a semicolon.
+
+Now, back to our area calculator. Here is the Javascript code we will use to get started:
+
+<code lang="javascript">
+//The function we will find the area under
+var f = function(x) {
+  //This is how we do powers in Javascript: Math.pow(base, exponent)
+  return Math.pow(x, 2);
+}
+
+//When the calculate button has been clicked
+var calculateArea = function() {
+  //Add code to calculate area here
+};
+
+//When the page has loaded
+window.onload = function() {
+  document.getElementById("calculate").onclick = calculateArea;
+};
+</code>
+
+At the top, we can see the function we will be finding the area under. Javascript has an object called Math that has some built-in math functions such as sin, cos, asin, log, etc. (It should be noted that the base for Javascript's log function is e, so it is effectively ln. You need to use log rules to change the base.) w3schools has <a href="http://www.w3schools.com/js/js_obj_math.asp">a page about the Math object</a> if you want more information on the tools it provides. The pow function takes two parameters, separated by a comma: the base, followed by the exponent.
+
+<strong>window</strong> is an object. <strong>onload</strong> is a property that the object window has, so to access window's property onload, we refer to it as <strong>window.onload</strong> in Javascript. When the window has completely loaded, the defined function is run. Now, <strong>document</strong> is another object, referring to the tree of HTML we made earlier. The function document.getElementById() returns the HTML element with the id you specify in the brackets. So, document.getElementById("calculate") refers directly to the button we gave an id of "calculate" to earlier. When it is clicked, it is going to run the function "calculateArea" that we began to define. Let's start to define that function:
+
+<code lang="javascript">
+var calculateArea = function() {
+  var min = parseFloat(document.getElementById("beginning").value);
+  var max = parseFloat(document.getElementById("ending").value);
+  var slices = parseFloat(document.getElementById("slices").value);
+  var sliceWidth = (max-min)/slices;
+};
+</code>
+
+We need to figure out what numbers the user wrote in the input fields, so we are making variables to store those values. The value of a text field, however, is a string (referring to a string of characters) rather than a number, so we can't do any math with the property document.getElementById("beginning").value on its own. Luckily, there is the function parseFloat(). parseFloat() takes a string and returns a number. There are actually two functions we can use for this: parseFloat and parseInt. ParseInt will only return an integer, so if the user had input "1.5", parseInt would stop at the dot and only return 1. parseFloat would return 1.5. Using these values we have obtained, we can then calculate how wide each slice will be by doing some simple math.
+
+Now we can actually calculate the area. We know it will be the sum of the area of each rectangular slice, but how would we do a sum like that? Let me introduce you to a control structure called a <strong>for loop</strong>.
+
+<code lang="javascript">
+var calculateArea = function() {
+  var min = parseFloat(document.getElementById("beginning").value);
+  var max = parseFloat(document.getElementById("ending").value);
+  var slices = parseFloat(document.getElementById("slices").value);
+  var sliceWidth = (max-min)/slices;
+  
+  var area = 0;
+  for (var i = 0; i < slices; i++) {
+    area += sliceWidth * f(min + sliceWidth*i);
+  }
+  document.getElementById("result").value = area;
+};
+</code>
+
+A for loop needs three statements inside its round brackets:
+<ol>
+<li><strong>The initial command.</strong> It is run before starting the loop. Here, we are creating a variable named i (it can be called anything, but it will be used for iteration, hence the name "i") that starts out equal to min.</li>
+<li><strong>The condition.</strong> The loop will continue to run as long as i &lt; slices. Once i &gt;= slices, the loop terminates. Going from 0 &lt;= i &lt; slices ensures that it will run <em>slices</em> times, starting from 0.</li>
+<li><strong>The step.</strong> This final statement tells the loop how to change the iterator variable. This gets run after the end of each pass through the loop. After applying this step, if the condition in the second statement stops being met, the loop terminates without running another time. The operator ++ is a shortcut: x++ is the same as saying x = x+1.</li>
+</ol>
+
+Then, inside the curly braces, we have the code that runs each iteration. Since these curly braces are part of a control structure and not a statement, there is no semicolon after the closing curly brace. The same applies when using an if statement, which we are not using here, but I will mention since it is so useful:
+<code lang="javascript">
+//If the condition in the brackets is met, run the code in the curly braces.
+if (x == 0) { //Use == to check if equal to (= always assigns)
+  //do stuff
+} else if (x > 0) { //Optionally, provide one or more else if statements, which only get checked if the previous conditions are not met
+  //do more stuff
+} else { //Optionally, provide a final else statement
+  //do this if none of the other conditions are met
+}
+</code>
+
+Anyway, back to the for loop. Inside of the braces, we can use the variable i, which will be different each time the loop runs. The operator += is a shortcut: x += 2 is the same as saying x = x+2. Each run through the loop, we add the area of the rectangular slice to the area variable. Once the loop is complete, we set the value of the result text box to the area. If you save and go to the live preview window, try clicking the Calculate button. It should work.
+
+<h2>CSS</h2>
+Now that we have a fully functional program, we can make it look nice. In this particular case, looking nice doesn't add very much benefit, since the program is simple. However, in more complex projects, making your program's interface look simple, appealing, and navigable can be very important. For that reason, we will add CSS to this project.
+
+Open up your HTML file again by clicking on index.html in the sidebar in Brackets. We now need to link a CSS file to our HTML:
+<code lang="html">
+<head>
+  <title>
+    Area Under a Graph
+  </title>
+  <script src="area.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+</code>
+
+Save and create a new file. Save the new file as <strong>style.css</strong> so that it matches the tag we added to the HTML file. Here is the CSS code we will be using:
+
+<code lang="css">
+body {
+  margin: 20px;
+  background-color: #58b1d8;
+  color: #FFFFFF;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-weight: normal;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #FFFFFF;
+}
+
+input[type="text"] {
+  border: 0;
+  padding: 5px;
+}
+
+#calculate {
+  border: 0;
+  padding: 10px;
+  margin: 10px;
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+#calculate:hover {
+  background-color:#EEEEEE;
+}
+</code>
+
+CSS works by first specifying what tags to find and then, inside curly brackets, what to do to them. body will target all body tags, h1 will target all h1 tags, etc. If you add square brackets afterwards (like in input[type="text"]), it only targets input tags who have the attribute "type" set to "text". If you add a number sign before the name, it means you are talking about an id. So, #calculate references specifically the tag with the id "calculate". Adding :hover after a selector (like in #calculate:hover) means that the styles following it only apply to the tag with the id "calculate" when the mouse is hovering over it. w3schools has <a href="http://www.w3schools.com/cssref/css_selectors.asp">a page explaining the different CSS selectors that can be used.</a>
+
+Inside of a CSS rule, there are different properties that can be changed. Imagine each tag as a box on the page: Padding changes the amount of space between the things inside the box and the edge of the box. Margin changes the space between the edge of the box and any adjacent boxes. Border changes how the edges of the box are displayed. Background-color changes the background colour of the box (note: color is spelled the american way.) Color changes the colour of text in the box. Colour codes can be found by using various <a href="http://www.colorpicker.com/">colour picker tools</a>. Font-weight controls the boldness of text. Font-family changes the typeface. <a href="https://www.google.com/fonts">Google Fonts</a> has a great list of web fonts and instructions on how to use them. These are just a few properties that can be changed. w3schools has a page with <a href="http://www.w3schools.com/cssref/default.asp">a list of CSS properties</a> and what values you can use for them.
+
+<h2>Final Steps</h2>
+You're done your application! If you save and look at the live preview, you should see the fruits of your labour. Now, how do you share your creation?
+
+If you have a web server, you can simply upload your files to a folder on it. If you don't, you still have some choices. A good one is Codepen. Codepen is a website that lets you play around with and share web development tools. You can go to <a href="http://codepen.io/pen/">http://codepen.io/pen/</a> to create a new project on Codepen. Paste the contents of your HTML's body tag into the HTML section, paste your Javascript into the Javascript section, and paste your CSS into the CSS section and press Save. You can optionally create a Codepen account to keep track of and edit submitted projects. Once saved, you can click on the Share button and you will find a link to the full-page view of your project to link to from your site.
+
+Something else you may want to look into is adding the ability to let the user enter in a function instead of having a predefined function built into the program. To do this from scratch would require a lot of work, which is why I built the <a href="http://www.davepagurek.com/programming/xcalc-js/">XCalc.js javascript library.</a> It takes a string with a mathematical expression and lets you evaluate it at an x value, simplify it, derive it, and even graph it. Instructions on how to use the library are <a href="http://www.davepagurek.com/programming/xcalc-js/">available on my website.</a>
+
+Hopefully you found this introduction into the world of Javascript and web applications useful!
+
