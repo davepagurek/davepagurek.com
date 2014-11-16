@@ -2,7 +2,7 @@
 <!--
 {
 	"title": "Enemy AI",
-	"excerpt": "Enemy AI: The art of making interactive computer-controlled game characters! Here's a tutorial about how to do it! First off, I'm not talking about the movie AI. Although, it was a good movie. No, I'm talking about AI from a gaming point of view! AI stands for Artificial Intelligence. Basically, this refers to the characters […]",
+	"excerpt": "Enemy AI: The art of making interactive computer-controlled game characters!",
 	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart-220x220.png",
 	"category": "blog",
 	"date": "2010-05-06"
@@ -11,111 +11,114 @@
 
 Enemy AI: The art of making interactive computer-controlled game characters! Here's a tutorial about how to do it!<span id="more-13"></span>
 
-First off, I’m not talking about the movie AI. Although, it was a good movie. No, I’m talking about AI from a gaming point of view!
+First off, I'm not talking about the movie AI. Although, it was a good movie. No, I'm talking about AI from a gaming point of view!
 
 AI stands for Artificial Intelligence. Basically, this refers to the characters in games which the computer controls to either help you or harm you depending on the game and its circumstances. However, seeing as the title of this article is “Enemy AI”, I will only be talking about the harming you aspect of the AI. However, the same methods can be applied to computer players that are on your side as well.
 
 As an example of artificial intelligence, take the boss from Stage Two of Gawkgame.
 
-[caption id="attachment_14" align="alignnone" width="403" caption="The boss from Gawkgame."]<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/gawkgame.png"><img class="size-full wp-image-14" title="gawkgame" src="http://www.davepagurek.com/wp-content/uploads/2010/05/gawkgame.png" alt="The boss from Gawkgame." width="403" height="387" /></a>[/caption]
+<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/gawkgame.png"><img class="size-full wp-image-14" title="gawkgame" src="http://www.davepagurek.com/wp-content/uploads/2010/05/gawkgame.png" alt="The boss from Gawkgame." width="403" height="387" /></a>
+The boss from Gawkgame.
 
-The giant robo-gawk here, as you will find out if you have played the game, reacts specifically to your movements. However, this guy happens to be pretty dumb. He only reacts to certain movements, and it just so happens that 100% of his “intelligence” can be written out in 46 lines of flash code (not including the missile’s code. The missile is actually about half as smart as the robot itself.)
+The giant robo-gawk here, as you will find out if you have played the game, reacts specifically to your movements. However, this guy happens to be pretty dumb. He only reacts to certain movements, and it just so happens that 100% of his “intelligence” can be written out in 46 lines of flash code (not including the missile's code. The missile is actually about half as smart as the robot itself.)
 
-So, what does he react to? I like to make flowcharts as they make the coding process extremely easy. So, here’s the chart I made for the robo-gawk.
+So, what does he react to? I like to make flowcharts as they make the coding process extremely easy. So, here's the chart I made for the robo-gawk.
 
-[caption id="attachment_15" align="alignnone" width="428" caption="The basic flowchart."]<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart.png"><img class="size-full wp-image-15" title="flowchart" src="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart.png" alt="The basic flowchart." width="428" height="606" /></a>[/caption]
+<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart.png"><img class="size-full wp-image-15" title="flowchart" src="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart.png" alt="The basic flowchart." width="428" height="606" /></a>
+The basic flowchart.
 
-So as you can see, there isn’t all that much to program. So, here’s this flowchart translated into ActionScript2, where the actions are to be applied on the robo-gawk’s MovieClip.
+So as you can see, there isn't all that much to program. So, here's this flowchart translated into ActionScript2, where the actions are to be applied on the robo-gawk's MovieClip.
 
-[cc lang="actionscript"]onClipEvent (load) {
-var launch:Boolean = false;
+<code lang="actionscript">onClipEvent (load) {
+	var launch:Boolean = false;
 }
 onClipEvent(enterFrame) {
-//Are you dead?
-if (_root.dead) {
-//remove your MovieClip from the sage
-unloadMovie(this);
-//if you're not dead:
-} else {
-//Is the Pahgawk lower than you?
-if (_root.gawk._y&amp;gt;this._y) {
-//Go down.
-this._y += 2;
+	//Are you dead?
+	if (_root.dead) {
+		//remove your MovieClip from the sage
+		unloadMovie(this);
+	//if you're not dead:
+	} else {
+		//Is the Pahgawk lower than you?
+		if (_root.gawk._y&amp;gt;this._y) {
+			//Go down.
+			this._y += 2;
+		}
+		//Is the Pahgawk higher than you?
+		if (_root.gawk._y&amp;lt;this._y) {
+			//Go up.
+			this._y -= 2;
+		}
+		//Is the Pahgawk touching the invisible "flagarea" movieclip that is basically a square with the flag in its center?
+		if (_root.gawk.hitTest(_root.flagarea)) {
+			//FIRE LASERS
+			this.laser.play();
+			//Did Pahgawk hit the laser?
+			if (this.laser.hitTest(_root.gawk)) {
+				//Reset his coordinates!
+				_root.gawk._x = 348.4;
+				_root.gawk._y = 373;
+			}
+		}
+		//is Pahgawk near the invisible "switcharea" that is around the switch?
+		if (_root.gawk.hitTest(_root.switcharea)) {
+			//missile launch
+			launch = true;
+		}
+			//Did Pahgawk touch me?
+			if (_root.gawk.hitTest(this)) {
+			launch = true;
+		}
+		//If the missile launched:
+		if (launch) {
+			//Makes the missile go to a keyframe with a drawing of it (as opposed to frame 1, which is empty)
+			_root.missile.gotoAndPlay(2);
+			//Some math to calculate where the missile should be facing
+			var xd = _root.gawk._x-_root.missile._x;
+			var yd = _root.gawk._y-_root.missile._y;
+			var ang = Math.atan2(yd, xd);
+			//Makes the missile rotate according to the math
+			_root.missile._rotation = ang*(180/math.PI);
+			//is the missile to Pahgawk's right?
+			if (_root.missile._x&amp;gt;_root.gawk._x) {
+				//Go left
+				_root.missile._x -= 1.5;
+			}
+			//Is the missile to the Pahgawk's left?
+			if (_root.missile._x&amp;lt;_root.gawk._x) {
+				//go right
+				_root.missile._x += 1.5;
+			}
+			//this is all pretty much the same thing, but with the vertical axis instead of the horizontal one.
+			if (_root.missile._y&amp;gt;_root.gawk._y) {
+				_root.missile._y -= 1.5;
+			}
+			if (_root.missile._y&amp;lt;_root.gawk._y) {
+				_root.missile._y += 1.5;
+			}
+			//Did Pahgawk hit the missile?
+			if (_root.gawk.hitTest(_root.missile)) {
+				//Resets Pahgawk's coordinates to the starting position.
+				_root.gawk._x = 348.4;
+				_root.gawk._y = 373;
+				//resets the missile's coordinates:
+				_root.missile._x = 616.0;
+				_root.missile._y = 322.0;
+				//the missile goes to an empty keyframe so you can't see it
+				_root.misile.gotoAndStop(1);
+				//resets launch variable
+				launch = false;
+			}
+		}
+	}
 }
-//Is the Pahgawk higher than you?
-if (_root.gawk._y&amp;lt;this._y) {
-//Go up.
-this._y -= 2;
-}
-//Is the Pahgawk touching the invisible "flagarea" movieclip that is basically a square with the flag in its center?
-if (_root.gawk.hitTest(_root.flagarea)) {
-//FIRE LASERS
-this.laser.play();
-//Did Pahgawk hit the laser?
-if (this.laser.hitTest(_root.gawk)) {
-//Reset his coordinates!
-_root.gawk._x = 348.4;
-_root.gawk._y = 373;
-}
-}
-//is Pahgawk near the invisible "switcharea" that is around the switch?
-if (_root.gawk.hitTest(_root.switcharea)) {
-//missile launch
-launch = true;
-}
-//Did Pahgawk touch me?
-if (_root.gawk.hitTest(this)) {
-launch = true;
-}
-//If the missile launched:
-if (launch) {
-//Makes the missile go to a keyframe with a drawing of it (as opposed to frame 1, which is empty)
-_root.missile.gotoAndPlay(2);
-//Some math to calculate where the missile should be facing
-var xd = _root.gawk._x-_root.missile._x;
-var yd = _root.gawk._y-_root.missile._y;
-var ang = Math.atan2(yd, xd);
-//Makes the missile rotate according to the math
-_root.missile._rotation = ang*(180/math.PI);
-//is the missile to Pahgawk's right?
-if (_root.missile._x&amp;gt;_root.gawk._x) {
-//Go left
-_root.missile._x -= 1.5;
-}
-//Is the missile to the Pahgawk's left?
-if (_root.missile._x&amp;lt;_root.gawk._x) {
-//go right
-_root.missile._x += 1.5;
-}
-//this is all pretty much the same thing, but with the vertical axis instead of the horizontal one.
-if (_root.missile._y&amp;gt;_root.gawk._y) {
-_root.missile._y -= 1.5;
-}
-if (_root.missile._y&amp;lt;_root.gawk._y) {
-_root.missile._y += 1.5;
-}
-//Did Pahgawk hit the missile?
-if (_root.gawk.hitTest(_root.missile)) {
-//Resets Pahgawk's coordinates to the starting position.
-_root.gawk._x = 348.4;
-_root.gawk._y = 373;
-//resets the missile's coordinates:
-_root.missile._x = 616.0;
-_root.missile._y = 322.0;
-//the missile goes to an empty keyframe so you can't see it
-_root.misile.gotoAndStop(1);
-//resets launch variable
-launch = false;
-}
-}
-}
-}
-[/cc]
-Okay, so that’s pretty much it for that guy. Obviously, you can get much more complex ones. For instance, a flowchart for the Pahgawk in the Sari and David snowball fight game would be:
+</code>
+Okay, so that's pretty much it for that guy. Obviously, you can get much more complex ones. For instance, a flowchart for the Pahgawk in the Sari and David snowball fight game would be:
 
-[caption id="attachment_16" align="alignnone" width="471" caption="David from the Snowball Fight game&#39;s flowchart. Basically."]<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart2.png"><img class="size-full wp-image-16" title="flowchart2" src="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart2.png" alt="David from the Snowball Fight game's flowchart. Basically." width="471" height="436" /></a>[/caption]
+<a href="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart2.png"><img class="size-full wp-image-16" title="flowchart2" src="http://www.davepagurek.com/wp-content/uploads/2010/05/flowchart2.png" alt="David from the Snowball Fight game's flowchart. Basically." width="471" height="436" /></a>
+David from the Snowball Fight game&#39;s flowchart. Basically.
 
-Now, obviously, this is only the basic stuff shown here. There is also a lot more. Like, you can’t just type “throw” into Flash and expect it to know what that means. But this is how one goes about planning for an artificially intelligent character for a game. In case you are wondering, the above picture was created using Xmind, a flowchart or brainstorming program. I highly recommend it if you don’t happen to have a notebook and paper next to you or if you want to be able to go back and edit/add new bubbles later on.
+Now, obviously, this is only the basic stuff shown here. There is also a lot more. Like, you can't just type “throw” into Flash and expect it to know what that means. But this is how one goes about planning for an artificially intelligent character for a game. In case you are wondering, the above picture was created using Xmind, a flowchart or brainstorming program. I highly recommend it if you don't happen to have a notebook and paper next to you or if you want to be able to go back and edit/add new bubbles later on.
 
 Hopefully this helped for anyone programming games!
 
