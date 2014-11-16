@@ -39,11 +39,11 @@ This doesn't keep things in sync, but if you place these every so often, it will
 Next, draw a dot or something outside of the stage so you can't see it after export. Select it, F8, make it a movieclip. Right-click on it and select "edit". Make a second keyframe in its timeline. In the second keyframe's actions, write the following:
 
 If it's Actionscript 1 or 2:
-[cc lang="actionscript"]_root.play();
-//Makes the movie play again.[/cc]
+<code lang="actionscript">_root.play();
+//Makes the movie play again.</code>
 If it's Actionscript 3:
-[cc lang="actionscript"] MovieClip(root).play();
-//Makes the movie play again.[/cc]
+<code lang="actionscript"> MovieClip(root).play();
+//Makes the movie play again.</code>
 
 What this is doing is basically stopping and then starting the movie again so that it has a chance to start afresh with the audio in sync. Keep in mind this makes EVERYTHING (sound included) stop for a frame, so you might want to put this at the end of a fade-out or in a scene where there is no movement and no sound. I used these in Around the Sun and Out of the Dumps.
 <h3>3. Ditch Flash.</h3>
