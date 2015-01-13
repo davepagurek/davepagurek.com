@@ -1,0 +1,59 @@
+<!--
+{
+    "title": "Truthful",
+    "date": "2015-01-09",
+    "excerpt": "Calculate truth tables from a boolean algebraic expressions",
+    "thumbnail": "%root%/content/images/2015/1/truthful-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "HTML",
+        "CSS",
+        "Javascript"
+    ],
+    "browser": {
+        "url": "http://davepagurek.com/truthful/",
+        "image": "%root%/content/images/2015/1/truthful.png"
+    },
+    "buttons": [
+        {
+            "url": "http://davepagurek.com/truthful/",
+            "text": "View Truthful"
+        },
+        {
+            "url": "https://github.com/pahgawk/Truthful",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+In both our Math 135 (Algebra) and ECE 124 (Digital Circuits) courses this term, we've had to work with boolean algebra. This can get tricky and often to check our work, we make truth tables.
+
+This is a tool to enter boolean expressions and generate truth tables.
+
+<h2>Using Truthful.js</h2>
+
+Include the Javascript file in your HTML:
+<code lang="HTML">
+<script src="Truthful.js"></script>
+</code>
+
+<h3>Expressions</h3>
+Create an algebraic expression like this:
+<code lang="javascript">
+var expression = Truthful.createExpression("a*b+!(c*d)");
+</code>
+
+To get the result of an expression:
+<code lang="javascript">
+var x=2;
+var result = expression.result({
+	"a": 1,
+	"b": 0,
+	"c": 1,
+	"d": 1
+});
+</code>
+If a variable's value is not specified, it defaults to zero.
+
+Expressions can include * for AND. + for OR, and ! for NOT.
