@@ -21,6 +21,8 @@
 }
 -->
 
+<image src="https://github.com/pahgawk/Trestle/blob/master/admin/img/trestle.png?raw=true" />
+
 A light, extensible Perl CMS by Dave Pagurek
 
 <h2>Features</h2>
@@ -32,8 +34,54 @@ A light, extensible Perl CMS by Dave Pagurek
     <li>Cache generated pages to reduce server load</li>
 </ul>
 
-<h2>Example post</h2>
-<code lang="html">
+<h2>Setup</h2>
+<h3>Trestle config</h3>
+Here is an example `index.fcgi`:
+
+<code lang="perl">
+use Trestle;
+use Trestle::Theme::Pahgawks;
+use Trestle::Plugin::CodePrettify;
+use Trestle::Plugin::GoogleAnalytics;
+use Trestle::Plugin::YouTube;
+use Trestle::Plugin::DisqusComments;
+use Trestle::Plugin::ImageCaption;
+
+my $site = Trestle->new({
+    dev => 1,
+    root => "http://localhost/Trestle",
+    theme => Trestle::Theme::Pahgawks->new(),
+    plugins => [
+        Trestle::Plugin::CodePrettify->new("tomorrow-night"),
+        Trestle::Plugin::GoogleAnalytics->new("UA-8777691-3"),
+        Trestle::Plugin::YouTube->new(),
+        Trestle::Plugin::ImageCaption->new()
+    ],
+    cacheLife => 0
+});
+
+$site->run();
+</code>
+
+If `dev` is enabled, `CGI::Carp` will send warnings and fatal errors to the browser.
+
+`cacheLife` is the number of hours before a cached page is set to be rerendered.
+
+<h3>Apache config</h3>
+In `.htaccess`, uncomment the respective line based on your system setup:
+<code lang="apache">
+#Use this if your Apache setup supports mod_fcgid
+#AddHandler fcgid-script .fcgi
+
+#Use this if you want to run Trestle as normal cgi
+AddHandler cgi-script .fcgi
+</code>
+
+<h2>Writing</h2>
+Here is an example page to demonstrate page structure. 
+
+<code lang="perl">html
+
 <!--
 {
     "title": "Hooked on a Feeling",
@@ -48,4 +96,128 @@ I made this song to represent the juxtaposition of societal norms and the microc
 The boat part is actually for real though.
 
 </code>
+
+Metadata is written as a JSON object in an HTML comment at the top of the page.
+
+`%root%` will be replaced by the root directory as defined in `index.fcgi`
+
+Inline YouTube video urls will be replaced with an embedded player thanks to `Trestle::Plugin::YouTube`
+
+Images in the form `<img src="img" full="img-full" caption="Caption">` will be replaced by a captioned image thanks to `Trestle::Plugin::YouTube`
+
+<h2>Plugins</h2>
+Here is the structure of an example plugin:
+<code lang="perl">
+package Trestle::Plugin::Example;
+
+sub new {
+	my $class = shift;
+	my $self = {};
+
+	$self->{pages} = 1;
+	$self->{categories} = 1;
+	$self->{archives} = 1;
+	$self->{index} = 1;
+	$self->{error} = 1;
+
+	bless $self, $class;
+	return $self;
+}
+
+sub content {
+	my ($self, $content, $page) = @_;
+
+    $content =~ s/foo/bar/ig;
+
+	return $content;
+}
+
+1;
+</code>
+
+Set `$self->{pagetype}` in `sub new` to register the plugin for that type of content.
+
+In the `content` sub, you can do what you want with the `$content` variable and then return the new page content.
+
+<h2>Themes</h2>
+Here is the basic structure of a theme:
+<code lang="perl">
+package Trestle::Theme::Example;
+
+use strict;
+
+use lib "../..";
+use Trestle::Theme;
+
+sub new {
+    my $class = shift;
+    my $self = {
+        dir => "Trestle/Theme/Example",
+        theme => Trestle::Theme->new()
+    };
+
+    bless $self, $class;
+    return $self;
+}
+
+sub content {
+    my ($self, $page) = @_;
+
+    return $self->{theme}->render("$self->{dir}/template/content.tmpl", {
+        themeDir => $self->{dir},
+        title => $page->meta("title"),
+        category => $page->meta("category"),
+        content => $page->content
+    });
+}
+
+sub dir {
+    my ($self, $category) = @_;
+
+    return $self->{theme}->render("$self->{dir}/template/dir.tmpl", {
+        themeDir => $self->{dir},
+        title => $category->info("name"),
+        name => $category->info("name"),
+        pages => $category->info("pages")
+    });
+}
+
+sub archives {
+    my ($self, $root, @cats) = @_;
+    my $source = "";
+
+    return $self->{theme}->render("$self->{dir}/template/archives.tmpl", {
+        themeDir => $self->{dir},
+        title => "Portfolio",
+        categories => \@cats
+    });
+
+}
+
+sub error {
+    my ($self, $error, $root) = @_;
+
+    return $self->{theme}->render("$self->{dir}/template/error.tmpl", {
+        themeDir => $self->{dir},
+        title => "Page Not Found",
+        error => $error
+    });
+}
+
+sub main {
+    my ($self, $page) = @_;
+
+    return $self->{theme}->render("$self->{dir}/template/content.tmpl", {
+        themeDir => $self->{dir},
+        title => $page->meta("title"),
+        content => $page->content
+    });
+}
+
+1;
+</code>
+
+A theme uses `HTML::Template`-style templates for `.tmpl` pages. Read <a href="search.cpan.org/~samtregar/HTML-Template-2.6/Template.pm">the documentation</a> to see how to write templates.
+
+Themes have subs for each of the types of pages that potentially need to be rendered.
 
