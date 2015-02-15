@@ -1,0 +1,37 @@
+<!--
+{
+	"title": "The New saripagurek.com",
+	"date": "2015-02-15",
+	"thumbnail": "%root%/content/images/2015/2/IMG_20150207_102047-thumbnail.jpg",
+	"excerpt": "How my sister's website came into existence.",
+	"category": "blog"
+}
+-->
+
+<a href="http://www.saripagurek.com" target="_blank">My sister's website</a> is live and it's her first major programming project. I'm really proud of her for the whole thing.
+
+It started in October when I realized I could get a free .me domain from Namecheap, being a student. I already had my own website so I sent a message to my sister asking if she wanted one. I ended up spending the morning not really paying attention in class and instead setting up a Github account for Sari so that she'd be able to make her site on GitHub Pages. We settled for a .com since she figured it would sound more professional and would be more futureproof. I suppose she'd heard me mention about how I ended up having to switch away from the pahgawks.com domain I'd got as a kid to a more professional one, so I respect her decision to not get sari.rocks or something else like that.
+
+At this point, she had no knowledge of HTML or CSS or Git or anything. I decided to make an HTML/CSS template for her to start with, with heavily commented code explaining what everything does. It was really bare-bones and didn't include much other than some basic structure and font sizes. I asked her to draw out a design for us to work from so that we could fix up the CSS more when I came home next.
+
+<img src="%root%/content/images/2015/2/GEDC1226-medium.jpg" full="%root%/content/images/2015/2/GEDC1226.JPG" caption="Sari's initial design mockup." />
+
+When I came home for the winter break, we got right to website making. The general process involved asking how one would go about doing something, me explaining it, and then Sari typing the code. I'm not sure this sort of teaching is enough for her to be able to implement rounded corners on buttons again the next time she wants to use them on her own, but I think she'd at least know where to look to see the code I'd previously explained and know what to copy and paste.
+
+We then took some photos of drawings and paintings she'd done in the past while and added those to the site. Initially, we just had one page, and I showed Sari what anchor tags were and how you could link to things on the same page with named anchors. Eventually though, we grew to realize that Sari had made <em>a lot of stuff</em> and would require more than one page. She'd been busy making all sorts of modifications in her room to better organize herself and had spent time adding more HTML elements for the new posts. She'd been editing in <a href="http://brackets.io/" target="_blank">Brackets</a> so that she could see when her HTML had mistakes in it (some copy-and-paste errors happened when duplicating posts sometimes.) Then, she'd commit and sync using the Github for Windows UI since a command line workflow would be a bit overkill.
+
+<img src="%root%/content/images/2015/2/GEDC1405-medium.jpg" full="%root%/content/images/2015/2/GEDC1405.JPG" caption="A CD case organizer: one of Sari's interesting organization projects." />
+
+The next advancement happened just this weekend. Having returned to Ottawa for reading week, we decided to automate the process of adding posts since there is a lot of duplicate code involved with adding new posts in multiple locations on the site. I wanted to learn some Ruby and Sari wanted to automate her site (and seemed to dislike semicolons) so we decided to both learn.
+
+I wrote a Perl script first to scrape her existing site and put it into a JSON format. This wasn't done by hand because her patience level for tedious tasks is understandably fairly low and if the point of this whole exercise was to show how automating things is the way forward, making her retype a bunch of stuff wasn't the way to go. Plus, it only needed to be done once, so I just did this part myself.
+
+We started off by turning a page from her site into a <a href="https://github.com/mustache/mustache" target="_blank">Mustache template</a> with a loop where all the posts would go. We did some file I/O in Ruby to read in the content JSON and then to read in the template. After that, a simple `Mustache.render(template, content)` was sufficient to demonstrate how everything was going to work and how it would have value. We needed some functions to sort the posts so we made a very simple class that extends `Mustache`, as demonstrated in the Mustache github readme. This was then extended to write all the pages on her website instead of just one. By this point we had moved to Sublime Text for the easy build system integration and testing the script with a simple `Ctrl-B`.
+
+Sari's new workflow now involves writing posts in JSON, running `build.rb`, checking the output, committing, and syncing. We went and added a post to her site containing a picture of me she'd drawn in September to test the system. It worked!
+
+<img src="%root%/content/images/2015/2/IMG_20150207_102047-medium.jpg" full="%root%/content/images/2015/2/IMG_20150207_102047.jpg" caption="I had taken a selfie that looked like this and sent it to Sari. She sent me this drawing back." />
+
+In case you're interested, you can <A href="https://github.com/saripagurek/saripagurek.github.io" target="_blank">check out the repository on GitHub</a> to see how everything works or to see when new things get added to her site. She adds things all the time, even when I'm not there to help, and she seems to always be busy drawing new things and making new crafts. The code in the repo isn't the cleanest but she's also in the sixth grade. I think it turned out pretty well!
+
+<img src="%root%/content/images/2015/2/IMG_20150215_120319-medium.jpg" full="%root%/content/images/2015/2/IMG_20150215_120319.jpg" caption="The reward for hard work: Matching Dropbox shirts." />
