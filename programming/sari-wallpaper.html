@@ -1,0 +1,56 @@
+<!--
+{
+    "title": "Sari Wallpaper",
+    "date": "2015-02-21",
+    "excerpt": "A joke I'm playing on my sister where I remotely change her wallpaper to pictures of me.",
+    "thumbnail": "%root%/content/images/2015/2/sari-wallpaper-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "Python",
+        "Perl"
+    ],
+    "browser": {
+        "url": "http://davepagurek.com/stuff/wallpaper/",
+        "image": "%root%/content/images/2015/2/sari-wallpaper-large.jpg"
+    },
+    "buttons": [
+        {
+            "url": "http://davepagurek.com/stuff/wallpaper/",
+            "text": "View Sari Wallpaper"
+        },
+        {
+            "url": "https://github.com/pahgawk/Sari-Wallpaper",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+So my sister is seven years younger than me. I thought it might be weird for her not having me in the house once I left for university so I decided to play this joke on her where I repeatedly change her wallpaper to pictures of me instead.
+
+I started first by changing her wallpaper while I was in the house, so she thought I was physically sneaking into her room at night to change her wallpaper. Passwords were changed but the wallpapers still arrived. I laid low for a week or so after going to Waterloo to lure her back into a false sense of security and then made the wallpapers come back with a vengeance.
+
+Since then, the surprise of having my wallpapers arrive has warn off, so the fun exists mostly in picking interesting photos and selfies to set her wallpaper to. I showed her how the whole thing works and she <a href="http://saripagurek.com/wallpaper/" target="_blank">implemented her own version</a> to change my dad's wallpapers.
+
+<h2>Client setup</h2>
+<h3>Windows</h3>
+<ol>
+  <li>Run `python setup.py py2exe` to create an exe to store on the client (using Python 3)</li>
+  <li>Edit `client/wallpaper.vbs` to reflect the correct path to the generated exe</li>
+  <li>Edit `client/identity.txt` to give a unique string to each client listening for wallpapers</li>
+  <li>Open the Windows Task Scheduler and import `client/update_wallpaper.xml` to create scheduled tasks to update wallpapers. Edit the task's Action to the location you have `wallpaper.vbs` stored.</li>
+</ol>
+
+<h3>Linux</h3>
+<ol>
+  <li>Run `crontab -e` to edit  cron jobs</li>
+  <li>Add the line `0 * * * * python3 /home/username/path/to/file/wallpaper.py` to run the script every hour</li>
+</ol>
+
+<h2>Server Setup</h2>
+<ol>
+  <li>Edit `server/config-example.pl` and change the password string to the password to use for the upload server. Change the devices you are listening for, corresponding to the contents of `client/identity.txt` earlier. Then, rename the file to `server/config.pl`.</li>
+  <li>Copy all of the files from the `server` folder onto your hosting directory.</li>
+  <li>Make sure everything is `chmod 775` and `chown www-data:www-data`.</li>
+  <li>If you want to edit the visual styles of the server code, edit the files in `server/templates`. They use Perl HTML::Template syntax.</li>
+</ol>
