@@ -1,7 +1,45 @@
 <!--
-    "title": "Twitch Plays Scribbler",
-    "category": "programming",
-    "date": "2014-11-17"
+{
+	"title": "Twitch Plays Scribbler",
+	"category": "programming",
+	"date": "2014-11-17",
+	"thumbnail": "%root%/content/images/2015/3/IMG_20141024_210102-thumbnail.jpg",
+	"browser": {
+		"url": "http://scribblerplaystwitch.herokuapp.com/",
+		"image": "%root%/content/images/2015/3/scribibler-large.jpg"
+	},
+	"languages": [
+		"Python",
+		"Javascript/Node.js",
+		"Socket.io"
+	],
+	"buttons": [
+		{
+			"url": "http://scribblerplaystwitch.herokuapp.com/",
+			"text": "View Twitch Plays Scribbler"
+		},
+		{
+			"url": "https://github.com/pahgawk/Twitch-Plays-Scribbler",
+			"text": "View Source on GitHub"
+		} 
+	]
+}
 -->
 
-In our SE 101 class, we were given the task of programming a robot. It boasted a multitude of sensors, but the execution was a tad lackluster. Sensors only worked some of the time and yielded inconsistent values. The camera operated at a maximum of 0.5 frames per second.
+In our SE 101 class, we were given the task of programming a robot. It boasted a multitude of sensors, but the execution was a tad lackluster. Sensors only worked some of the time and yielded inconsistent values. The camera operated at a maximum of 0.5 frames per second. Our task was, first, to make the tobot be able to autonomously navigate around obstacles, and then use this thing to make <em>something</em> and do some project management diagrams about the process (the project management aspect, it turns out, was what we were supposed to really get out of the course.)
+
+The constraints actually managed to bring some pretty cool results out of the experience. The obstacle avoidance was challenging to get working consistently due to the faulty sensor data, but using calibration, some statistical analysis, and lots of heuristics, we got it working. We got it on video going around the simplest obstacle, a box perpendicular to it, but it also worked for other arbitrary orientations.
+
+https://www.youtube.com/watch?v=U36klxAhsVc
+
+Next was the fun part: making whatever we wanted with it. We decided to try to not rely on the robot itself as much as we could due to the grievance the sensors caused us in our obstacle avoidance challenge. We eventually settled on Twitch Plays Scribbler.
+
+If you haven't heard of <a href="http://www.twitch.tv/twitchplayspokemon" target="_blank">Twitch Plays Pokemon</a>, it's a constantly streaming video on Twitch.tv of Pokemon handheld games. Thousands of users type in commands into the chat simultaneously which are then executed in the game. The result is an eclectic and exciting and challenging new experience. We wanted to bring the fun and frustration of trying to accomplish tasks while working with lots of unknown strangers to the Scribbler Bot.
+
+Twitch Plays Scribbler is a similar idea: everyone spams commands into a chat window and the robot executes them as fast as it can while sending results back to users via a video stream. This stream included both the 0.5 fps first-person camera (we were marked for actually using the robot's hardware) as well as an overhead webcam feed at a decent frame rate to make the experience actually feel responsive.
+
+It even would sing the first line of "Hooked on a Feeling" if a user told it to.
+
+The result was actually a surprisingly good learning experience. The robot itself had to be communicated with over Python, a language I had previously not had much experience in. The server was set up with Node.js and using Socket.io to connect with the clients. I did a lot of new stuff and I am proud of how it turned out so I would say it was a success.
+
+https://www.youtube.com/watch?v=ihJcyoKb5YU
