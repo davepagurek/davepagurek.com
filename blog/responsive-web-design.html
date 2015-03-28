@@ -1,4 +1,3 @@
-
 <!--
 {
 	"title": "Responsive Web Design",
@@ -12,7 +11,7 @@
 It used to be that web designers didn't really need to worry too much about how their websites looked on different sized screens, on different devices, or, to a certain extent, in different browsers. The web used to have a one-size-fits-all approach. However, that isn't really the case any more. In the current year, people might view the same website on a tiny touchscreen phone while other people view it on a giant 2560-by-1440 display. Designers are now forced to accept that, when they make a website, they can no longer make <em>one</em> website. Enter Responsive Web design.
 
 <h2>What does "responsive" mean?</h2>
-A responsive website is a website that adjusts the layout of its elements at certain screen sizes to better lay out the content on the display. To demonstrate what I mean by this, I will use the website of professional artist Adrian Göllner, which I made a few months ago. I invite you to <a href="http://adriangollner.ca/content/?page_id=341">visit the art page</a> of his website using a modern browser (not an old version of Internet Explorer, anyway) and try resizing the browser window. A few things happen:
+A responsive website is a website that adjusts the layout of its elements at certain screen sizes to better lay out the content on the display. To demonstrate what I mean by this, I will use the website of professional artist Adrian G&ouml;llner, which I made a few months ago. I invite you to <a href="http://adriangollner.ca/content/?page_id=341">visit the art page</a> of his website using a modern browser (not an old version of Internet Explorer, anyway) and try resizing the browser window. A few things happen:
 
 <img src="http://www.davepagurek.com/wp-content/uploads/2012/02/resize.jpg" alt="" title="resize" width="820" height="376" class="aligncenter size-large wp-image-2244" />
 <ol>
@@ -25,7 +24,7 @@ Because of these incremental changes in layout, the website works just as well o
 
 <h2>Pre-emptively fix bugs</h2>
 The first thing you'll want to do is add this little code snippet into the &lt;head&gt; section of your HTML so that smartphone web browsers don't try to auto-size webpages:
-<code lang="html"><meta name="viewport" content="width=device-width; initial-scale=1.0"></code>
+<code lang="html"><meta name="viewport" content="width=device-width, initial-scale=1.0"></code>
 
 Also, Internet Explorer versions 8 and lower do not natively support CSS media queries, a technique I will explain later, so we need to include a javascript file to add the missing functionality:
 <code lang="html"><!--[if lt IE 9]>
@@ -97,4 +96,3 @@ Personally, I have found that the way that works best for me is a combination of
 In the end, though, it really depends on your priorities and what works for you. If you have the patience to plan out all your designs beforehand, that might be a good way to go. Or if you're making a webapp, maybe you should start with mobile and work up to ensure that users are not frustrated when accessing the app from their phones. Like I said, it depends. Responsive design is a concept, and what you choose to do with is up to you.
 
 &lt;/dave&gt;
-
