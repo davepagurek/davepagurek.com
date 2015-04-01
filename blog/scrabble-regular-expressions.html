@@ -1,0 +1,183 @@
+<!--
+{
+	"title": "Scrabble Solving with Regular Expressions",
+	"category": "blog",
+	"excerpt": "String parsing can make some problems a lot more fun.",
+	"thumbnail": "%root%/content/images/2015/4/regex-thumbnail.jpg",
+	"date": "2015-03-31"
+}
+-->
+
+
+<h2>The Problem</h2>
+
+In CS 138 we had an assignment where, using hash tables in C++, we had to produce the highest scoring Scrabble word given a hand of letters and a text file of newline-separated valid English words. This was accomplished by finding all possible permutations given the provided letters and then looking up each one in a dictionary to see if it's a real word. This yields a reasonably fast solution, but gets bogged down with inputs upward of 10 letters. There exists a more Perly solution where, instead of finding each possible combination and seeing if the word exists, you can simply search through existing words for potential matches first, and then check if each option has the right amount of letters.
+
+<h2>Implementation with Regular Expressions</h2>
+
+Although people like to dislike Regular Expressions because of their imposing syntax, this is the sort of problem that can be solved efficiently with them.
+
+The first pass of the search will be broad and will simply look for words whose characters all match the input characters. If the input text is `abcd`, then we want to check the dictionary for things that match the pattern `/^[abcd]+$/igm`. This looks like a jumble of letters right now, but let me explain. The square brackets represent a <strong>character class</strong>, meaning it matches a character only if the character matches one of the values in the brackets. We add a `+` after and wrap it all in  `^` and `$` so that it can only match the whole word, if anything at all. The `^` indicates the start of the line, `$` represents the end of the line, and `+` means "one or more of the preceding character." Basically, from the start to the end of the line, we want to see only characters that match the input. We add `igm` to the end to make it case-<strong>i</strong>nsensitive, search <strong>g</strong>lobally (not stop after one match), and to treat the string as <strong>m</strong>ultiple lines as opposed to a long string with embedded `\n` characters.
+
+Here's how this looks so far in Perl:
+
+<code lang="perl">
+# Read in the whole dictionary file
+use File::Slurp;
+my $dictionary = read_file("words.txt");
+
+# Get user input, removing trailing newlines
+chomp(my $input = <STDIN>);
+
+# Create the RegEx character class
+my $regexText = "^[$input]+\$"; # $ is escaped so Perl doesn't think it's a variable
+
+# Get all the matches from the dictionary
+my @matches = $dictionary =~ /$regexText/igm;
+
+print join("\n", @matches) . "\n";
+</code>
+
+We create a string with the match pattern first before compiling it to a regular expression itself because in a double-quoted string, you can put a Perl variable name and have it replace it with the variable value. This actually works in RegEx literals too, but only when not in character classes (hence the need to use a string first.)
+
+If we run this code and provide the input "test", we get this result:
+
+<code>
+es
+eses
+ess
+esses
+et
+see
+sees
+...
+tet
+tets
+tsetse
+tsetses
+</code>
+
+These all use the right letters, but not necessarily the right number of letters. We need to do a second pass through each match to see if the number of letters matches. Basically, for each letter in the word, we want to see if its number of occurrences is less than or equal to than the number of occurrences in the original letter set. Here's how that section of the code looks:
+
+<code lang="perl">
+# Go through the matches from the initial query
+WORD: for my $word (@matches) {
+
+    # Check the number of occurrences of each letter: loop through the letters in the word
+    LETTER: for my $letter (split "", $input) {
+
+        # Get the number of times the letter occurs in the word with a RegEx
+        my @wordMatches = $word =~ /$letter/g;
+        my $wordOccurrences = scalar @wordMatches;
+
+        # Get the number of times the letter occurs in the input string with a RegEx
+        my @lettersMatches = $input =~ /$letter/g;
+        my $lettersOccurrences = scalar @lettersMatches;
+
+        # Break out of the WORD loop if there are too many of a given type of letter in the word
+        next WORD if ($wordOccurrences > $lettersOccurrences);
+    }
+
+    # If the loop gets here, all the letters are fine
+    push(@filteredMatches, $word);
+}
+
+print join("\n", @filteredMatches) . "\n";
+</code>
+
+The way we get the number of occurrences looks funny, so here's how that works. Take the following lines:
+
+<code lang="perl">
+my @wordMatches = $word =~ /$letter/g;
+my $wordOccurrences = scalar @wordMatches;
+</code>
+
+`@wordMatches` is in array context, so it gets an array of matched results from the regular expression. `$wordOccurrences` is forcing scalar context on an array, which returns its length.
+
+Here's what you get when you run this code with the input "test":
+
+<code>
+es
+et
+set
+sett
+stet
+test
+tet
+tets
+</code>
+
+Now we only have results that can be made with the given quantity of letters specified. The final step is to go through these filtered matches and find the one with the highest regular expression score. This part can be done easily with a hash in Perl, where the keys are letters and the values are the Scrabble values of each letter.
+
+What happens if the letter in the string is not alphabetic? Well, a Perl hash lookup where the key isn't in the hash returns `undef`. We can handle this by adding `$values{$letter} || 0` to the sum instead of just `values{$letter}`. Basically, this means that it uses the hash lookup result or zero if the result is undefined.
+
+We can then write a subroutine to go through each letter in a string and sum up the scrabble values of a character.
+
+<code lang="perl">
+# Map letters to scrabble values
+my %values = (
+    e => 1,
+    a => 1,
+    i => 1,
+    o => 1,
+    n => 1,
+    r => 1,
+    t => 1,
+    l => 1,
+    s => 1,
+    u => 1,
+    d => 2,
+    g => 2,
+    b => 3,
+    c => 3,
+    m => 3,
+    p => 3,
+    f => 4,
+    h => 4,
+    v => 4,
+    w => 4,
+    y => 4,
+    k => 5,
+    j => 8,
+    x => 8,
+    q => 10,
+    z => 10
+);
+
+# Get the sum of the scrabble values of the letters in a word
+sub wordValue {
+    my $word = lc(shift); # to lower case
+    my $sum = 0;
+
+    # Split the word into an array of individual letters
+    for my $letter (split //, $word) {
+
+        # If it's not in the table, the scrabble value is 0
+        $sum += $values{$letter} || 0;
+    }
+    return $sum;
+}
+
+
+my $highestScore = 0;
+my $highestWord = "";
+
+for my $word (@filteredMatches) {
+    my $score = wordValue($word);
+    if ($score > $highestScore) {
+        $highestScore = $score;
+        $highestWord = $word;
+    }
+}
+
+# Display the results!
+if ($highestScore == 0) {
+    print "$letters: no matches\n";
+} else {
+    print "$letters: $highestWord has score of $highestScore\n";
+}
+</code>
+
+And that's it! From my experience, this code is actually significantly faster for large inputs than the C++ version I wrote. The credit for the speed is due to the Perl Regular Expression engine, of course, which has had many years to optimize and increase speed.
+
+The full code (with some small performance improvements that sacrifice more readable code) can be found <a href="https://github.com/pahgawk/RegexScrabble">in a GitHub repo.</a>
