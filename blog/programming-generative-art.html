@@ -54,3 +54,9 @@ Now, I started building houses the same way I was building trees. A house <a hre
 
 <img src="%root%/content/images/2015/6/building-medium.jpg" full="%root%/content/images/2015/6/building.png" caption="How the buildings ended up looking." />
 
+<h2>random() and noise()</h2>
+In any sort of randomly generated visualizations, there's going to be a lot of usage of a pseudo-random number generator. That's to be expected. It's very well suited to making a selection out of a bunch of predefined options.  What about landscapes, though?
+
+The standard `random()` function isn't very well suited to drawing outlines of landscapes. Mathematically speaking, `random()` is not a continuous function. That is to say, if you keep zooming in on the line `y = random(x)`, it doesn't become smooth. This makes it not a good choice when you want to draw a smooth line. You could space out the random points and interpolate between them, but it will likely still appear jagged and unnatural.
+
+This is where <a href="https://en.wikipedia.org/wiki/Perlin_noise" target="_blank">Perlin noise</a> comes in handy. It was developed in the '80s specifically for use in computer graphics to try to make more natural looking visualizations. It is still fairly random, but it is a continuous function. The more you scale by, the smoother of a line you get.
