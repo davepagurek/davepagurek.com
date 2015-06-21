@@ -6,20 +6,28 @@
 -->
 
 <div class="section" id="header">
-    <div class="wrapper centered bounceInLeft animated">
-        <img id="me" src="%root%/content/images/2015/1/dave.jpg" />
-        <div id="intro">
-            <h2>Hi, I'm Dave Pagurek.</h2>
-            <p></p>
-            <p>I'm a programmer, web developer, and digital artist studying Software Engineering at the University of Waterloo.</p>
-            <p>
-            <a class="button white" href="resume" target="_blank">Resume</a>
-            <a class="button white" href="https://github.com/pahgawk">GitHub</a>
-            <a class="button white" href="archives">Portfolio</a>
-            </p>
+    <canvas id="landscape"></canvas>
+    <div id="overlay" class="transparent"></div>
+    <div id="whoami">
+        <div class="wrapper centered bounceInLeft animated">
+            <img id="me" src="%root%/content/images/2015/1/dave.jpg" />
+            <div id="intro">
+                <h2>Hi, I'm Dave Pagurek.</h2>
+                <p></p>
+                <p>I'm a programmer, web developer, and digital artist studying Software Engineering at the University of Waterloo.</p>
+                <p>
+                <a class="button white" href="resume" target="_blank">Resume</a>
+                <a class="button white" href="https://github.com/pahgawk">GitHub</a>
+                <a class="button white" href="archives">Portfolio</a>
+                </p>
+            </div>
+            <div id="landscapeInfo">
+                This background is procedurally generated. Click on it to make a new one!
+                <a href="https://github.com/pahgawk/Frontier" target="_blank">View source on GitHub</a>
+            </div>
         </div>
     </div>
-</div>
+    </div>
 <div class="section">
     <div class="wrapper">
         <h2>Web and Programming</h2>
@@ -74,3 +82,4 @@
         <p align="center"><a class="button" href="http://pahgawks.bandcamp.com">Listen on Bandcamp</a> <a class="button" href="http://soundcloud.com/davidpvm">Listen on Soundcloud</a></p>
     </div>
 </div>
+<script type="text/javascript" src="Frontier/js/frontier.min.js"></script>
