@@ -1,0 +1,146 @@
+<!--
+{
+	"title": "Using Swivel in batch from the terminal",
+	"category": "blog",
+	"date": "2015-06-27",
+	"thumbnail": "%root%/content/images/2015/6/swivel-thumbnail.jpg"
+}
+-->
+
+<strong>TL;DR turns out you can use Swivel from the command line, but it doesn't let you change the starting frame that way, so I tried to patch it in myself.</strong>
+
+You probably know of and have used Newgrounds's swf to video converter, <a href="https://www.newgrounds.com/wiki/creator-resources/flash-resources/swivel" target="_blank">Swivel</a>. It's a really fantastic tool and is really the only acceptable tool for converting Flash videos. So that is why I wanted to use it when presented with the task of downloading all the NATA entries and converting them all to video.
+
+When presented with a task like this, there is a lot of repetitive process involved, so I like to try to automate things. Perl is my tool of choice to do web scraping and automation, and I figured I'd throw in a system call to run Swivel on the downloaded swf files that I scrape from Newgrounds.
+
+The thing is, Swivel doesn't claim to be usable from the command line. It doesn't say so anywhere on the wiki page. But I noticed that if you run it, followed by the name of a file, it will convert it using the default settings:
+
+<code lang="bash">
+$ Swivel file.swf
+</code>
+
+I wondered if maybe Swivel actually did have a command line API, but just an undocumented one. To find out, a used a <a href="https://www.free-decompiler.com/flash/" target="_blank">Flash decompiler</a> and took a look at `bin/Swivel.swf` from the Swivel installation directory. It turns out that if you want to use Swivel from the command line, you have a few different flags you can set:
+
+<code lang="bash">
+$ Swivel file.swf -s 1280x720
+</code>
+Set the output width and height
+
+<code lang="bash">
+$ Swivel file.swf -vb 1.5m
+$ Swivel file.swf -vb 256k
+</code>
+Set the video bitrate
+
+<code lang="bash">
+$ Swivel file.swf -ab 1.5m
+$ Swivel file.swf -ab 256k
+</code>
+Set the audio bitrate
+
+<code lang="bash">
+$ Swivel file.swf -sm letterbox
+$ Swivel file.swf -sm crop
+$ Swivel file.swf -sm stretch
+</code>
+Set the video scale mode
+
+<code lang="bash">
+$ Swivel file.swf -a none
+$ Swivel file.swf -a swf
+$ Swivel file.swf -a audio.mp3
+</code>
+Set the audio for the exported video (No audio, audio from the swf, or an external file)
+
+<code lang="bash">
+$ Swivel file.swf -o converted.mp4
+</code>
+Set the output file
+
+<code lang="bash">
+$ Swivel file.swf -t
+</code>
+Set transparent background
+
+This is all really helpful stuff. However, I also needed to be able to set the start frame. My script goes and downloads videos from Newgrounds with the NATA round tag (like "nata2015open"), and swfs uploaded to Newgrounds all have preloaders. This causes the conversions to hang when being run through the command line. So, I set out on a mission to add the feature in to Swivel.
+The trouble is, when you decompile an swf file, you don't get actionscript, you get bytecode.
+For example, here's a simple script:
+
+<code lang="actionscript">
+var test = [1, 2, 3]
+trace(test.length);
+</code>
+
+Here it is in <a href="http://www.anotherbigidea.com/javaswf/avm2/AVM2Instructions.html" target="_blank">AVM2 instructions:</a>
+
+<code>
+getlocal0         
+pushscope         
+findproperty      test //nameIndex = 7
+pushbyte          1
+pushbyte          2
+pushbyte          3
+newarray          [3]
+setproperty       test //nameIndex = 7
+pushundefined     
+coerce_a          
+setlocal1         
+findpropstrict    trace //nameIndex = 8
+findpropstrict    test //nameIndex = 9
+getproperty       test //nameIndex = 9
+getproperty       length //nameIndex = 10
+callproplex       trace (1) //nameIndex = 8
+coerce_a          
+setlocal1         
+getlocal1         
+returnvalue       
+returnvoid        
+</code>
+
+In case you're not familiar with the general concept of how programming languages and assemblers work, here's a brief overview. Your computer doesn't automatically understand ActionScript. In fact, it doesn't really understand any normal programming language, even low level ones like C. Your computer reads Assembly, or basically, a bunch of hexadecimal numbers, where each one corresponds to a specific command. All other languages get turned into Assembly in some way or another, where some languages are separated by more degrees than others (scripting languages like Python or ActionScript sit at a higher level than something like C.)
+
+So, ActionScript doesn't compile directly to Assembly, but it compiles to something called byte code, which essentially serves the same purpose. Rather than read commands directly into the CPU, commands get read into the ActionScript Virtual Machine. The way AVM2 reads in commands is very similar to how Assembly works: Each command name maps directly to a hexadecimal number, which represents a simple command to execute.
+
+There are no if statements, but there are markers in the code and you can use the "jump" keyword to go to different ones depending on if conditions are met. Instead of running functions with inline parameters like addNumbers(1, 2), you push the parameters to the stack (pushbyte 1, pushbyte 2) and then call the function specifying how many things there are in the stack meant as parameters (callproperty addNumbers 2). It's not the most intuitive thing to work in, but it works.
+
+I essentially wanted to add in one line of code to start recording on frame 2:
+
+<code lang="actionscript">
+swivelJob.duration = RecordingDuration.frameRange(2, swivelJob.duration.params[1]);
+</code>
+
+Here's what that ended up being:
+
+<code>
+getlocal0         
+pushscope         
+findpropstrict    swivelJob //nameIndex = 7
+getproperty       swivelJob //nameIndex = 7
+findpropstrict    RecordingDuration //nameIndex = 9
+getproperty       RecordingDuration //nameIndex = 9
+pushbyte          2
+findpropstrict    swivelJob //nameIndex = 7
+getproperty       swivelJob //nameIndex = 7
+getproperty       duration //nameIndex = 8
+getproperty       params //nameIndex = 11
+pushbyte          1
+getproperty       null //nameIndex = 12
+callproperty      frameRange (2) //nameIndex = 10
+dup               
+setlocal2         
+setproperty       duration //nameIndex = 8
+getlocal2         
+kill              2
+coerce_a          
+setlocal1         
+</code>
+
+Because this is all pretty new to me and lends itself to a very awkward workflow, I basically just added in that code block without any conditionals: in my patched version of Swivel, if you run a conversion from the command line, it always assumes that it should start on the second frame. Ideally, I'd make it so there are extra command line flags you could set to specify the start and end frames (for example, `-sf` and `-ef`), but this is all I have done for now.
+
+If you want to try it out, you can <a href="https://github.com/pahgawk/NATA-Scraper/raw/eaa8aba5d383d1f0b5a6b33f6c47ccc63966a498/Swivel-patched.swf" target="_blank">download the patched swf here</a>. Rename it to just Swivel.swf and put it in your Swivel installation folder /bin (so, on Windows, that'd end up being C:/Program Files/Swivel/bin). It's a good idea to back up your original Swivel.swf first, but if all else fails, you can <a href="https://github.com/pahgawk/NATA-Scraper/raw/eaa8aba5d383d1f0b5a6b33f6c47ccc63966a498/Swivel-original.swf" target="_blank">redownload the original here</a>.
+
+If enough people would find it useful, I might consider going and actually adding in the feature fully. Or, if any of the Newgrounds staff feel like open-sourcing the ActionScript source, that'd make it really easy to add the feature in, so I'd gladly go and do it! Understandably they might not want their source public though.
+
+So yeah, that's what I've been doing in my spare time for the past few days!
+
+Although the entirety of the NATA scraper isn't done yet, you can <a href="https://github.com/pahgawk/NATA-Scraper" target="_blank">follow its progress on GitHub</a> if you're so inclined.
