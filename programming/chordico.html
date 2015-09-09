@@ -1,0 +1,64 @@
+<!--
+{
+	"title": "Chordi.co",
+	"excerpt": "Procedural music, taught with data from real artists",
+	"thumbnail": "%root%/content/images/2015/9/chordi-closeup-thumbnail.jpg",
+	"category": "programming",
+	"languages": [
+		"Python",
+		"Javascript"
+	],
+	"browser": {
+		"url": "http:/chordi.co/",
+		"image": "%root%/content/images/2015/9/chordi-full-large.jpg"
+	},
+	"buttons": [
+		{
+			"url": "http://chordi.co/",
+			"text": "View Chordi.co"
+		},
+		{
+			"url": "https://github.com/pahgawk/Chordi.co",
+			"text": "View Source on GitHub"
+		} 
+	],
+	"date": "2015-09-09"
+}
+-->
+
+Last weekend was PennApps XII, and our team (consisting of myself, Andrew, Wojtek, Yifei, Kingsong, and Bo) tackled the challenge of creating procedurally generated music. The result: Chordi.co! It doesn't always produce great sounding results, but it does enough of the time to feel like this was a successful project.
+
+<h2>Building Chordi.co</h2>
+
+There are many ways in which one can create procedural music, but we wanted to use a neural network to try to learn from existing songs in an attempt to recognize common chord progressions and build new songs using those. We decided to only worry about chords and not melody since we only had the weekend and we figured that chords alone would be difficult enough to perfect. So, with that in mind, this is the process we had to go through to make our idea work.
+
+<h3>Getting Training Data</h3>
+We wanted to learn about chord progressions, so we had to get data about the chords in songs. For those without musical background, a chord consists of three or more notes (generally speaking, of course - there are always exceptions and edge cases). Chords can have different qualities depending on the relationships between the notes in them. Two basic chords are the <a href="https://upload.wikimedia.org/wikipedia/commons/5/50/C_major_triad.mid" target="_blank">major</a> and <a href="https://upload.wikimedia.org/wikipedia/commons/a/a7/D_minor_triad.mid" target="_blank">minor</a> chords: a major chord (such as C, E, G) tends to sound "happy" and a minor chord (such as C, E flat, G) tends to sound "sad". The notes can also be <strong>arpeggiated</strong>, meaning they are not played all at the same time, but rather in sequence. Additionally, you can have a chord of the same quality but starting on a different note (A, C, E and C, E flat, G are both minor chords). A chord also has a number with is, corresponding to what note of the scale it starts on. That is to say, the chords C, E, G and B flat, D, F are both I chords for the keys of C and B flat, respectively, since they start on the first notes of their keys' scales. Our algorithm would have to take a song and figure out what chords happen when and for how long based on the notes of the song, and figure out how they relate to the song's key.
+
+We decided the best song input format to work with was midi rather than mp3, since a midi file stores information about tempo and notes and tracks rather than binary sound data, which is <em>much</em> harder to understand with a computer. That's not to say that parsing midis is easy, though. A standard song is broken up into multiple tracks and instruments which are played simultaneously and have to be examined all at once in order to get a full understanding of the notes being played at a given time. Not all tracks need to be or should be analyzed, though. For example, in midi files, the drum track is a track with notes just like any other instrument. Luckily for the specific case of the drum track, drums are on channel 10 of a midi, so that one can be ignored.
+
+Once we have all the note data, we needed to keep track of what notes are being played at any given time to see when a chord ends. We worked in quarter note intervals, trying to intelligently work around edge cases such as notes that really belong to the next chord but start early in order to transition from one chord to the next. Although we made decent progress, in order for training data to work reasonably well, it also took some human tuning of the data. This meant that generating good input took a while, so we didn't end up producing as much training data as would be required to raise the neural network to its full potential. However, with around 14 songs, it was decent enough to still see results.
+
+<h3>Making the Neural Network</h3>
+In order to learn from existing songs, we had to come up with a way to turn songs into a format understandable by the neural network. We decided to simply enumerate the chords we found in the training data so that each combination of chord quality (major, minor, etc) and root note (essentially, the number of the scale for the bottom note of the chord) is mapped to an integer. A song would be composed of a list of these chord numbers, with chords lasting for four beats being represented by the same number four times in a row in the list.
+
+We fed the training data into a PyBrain neural network. The general idea is that the more times the network sees, for example, a IV chord followed by a V chord in the training data, the more likely it is that giving the network a IV as an input will result in a V as the output. We didn't want total convergence, though. Many songs end on a V to I progression, but we don't want to have the song end every time we see a V go to a I. We also wanted to look at more than one chord in the past in order to predict the next chord so that we could find chord progression patterns such as vi - V - IV - V where there are more pieces in the sequence than two. We didn't want to look too far back, though, otherwise the network might just start copying training data since there aren't as many examples of such a long sequence of chords. After lots of tuning to see what works best, we ended up using two hidden layers in the network, the first having 25 nodes and 10 on the second.
+
+<h3>Rendering the Song</h3>
+To make the network generate a song, we would randomly pick four starting chords to seed the network and see what output is produced. The new chord is then added to the list and the most recent four chords are then inputted into the network again to produce the next chord. This process continues until either the network sends back an end of song node or until it has gone on what we consider to be long enough.
+
+We would then take the chord numbers and turn them back into a sequence of notes in a midi file. Due to time constraints, every output is in C major or minor, and the drum track pattern on each song is the same. The tempo and instrument are variable, however.
+
+The generated midi is then converted into a wav file, and then converted from a wav to an mp3 to send to the end user.
+
+<h3>Setting Up an Interface</h3>
+Because the rest of the scripts were in Python for all of the data processing needed, we continued using Python for the web server, which is made with Flask. There is an endpoint which can be hit to generate a song where one specifies a midi instrument to use (such as "Grand Piano" or the classic "Reverse Cymbal") and whether to use the training data for major or minor songs (although we have a few mixed up songs there, so effectively it is just a toggle between two different sets of training data more than major or minor.) A tempo is randomly picked.
+
+To make listening to Chordi.co music visually interesting, we added some visualizations. We have one graph of the song's spectrum levels, and another where a 3D cube pops out to the beat of the song. The graph is rendered with D3.js, and the cubes are actually just vanilla CSS and Javascript. The cubes are really just div tags rotated in 3D space. Both involve looking at the volume levels per frequency range of the song. Unfortunately, the Javascript APIs for this only work reliably in Chrome, so although the rest of the site's functionality remains intact everywhere, the visualizations do not.
+
+<h2>The Trip</h2>
+The bus we took from Waterloo to Philadelphia had its air conditioning break a few hours into the trip, so we spent the vast majority of the time in ~35 degree C heat with no air flow. We got off the bus extremely sweaty and gross and without spare clothes because it was a hackathon and sponsors tend to give out shirts, so this time we had to go look for free shirts right away. Luckily, after first grabbing some water bottles, we got some Twilio shirts and were good to go!
+
+In addition to spending tha majority of our time working on Chordi.co and perfecting the program, we took a short bus trip to UPenn to walk around and explore a bit. We also managed to grab a bunch of foam dart guns from the hackathon and had a few dart fights while we were working, much to the dismay of those trying to sleep.
+
+Overall it was a really great trip. It was a lot of fun and I'm pretty proud of what we made. I'm looking forward to the next one!
