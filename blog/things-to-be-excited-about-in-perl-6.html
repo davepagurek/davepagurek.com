@@ -1,0 +1,274 @@
+<!--
+{
+  "title": "Things to be Excited About in Perl 6",
+  "category": "blog",
+  "date": "2015-10-11",
+  "excerpt": "Get hyped for Larry Wall's Christmas gift to programmers!",
+  "thumbnail": "%root%/content/images/2015/10/larrywall-thumbnail.jpg"
+}
+-->
+
+Perl's creator, Larry Wall, <a href="http://www.pigdog.org/auto/software_jihad/link/3138.html" target="_blank">recently confirmed</a> that Perl 6 will in fact be released this Christmas. It's been a long (<em>long</em>) time coming, so the release of Perl 6 has turned into a bit of a joke, especially given the unpopularity of Perl 5 in the past decade. Perl was first made to be a general-purpose scripting language with a focus on quick text processing needs, but ended up growing into the go-to CGI language when the internet became a thing. Not being designed for the way the internet evolved, other scripting languages made to fit that niche better gained popularity over Perl. But Perl 6 is different. Perl 6 is a major departure from Perl 5, completely rethought while still remaining Perly. It isn't made to be the language to replace Ruby or Python on webservers and doesn't aim to be adopted immediately by companies everywhere; rather, it's made to be powerful and fast to write and to just be a joy to work with.
+
+So here are some of the most interesting language features that add up to make Perl 6 worth getting excited about! 
+
+<h2>Variables</h2>
+<h3>Debugging</h3>
+Perl 6 comes with some fancy new debugging methods that can be called on variables to print a snapshot of them. There's `.gist`to give you the gist of the variable's contents, and then there's `.perl` to give you a string of Perl code that you would run to create an equivalent variable.
+<code lang="perl">
+say {a => 1, b => 2}.gist; # a => 1, b => 2
+say {a => 1, b => 2}.perl; # {:a(1), :b(2)}
+</code>
+
+You can compare variables at the same time using a neat feature called junctive autothreading. It's a much more readable way of checking a variable against a group of values without using a long chain of ands and ors. Each variable only knows that it's being compared to one thing at a time, though, so you can use this feature with anything without worrying about compatibility. As the "autothreading" in the name suggests, Perl will even try to run comparisons at the same time.
+<code lang="perl">
+# Equivalent to if $var == 3 || var == 5 ...
+if $var == any(3, 5, 7) {
+  # ...
+}
+
+if $var == 3|5|7 {
+  # ...
+}
+</code>
+
+<h3>Lists</h3>
+Perl 5 had some arguably unintuitive design decisions involving scalar and list context, references, and when to use `$` and `@` sigils. In Perl 6, basically everything is a reference, so it is fine in most cases to use `$` variables. This means that the variable is treated as a singular object in most cases, and list context is used in iterations.
+<code lang="perl">
+my $arr = [1, 2, 3];
+for $arr.list -> $i { say $i }; # Use list context to loop
+</code>
+
+Using list contexts, we can switch variables without using a temporary one.
+<code lang="perl">
+($x, $y) .= reverse;
+</code>
+
+Numeric lists are smart and can be declared very expressively.
+<code lang="perl">
+my $arithmetic = 2, 4, ... 12;
+my $geometric = 1, 2, 4, ... 2**32;
+</code>
+
+Lists can be made lazily now, allowing for some cool new ways to work with infinite series.
+<code lang="perl">
+my $infinite = 1..*;
+my $fibonacci = 1, 1, *+* ... *;
+for 3, 6, 9 ... * -> $i { say "Counting infinitely by 3s, we're at $i" }
+</code>
+
+Lists also come with some pretty convenient methods built in.
+<code lang="perl">
+my $combos = ("a", "b", "c").combinations;
+# ((), ("a",), ("b",), ("c",), ("a", "b"), ("a", "c"), ("b", "c"), ("a", "b", "c"))
+
+my $perms = say ("a", "b", "c").permutations;
+# (("a", "b", "c"), ("a", "c", "b"), ("b", "a", "c"), ("b", "c", "a"), ("c", "a", "b"), ("c", "b", "a")) 
+</code>
+
+Using the cross product operator on a list, you can easily initialize a hash with default values for a given set of keys.
+<code lang="perl">
+my $hash = ("a", "b", "c") X=> 1;
+# a => 1 b => 1 c => 1
+</code>
+
+You can use `.reduce` on a list when you have a lot to do in the block passed in, but for simple reductions, Perl 6 has a reduce operator to do it more concisely.
+<code lang="perl">
+my $sum = [+] 1, 2, 3;
+</code>
+
+<h2>Functions/Subroutines</h2>
+In Perl 6, although it is a dynamically typed language, you can easily add type checking to any method. If you try to call a function with the wrong argument type, it will fail with an error message at compile time, before you even run your program.
+<code lang="perl">
+sub say-hi-to(Str $name) {
+  say "Hello, $name"
+}
+say-hi-to("world"); # works
+say-hi-to(5); # fails at compile time
+</code>
+
+In languages where everything is a reference internally, concepts of "passing by value" and "passing by reference" lose meaning. Really, you tend to mean "can the arguments be mutated?" Perl 6 answers this with `ro` and `rw`.
+<code lang="perl">
+sub add-one(Int $x is ro) { $x + 1 } # returns a new copy of x
+sub add-one-mutate(Int $x is rw) { $x++ } # mutates x
+</code>
+
+Functions can specify their domain, so you can have multiple implementations of the same functions that only operate on their specified domain.
+<code lang="perl">
+multi is-big(Int $n where * > 50) { True }
+multi is-big(Int $ where 10..50) { False }
+</code>
+
+If you're writing a command line program, Perl lets you define separate `MAIN` functions that automatically get called when passing in the function's name in the terminal. If you don't specify anything, Perl will even show you the function names and signatures of the options available to you.
+<code lang="perl">
+multi MAIN('add', $key, $value, Bool :$replace) {
+  # ...
+}
+multi MAIN('remove', $key) {
+  # ...
+}
+multi MAIN('import', File, Str :$as) {
+  # ...
+}
+</code>
+
+
+<h2>Grammars and Regular Expressions</h2>
+One of the largest problems people have with Perl 5 is the unreadable syntax of Regular Expressions. Because they're so powerful, they get used often in Perl programs as well as in the numerous other languages that provide implementations of Perl-compatible Regular Expressions. Perl 6 aims to make regex use guilt-free again by introducing a completely new version of its Regular Expression syntax to both add even more features and also make everything more maintainable.
+
+<h3>Regexes</h3>
+By default, whitespace and comments in your regex literal are ignored. That means you can spread your regular expression tokens over multiple lines and add comments explaining what it's doing. Literal strings to be matched are put in quotes.
+<code lang="perl">
+my regex categorized-url {
+  ^^
+  '/' <word>     # category is a `word`, where `word` is another regex
+  ['/' <page> ]? # optional page in category
+  $$
+}
+</code>
+
+So you declare regexes like subroutines with `regex`, but you can also declare them with some different names to use different mode modifiers.
+<code lang="perl">
+my token word { \w+ }
+# Equivalent to regex { :r \w+ }
+# Only parses forward, never goes back to retry if an inner match fails
+
+my rule two-words { \w+ \w+ }
+# Equivalent to regex { :r :s \w+ \w+ }
+# Only parses forward, and also makes whitespace significant (as if it's a \s)
+</code>
+
+There are some useful new operators available to you:
+<code lang="perl">
+rule object { '{' ~ '}' <pairlist> }
+# Use the nested subrule operator ~ to parse the end part of a regex and then
+# check that it's surrounded by the given pairs (in this case, a <pairlist>
+# surrounded by curly braces)
+
+regex word-list { \w+ % ',' }
+# Use the modified quantifier % to separate lists of the previous token
+# with the next token
+</code>
+
+<h3>Grammars</h3>
+The largest change is the introduction of grammars. Rather than creating spaghetti code with many unorganized regexes (or, even worse, cramming everything into one massive monolithic regex), you structure your regexes into tokens and combinations of tokens. Then, you can simply match your grammar against a string, and it will get parsed into an abstract syntax tree for you.
+
+Here's a good example from the <a href="http://doc.perl6.org/language/grammars" target="_blank">Perl 6 Grammar documentation</a> demonstrating how a grammar is defined, linked to actions, and used to parse an AST.
+<code lang="perl">
+grammar KeyValuePairs {
+  token TOP {
+    [<pair> \n+]*
+  }
+  token ws { \h* }
+
+  rule pair {
+    <key=.identifier> '=' <value=.identifier>
+  }
+  token identifier {
+    \w+
+  }
+}
+
+class KeyValuePairsActions {
+  method identifier($/) { $/.make: ~$/                          }
+  method pair      ($/) { $/.make: $<key>.made => $<value>.made }
+  method TOP       ($/) { $/.make: $<pair> >> .made                }
+}
+
+my $res = KeyValuePairs.parse(q:to/EOI/, :actions(KeyValuePairsActions)).made;
+  second=b
+  hits=42
+  perl=6
+  EOI
+
+for @$res -> $p {
+  say "Key: $p.key()\tValue: $p.value()";
+}
+</code>
+
+As it turns out, Perl 6 is partially implemented <em>as a Perl 6 grammar.</em> That means you can add syntax into the Perl parser for your program inside your program. This isn't scary, this is an intended core feature of the language made to make Perl even more capable and extensible.
+<code lang="perl">
+# Define `times` as a language feature
+infix:<times>(Int $n, Block $r) {
+  for ^$n { $r(); }
+}
+
+# Use it immediately
+3 times -> { say "hello" };
+</code>
+
+<h2>Object-Oriented Programming</h2>
+Another problem with Perl 5 was that it didn't contain a good way to do OOP out of the box, although the package Moose is extremely powerful and comes with most distributions of Perl 5. Now, all of those good parts have been merged into Perl 6's default language.
+
+Classes can now extend each other, use mixins (`role`s in Perl), have public and private methods, and everything else you would expect for object-oriented design. Perl will make you a default constructor out of your public properties so that an object can be initialized by passing in key-value pairs for the public properties you want to assign (and, as always, there is also a way to make your own constructor.) From the <a href="http://doc.perl6.org/language/objects" target="_blank">Perl 6 OOP documentation</a> (where there are also many more examples of OOP implementations):
+<code lang="perl">
+role Notable {
+  has $.notes is rw;
+}
+
+class Journey does Notable {
+  has $.origin; # . is public, so it makes a private property and public aliases of the same name to make it accessible
+  has $.destination;
+  has @!travellers; # ! is private
+}
+
+# Create a new instance of the class.
+my $vacation = Journey.new(
+  origin      => 'Sweden',
+  destination => 'Switzerland',
+  notes       => 'Pack hiking gear!'
+);
+
+# Use an accessor; this outputs Sweden.
+say $vacation.origin;
+
+# Use an rw accessor to change the value, mixed in from Notable.
+$vacation.notes = 'Pack hiking gear and sunglasses!';
+</code>
+
+<h2>Concurrency</h2>
+To have a language ready for use on the internet, there needs to be a well-thought-out way to write concurrent code. The traditional way to do this is to use threading, but Perl has decided that there are some better design patterns.
+
+If you're used to Javascript, you'll know about Promises. You can kick off a process and a promise with `start`, and wait for a list of promises to all be fulfilled with `await`. This throws an error for you to catch if any promises fail, but as always, Perl provides you with alternate ways to specify how you want to handle failed promises with `anyof` and `allof`.
+<code lang="perl">
+my @quotes = await @currency_exchanges.map(-> $ex {
+  start { $ex.get_quote($val) }
+});
+
+# A more explicit way of waiting for all of them
+my @getting = @currency_exchanges.map(-> $ex {
+  start { $ex.get_quote($val) }
+});
+await Promise.allof(@getting);
+my @quotes = @getting.grep(*.status == Kept).map(*.result);
+</code>
+
+To ensure that code gets executed fast enough (for example, to kill long-running processes), promises can be made that are only true for <em>n</em> seconds before being considered a failure.
+<code lang="perl">
+my $kept-in-10 = Promise.in(10);
+</code>
+
+For a producer-consumer concurrency model, you can use channels, a threadsafe queue data structure. Go programmers should feel right at home using these.
+<code lang="perl">
+my $c = Channel.new;
+await (^10).map: {
+    start {
+        my $r = rand;
+        sleep $r;
+        $c.send($r);
+    }
+}
+$c.close;
+say $c.list;
+</code>
+
+<h2>But why does it matter?</h2>
+Sure, maybe these features are cool, but you can get by without them without having to learn another language. Why do we need another scripting language, anyway? Don't we have enough? Maybe Perl 6 doesn't offer you enough reason to switch away from anything else, so why even bother?
+
+Here's what I say when people ask me that.
+
+We have no reason to <em>stop</em> making new languages. When we stop trying new things, that's when we stagnate and stop innovating. All the things you love about your favourite language are ideas built on the shoulders of previous ideas. Perl is one of the many languages that have influenced modern programming languages, the most notable example of which being Perl-Compatible Regular Expressions. Plenty of other languages added support for them because they were a good idea that Perl introduced. If you think Regular Expressions are unreadable and unmaintainable, then at the very least it could be a good thing to have Perl 6 so that other languages are more inclined to implement the new version of Perl's regexes so you can have your better regexes without having to leave the comfort of your preferred language. The same thing applies to other language features, too. The existance of Perl 6 will make other languages better, even if you decide to never use Perl yourself.
+
+That is why I care a lot about Perl 6's release and you should, too.
+
+If you do want to try out some of Perl 6's new features now, you actually can! Although it is being officially released on Christmas, it is definitely stable enough to try out and start building with. Check out the <a href="http://rakudo.org/how-to-get-rakudo/" target="_blank">Perl 6 compiler</a> and get started!
