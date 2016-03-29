@@ -1,0 +1,11 @@
+{
+    "name": "davepagurek.com",
+    "version": "0.1.0",
+    "description": "The website of Dave Pagurek",
+    "author": "Dave Pagurek",
+    "provides": {},
+    "depends": [
+        "Template::Mojo"
+    ],
+    "source-url": "git@github.com:davepagurek/davepagurek.com.git"
+}

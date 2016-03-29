@@ -19,7 +19,7 @@ I've been doing some programming recently in Javascript, and in particular, the 
 <h2>The Code</h2>
 First, you need to set up your HTML.
 
-<code lang="html">
+```html
 <!DOCTYPE HTML>
 <html>
     <head>
@@ -30,10 +30,10 @@ First, you need to set up your HTML.
         <canvas id="game" width="650" height="400"></canvas>
     </body>
 </html>
-</code>
+```
 Notice that the !DOCTYPE is html. That is the HTML5 doctype, and it allows us to use the canvas element. Also, the Javascript function init() will be called when the page is loaded. Now, in fire.js, we need to define this function.
 
-<code lang="javascript">
+```javascript
 var canvas;
 var stage;
 var width = 650;
@@ -129,13 +129,17 @@ function update() {
         }
     }
 }
-</code>
+```
 The comments in the code are pretty thorough, but here are the important parts you should take note of.
 
-<code lang="javascript">stage.globalCompositeOperation="lighter";</code>
+```javascript
+stage.globalCompositeOperation="lighter";
+```
 This part is what makes the overall effect look like fire and not like red-colored smoke. When a bunch of particles are on top of each other, the colors add on to each other to make the overlapped area lighter. In practice, this means that the area where the particles are created is white because there are so many of them there. It gets progressively darker away from that point as the particles spread out.
 
-<code lang="javascript">var timer=setInterval("update()",40);</code>
+```javascript
+var timer=setInterval("update()",40);
+```
 This is the code that makes the update() function be called every 40 milliseconds. Inside the update() function, the particles are moved to new positions and then drawn, thus animating them.
 
 Anyway, I'm not sure how useful this effect actually is, but it is certainly cool to look at.

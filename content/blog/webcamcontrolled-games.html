@@ -1,0 +1,49 @@
+
+<!--
+{
+	"title": "Webcam-Controlled Games",
+	"excerpt": "It's a test to see if I could control a sniper game with a webcam.",
+	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0247-220x220.jpg",
+	"category": "blog",
+	"languages": [
+		"Actionscript" 
+	],
+	"date": "2011-01-14"
+}
+-->
+
+<a href="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0243.jpg"><img src="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0243-300x168.jpg" title="IMGA0243" width="300" height="168" class="alignleft size-medium wp-image-1481" /></a>
+
+My most recent game-creation endeavor is unlike any that I've attempted before. Rather than using conventional methods to control the gameplay (for example, the arrow keys) I decided to see if I could use the webcam to track the player's motion and use <em>that</em> in a game.
+
+What I came up with is, at the moment anyway, pretty simple and still pretty buggy. But it works, which means there is all sorts of possibility for me to make a full-out game of this sort. Anyway, what I made is a test to see if the motion tracking works. You have to step back from your computer, holding your keyboard, and try to shoot the target.
+
+To aim, you move around as you would in real life. You can crouch, or go on your toes. To fire, press the space bar. The game doesn't give points (it only tells you whether or not you hit the target.) There is no end. All this is is a test of what is possible, but check back to my site often because I most certainly will try to impliment this into an actual game.
+
+<h2>Demo</h2>
+<strong>Before you play:</strong> You need to have a webcam plugged in. Click "allow" on the security window of the game. Make sure the webcam is pointing in a way that your head isn't cut off. It's easest to play when you're standing back a bit from the screen because it gives you more room to move and makes everything less glitchy. Press SPACE to fire.
+<embed src="http://www.davepagurek.com/wp-content/uploads/2011/01/sniper1.swf" width="100%" height="500"></embed>
+
+
+<h2>What will be in the "full game"</h2>
+If/when I get around to making an actual game out of this, there are quite a few things I would like to do:
+
+<ol>
+<li>Make it have 3d graphics and not just 2d graphics that shift around in 3d-ish space.</li>
+<li>Make the camera more responsive to actual movements (sometimes crouching or other small-ish movements don't register) while also blocking out useless movements (occasionally it will seem to "jump" to a different location because a part of you moved and it thought it was all of you. :P)</li>
+<li>Add ammo, more guns, a system for reloading, and enemies.</li>
+<li>Depending on what type of game it turns out to be, possibly also the addition of controls so that you can walk forwards, turn, etc rather than just staying around one area.</li>
+</ol>
+
+<h2>How it works</h2>
+
+<a href="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0241.jpg"><img src="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0241-300x168.jpg" title="IMGA0241" width="300" height="168" class="alignright size-medium wp-image-1486" /></a>
+
+Wanting to try something like this on your own? Well, basically what it does is it stores the webcam's previous image, and then uses Actionscript 3 to apply it on top of the webcam's current image with a "difference" filter. That way, the only part left that you see is the part of the image that changed. With that, you can determine the approximate location of where the person in front of the camera is (because nothing else in the picture moves.) From there you can move other things around the screen in relation to that area or, alternatively, you can adjust other variables (you could make sounds play based on the amount of movement, move the mouse cursor based on the location, or even use it to control external hardware.) 
+
+Some websites you could look at for info:
+
+<a href="http://www.spikything.com/blog/index.php/2007/10/09/webcam-motion-detection-in-as3/">http://www.spikything.com/blog/index.php/2007/10/09/webcam-motion-detection-in-as3/</a>
+
+<a href="http://blog.soulwire.co.uk/code/actionscript-3/webcam-motion-detection-tracking">http://blog.soulwire.co.uk/code/actionscript-3/webcam-motion-detection-tracking</a>
+

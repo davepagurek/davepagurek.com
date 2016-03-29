@@ -11,17 +11,20 @@
 
 Whether you knew it or not, hitTests in Flash have a dark secret. They do not <em>actually</em> check to see if the two objects are touching. Instead, it draws a rectangle that fits perfectly around one object, and then another rectangle that fits perfectly around the other object. Then, it tests if THOSE are touching. This can cause some really ugly collision detection goofs. 
 
-<h2>This is a BAD hitTest:</h2><p align="center">
-<embed src="http://www.davepagurek.com/wp-content/uploads/2010/12/normal_hitTest.swf" width="550" height="400" align="center"></embed></p>
+<h2>This is a BAD hitTest:</h2>
+
+<embed src="http://www.davepagurek.com/wp-content/uploads/2010/12/normal_hitTest.swf" width="550" height="400" align="center"></embed>
+
 Wow. You can see just how horrible that was. But luckily, there are ways to fix this!
 
 <h2>A good hitTest: (what we'll make)</h2>
-<p align="center"><embed src="http://www.davepagurek.com/wp-content/uploads/2010/12/pixel_hitTest.swf" width="550" height="400" align="center"></embed></p>
+<embed src="http://www.davepagurek.com/wp-content/uploads/2010/12/pixel_hitTest.swf" width="550" height="400" align="center"></embed>
+
 That was pretty good, eh? Now, let's find out how to do this!
 
 <h2>The code</h2>
 Firstly, in the actions for the root timeline, paste in the following:
-<code lang="actionscript">
+```actionscript
 import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import flash.geom.ColorTransform;
@@ -96,19 +99,19 @@ MovieClip.prototype.hitTestShape = function(mc) {
 		return false;
 	}
 };
-</code>
-That code allows us to use the function <strong>hitTestShape</strong> rather than the traditional hitTest. Now, all you have to do to check for a real hitTest is this:
-<code lang="actionscript">
+```
+That code allows us to use the function `hitTestShape` rather than the traditional hitTest. Now, all you have to do to check for a real hitTest is this:
+```actionscript
 if (movieclip1.hitTestShape(movieclip2)) {
 	//do stuff.
 }
-</code>
+```
 <h2>How it Works</h2>
 Pretty much, what this does is it uses the bitmap version of hitTest. In actionscript 2, you were probably aware of the two movieclip hittests (for an object and for a point.) But you can do another type of hittest between bitmap objects too. With this, you can get a really accurate hitTest because it can easily tell if any of the pixels are overlapping. This is the method that other game development platforms tend to use.
 Anyway, this code basically creates bitmap objects with the coordinates of the two movieclips and tests if they overlap.
 <h2>Credits</h2>
 The original code for this was made by Grant Skinner. Here's his original copyright statement:
-<code>
+```
 /**
 * GTween by Grant Skinner. Aug 1, 2005
 * Visit www.gskinner.com/blog for documentation, updates and more free code.
@@ -137,11 +140,11 @@ The original code for this was made by Grant Skinner. Here's his original copyri
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 * OTHER DEALINGS IN THE SOFTWARE.
 **/
-</code>
+```
 
-Now, what I did is I took his original code and made a few modifications. Firstly, his code returns a shape rather than a boolean value, meaning you couldn't just write <strong>if (bob.hitTestShape(jeff)) {</strong> and expect it to work. I fixed that, while still allowing you to use the old functionality by creating a second function to do that too.
+Now, what I did is I took his original code and made a few modifications. Firstly, his code returns a shape rather than a boolean value, meaning you couldn't just write `if (bob.hitTestShape(jeff)) {` and expect it to work. I fixed that, while still allowing you to use the old functionality by creating a second function to do that too.
 
-I also fixed a major glitch: Before, he made it so that all the coordinates were based on the size of the stage that you set when you first made your Flash movie. But if you use something like a vcam (or if you resize the flash player window during runtime) the actual stage size changes, but the <strong>Stage.width</strong> and <strong>Stage.height</strong> properties don't change. This really messes up his code. So instead, I made it automatically create an invisible rectangle the same size as the stage. This way, when the stage is scaled, the script can accurately read the true coordinates.
+I also fixed a major glitch: Before, he made it so that all the coordinates were based on the size of the stage that you set when you first made your Flash movie. But if you use something like a vcam (or if you resize the flash player window during runtime) the actual stage size changes, but the `Stage.width` and `Stage.height` properties don't change. This really messes up his code. So instead, I made it automatically create an invisible rectangle the same size as the stage. This way, when the stage is scaled, the script can accurately read the true coordinates.
 
 <h2>That's all, folks!</h2>
 Hopefully you can use this in your next game or something. I haven't actually made any new games since I finished debugging Grant's old script, but it seems like the sort of thing that can be really useful. I'm definitely going to make use of this in the next version of Sideview Engine. :D

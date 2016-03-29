@@ -9,12 +9,13 @@
 }
 -->
 
-With all the talk about moving towards more open web formats, you may have considered making your web apps in HTML5 instead of Flash. The task of learning the &ltcanvas&gt element isn't actually that hard if you've developed anything in Flash before, because if you didn't know already, you use Javascript to access the canvas element, and Javascript is really similar to Actionscript. Even if you don't know anything about Flash, it's not that hard to get started.
+With all the talk about moving towards more open web formats, you may have considered making your web apps in HTML5 instead of Flash. The task of learning the &lt;canvas&gt; element isn't actually that hard if you've developed anything in Flash before, because if you didn't know already, you use Javascript to access the canvas element, and Javascript is really similar to Actionscript. Even if you don't know anything about Flash, it's not that hard to get started.
 
 
 <h2>What you'll be making</h2>
 It's really simple: It's just a ball bouncing around. If you're using a browser that doesn't support the canvas element but still has Flash player installed, I made it so that you can still see a little Flash script that does exactly the same thing as the canvas one would do just so you can get a sense of what it should look like.
-<center><iframe src="http://www.davepagurek.com/blogs/canvas.html" frameborder="0" width="150" height="150" scrolling="no"></iframe></center>
+
+<iframe src="http://www.davepagurek.com/blogs/canvas.html" frameborder="0" width="150" height="150" scrolling="no"></iframe>
 
 <h2>Getting started</h2>
 You'll need to open a basic text editor, or maybe a text editor with code coloring, like gedit. If you use a visual editor like Dreamweaver, well, either DON'T, or make sure you use to the code side and not the design side.
@@ -22,7 +23,7 @@ You'll need to open a basic text editor, or maybe a text editor with code colori
 Make a new file. When you save it, make sure the file extension is .html and not .txt or anything like that.
 
 <h2>Setting up your page</h2>
-<code lang="HTML">
+```HTML
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -39,17 +40,19 @@ Make a new file. When you save it, make sure the file extension is .html and not
 		<canvas id="ball" width="150" height="150"></canvas>
 	</body>
 </html>
-</code>
+```
 Some things to note here:
-<ol><li>The doctype is simple HTML, and not anything else. This is the HTML5 doctype, which you can <a href="http://www.w3schools.com/html5/tag_doctype.asp" target="_blank">learn about at w3schools</a> if you want.</li>
-<li>The canvas has an ID of "ball". This is so that we can access it from Javascript, which we'll get to a little later on. You can change it to pretty much anything you want, so long as it remains consistent with the javascript later on.</li>
-<li>You'll notice there's nothing in between the &lt;canvas&gt; and the &lt;/canvas&gt;. Anything that goes in between them is not displayed by a browser that supports canvas. However, browsers that <em>don't</em> support canvas will display the code in between the tags. So, if you want to, you can put something like an image, a flash script that does the same thing as the canvas, or maybe even a link to a browser with canvas support in between the canvas tags so that the people using old browsers can still get at least an idea of what's there.</li>
-<li>The CSS style just adds a 2 pixel thick black border around the canvas (So you can see it better on a white background.) You can change it or remove it if you want.</li>
-<li>Also, there's no actual javascript yet. We'll get to that.</li></ol>
+<ol>
+  <li>The doctype is simple HTML, and not anything else. This is the HTML5 doctype, which you can <a href="http://www.w3schools.com/html5/tag_doctype.asp" target="_blank">learn about at w3schools</a> if you want.</li>
+  <li>The canvas has an ID of "ball". This is so that we can access it from Javascript, which we'll get to a little later on. You can change it to pretty much anything you want, so long as it remains consistent with the javascript later on.</li>
+  <li>You'll notice there's nothing in between the &lt;canvas&gt; and the &lt;/canvas&gt;. Anything that goes in between them is not displayed by a browser that supports canvas. However, browsers that <em>don't</em> support canvas will display the code in between the tags. So, if you want to, you can put something like an image, a flash script that does the same thing as the canvas, or maybe even a link to a browser with canvas support in between the canvas tags so that the people using old browsers can still get at least an idea of what's there.</li>
+  <li>The CSS style just adds a 2 pixel thick black border around the canvas (So you can see it better on a white background.) You can change it or remove it if you want.</li>
+  <li>Also, there's no actual javascript yet. We'll get to that.</li>
+</ol>
 
 <h2>Adding the basic javascript</h2>
 Here's what we'll put in between the &lt;script&gt; and the &lt;/script&gt; tags:
-<code lang="html">
+```html
 <script type="text/javascript">
 
 	//Defining the variables so that we can tell where the ball is an where it's going.
@@ -104,11 +107,11 @@ Here's what we'll put in between the &lt;script&gt; and the &lt;/script&gt; tags
 		timer=setTimeout("refresh()",50);
 	}
 </script>
-</code>
+```
 Then add this to the &lt;body&gt; tag:
-<code lang="html">
+```html
 <body onload="refresh()">
-</code>
+```
 Ok, now, time to explain some of this!
 
 Firstly, if you don't know what a function is, it is pretty much a predefined set of actions bundled into a larger set of instructions. Think of it like this: the function dinnerParty() could be made of the actions jeff.answerDoor(), mary.talk("current_news"), tom.serveDinner("meatloaf") and mary.weight+=10 (because apparently Mary ate 10 pounds of meatloaf).
@@ -118,17 +121,25 @@ In our case, we have two functions: <strong>draw()</strong> and <strong>refresh(
 For your own knowledge, I'll explain the parameters of some of the functions used so that you can know how to use them to fit your own needs.
 
 Firstly, the <strong>arc()</strong> function can seem a bit abstract. Here's what it actually means:
-<code lang="javascript">variable.arc(x, y, radius, startAngle, endAngle, anticlockwise);</code>
+```javascript
+variable.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+```
 So, to make a circle at the coordinate (20, 75) with a radius of 15, a start angle of 0, an end angle of 2*Pi, to draw it anticlockwise, and to draw it into a canvas variable called "mycanvas" would be:
-<code lang="javascript">mycanvas.arc(20, 75, 15, 0, Math.PI*2, true);</code>
+```javascript
+mycanvas.arc(20, 75, 15, 0, Math.PI*2, true);
+```
 
 Secondly, the <strong>setTimeout</strong> can be useful in all kinds of situations, so here's how to use it:
-<code lang="javascript">variable=setTimeout("function()", delay);</code>
+```javascript
+variable=setTimeout("function()", delay);
+```
 The function is always in quotes, the delay is always in milliseconds, and it has to be applied to a variable. In the code for the ball, we run the <strong>refresh()</strong> functions every 50 milliseconds like so:
-<code lang="javascript">timer=setTimeout("refresh()",50);</code>
+```javascript
+timer=setTimeout("refresh()",50);
+```
 
 <h2>The finished code</h2>
-<code lang="html">
+```html
 <!DOCTYPE html>
 <html>
 	<head>
@@ -173,7 +184,8 @@ The function is always in quotes, the delay is always in milliseconds, and it ha
 			<p>Uh-oh! Your browser doesn't support canvas. Why not <a href="http://www.google.com/chrome">get Google Chrome?</a> It supports canvas.
 		</canvas>
 	</body>
-</html></code>
+</html>
+```
 
 
 Hopefully this was useful for you! If you want to read more about canvas, <a href="https://developer.mozilla.org/en/Canvas_tutorial" target="_blank">Mozilla has a good tutorial about it.</a>
