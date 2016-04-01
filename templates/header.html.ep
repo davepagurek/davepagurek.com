@@ -1,27 +1,28 @@
+% use DateTime::Format;
 % my ($params) = @_;
 <!DOCTYPE html>
 <html>
 <head>
   <title>
-    <%= $params<type> eq "home" ?? $params<title> !! "$params<title> - Dave Pagurek" %>
+    <%= $params<type> eq 'home' ?? $params<title> !! "{$params<title>} - Dave Pagurek" %>
     Dave Pagurek - Programmer, Web Developer, Digital Artist
   </title>
-  <link href="http://fonts.googleapis.com/css?family=Bitter:400" rel="stylesheet" type="text/css">
-  <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,300" rel="stylesheet" type="text/css">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-  <meta name="theme-color" content="#e74c3c" />
-  <meta name="viewport" content="width=device-width" />
-  <link href="/style.css" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Bitter:400' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300' rel='stylesheet' type='text/css'>
+  <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
+  <meta name='theme-color' content='#e74c3c' />
+  <meta name='viewport' content='width=device-width' />
+  <link href='/style.css' rel='stylesheet' type='text/css' />
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js'></script>
 </head>
 <body>
   <header>
     <nav>
       <h1>
-        <a href="#">Dave Pagurek</a>
+        <a href='#'>Dave Pagurek</a>
       </h1>
-      <a class="<%= $params<type> eq "home" ?? "selected" !! "" %>" href="<%= $params<root> %>">About</a>
-      <a class="<%= ($params<type> eq "page" && $params<page>.cat-slug eq "blog") || ($params<type> eq "category" && $params<category>.slug eq "blog") ?? "selected" !! "" %>" href="#">Blog</a>
-      <a class="<%= ($params<type> eq "page" && $params<page>.cat-slug ne "blog") || ($params<type> eq "category" && $params<category>.slug ne "blog") ?? "selected" !! "" %>" href="#">Portfolio</a>
+      <a class='<%= $params<type> eq 'home' ?? 'selected' !! '' %>' href='<%= $params<root> %>'>About</a>
+      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug eq 'blog') || ($params<type> eq 'category' && $params<category>.slug eq 'blog') ?? 'selected' !! '' %>' href='<%= "{$params<root>}/blog" %>'>Blog</a>
+      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug ne 'blog') || ($params<type> eq 'category' && $params<category>.slug ne 'blog') ?? 'selected' !! '' %>' href='{$params<root>}/archives'>Portfolio</a>
     </nav>
   </header>

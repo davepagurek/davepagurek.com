@@ -16,17 +16,22 @@ my $app = Cantilever.new(
   port => 3000,
   root => "http://localhost:3000",
   mimefile => '/etc/mime.types'.IO.e ?? '/etc/mime.types' !! '/etc/apache2/mime.types', # For OSX
-  ignore => [ / 'templates'$ / ],
+  ignore => [ / 'templates' ['/' .*] $ / ],
+  ignore-cats => [ / 'images'$ / ],
   home => -> $c {
+    $c<title> = "Dave Pagurek van Mossel - Programmer and Artist";
     $home-template.render($c);
   },
   page => -> $p {
+    $p<title> = $p<page>.meta<name>;
     $page-template.render($p);
   },
   category => -> $c {
+    $c<title> = $c<category>.meta<name>;
     $category-template.render($c);
   },
   error => -> $e {
+    $e<title> = "Houston, we have a problem";
     $error-template.render($e);
   }
 );

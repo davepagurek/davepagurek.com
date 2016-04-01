@@ -1,1 +1,25 @@
-category
+<section>
+  <h2><%= $params<category>.meta<name> %></h2>
+  <p>
+  <%=
+    $params<content>.all-cats.map(-> $p {
+      "<a href='{$p.link}'>{$p.meta<name>.gist}</a>"
+    }).join(' ')
+  %>
+  <a href='<%= $params<root> %>/archives'>Everything</a>
+  </p>
+</section>
+% for $params<category>.pages-by-date -> $year {
+<section>
+  <h2><%= $year.key %></h2>
+  <div class='posts'>
+% for $year.value.list -> $post {
+    <div class='post'>
+      <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+      <p><%= $post.meta<excerpt> %></p>
+      <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+    </div>
+% }
+  </div>
+</section>
+% }

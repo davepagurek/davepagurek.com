@@ -5,7 +5,8 @@
     "author": "Dave Pagurek",
     "provides": {},
     "depends": [
-        "Template::Mojo"
+        "Template::Mojo",
+        "DateTime::Format"
     ],
     "source-url": "git@github.com:davepagurek/davepagurek.com.git"
 }
