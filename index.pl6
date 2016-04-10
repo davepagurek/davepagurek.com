@@ -1,6 +1,8 @@
 use v6;
 use lib '../Cantilever/lib';
 use lib '../perl6-web/lib';
+use lib '../perl6-psgi/lib';
+use lib '../perl6-http-easy/lib';
 use Cantilever;
 use Template::Mojo;
 
@@ -13,8 +15,9 @@ my $error-template = Template::Mojo.new($header ~ "templates/error.html.ep".IO.s
 
 my $app = Cantilever.new(
   dev => True,
-  port => 3000,
-  root => "http://localhost:3000",
+  port => 80,
+  export-dir => "/Library/WebServer/Documents",
+  root => "http://localhost",
   mimefile => '/etc/mime.types'.IO.e ?? '/etc/mime.types' !! '/etc/apache2/mime.types', # For OSX
   ignore => [ / 'templates' ['/' .*] $ / ],
   ignore-cats => [ / 'images'$ / ],
@@ -23,7 +26,7 @@ my $app = Cantilever.new(
     $home-template.render($c);
   },
   page => -> $p {
-    $p<title> = $p<page>.meta<name>;
+    $p<title> = $p<page>.meta<title>;
     $page-template.render($p);
   },
   category => -> $c {
@@ -36,4 +39,8 @@ my $app = Cantilever.new(
   }
 );
 
-$app.run;
+$app.generate(copy => {
+  "content/images" => "content/images",
+  "style.css" => "style.css",
+  "./mountains.svg" => "mountains.svg"
+});
