@@ -12,15 +12,17 @@
 % for $params<category>.pages-by-date -> $year {
 <section class='posts'>
   <h2><%= $year.key %></h2>
+  <div class="row spread">
 % for $year.value.list -> $post {
-  <div class='post'>
+    <a class='post' href='<%= $post.link %>'>
 %   if $post.meta<thumbnail> {
-    <img src='<%= $post.meta<thumbnail> %>' />
+      <div class='thumbnail' style='background-image:url(<%= $post.meta<thumbnail> %>)'></div>
 %   }
-    <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
-    <p><%= $post.meta<excerpt> %></p>
-    <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
-  </div>
+      <h3><%= $post.meta<title> %></h3>
+      <p><%= $post.meta<excerpt> %></p>
+      <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+    </a>
 % }
+  </div>
 </section>
 % }

@@ -40,6 +40,18 @@ nav, .row {
   padding: 0;
   display: flex;
 }
+.row {
+  flex-wrap: wrap;
+}
+.row.centered {
+  justify-content: center;
+}
+.row.spread {
+  justify-content: space-around;
+  align-items: center;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
+}
 section, header, footer, .row, nav, iframe {
   display: flex;
   justify-content: center;
@@ -112,6 +124,47 @@ a:hover {
 }
 a img {
   border:0;
+}
+
+/* Post lists */
+a.post {
+  min-width: 18em;
+  max-width: 30em;
+  margin: 0 1.5em 2em 1.5em;
+  flex: 1;
+  background-color: #fff;
+  text-decoration: none;
+  display: block;
+  -webkit-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+  -moz-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+  -ms-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+  -o-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+  transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+}
+a.post:hover {
+  transform: scale(1.05);
+}
+a.post .thumbnail {
+  height: 12em;
+  background-size: cover;
+  background-position: center;
+}
+a.post h3 {
+  background-color: #222;
+  color: #fff;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+a.post p {
+  color: #000;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1.5rem;
+}
+a.post .date {
+  text-align: center;
+  color: #777;
+  padding: 0.5rem;
 }
 
 /* Browser */
