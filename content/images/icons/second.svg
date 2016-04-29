@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="186px" height="186px" viewBox="0 0 186 186" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-1" sketch:type="MSArtboardGroup">
+            <g id="Trophy-Silver" sketch:type="MSLayerGroup" transform="translate(23.000000, 4.000000)">
+                <path d="M17,0 L120.432335,0 L108.773109,130.873566 C108.773109,130.873566 89.4413884,141.588675 70.8187857,141.588675 C52.1961831,141.588675 30.2300049,130.873566 30.2300049,130.873566 L17,0 Z" id="Rectangle-1-Copy" fill="#C9DCE0" sketch:type="MSShapeGroup"></path>
+                <path d="M58.6972638,162.547973 L58.6972638,133 L77.6950396,133 L77.6950396,162.547973 L95.5219455,177.328143 L42,177.328143 L58.6972638,162.547973 Z" id="Rectangle-2-Copy" fill="#C9DCE0" sketch:type="MSShapeGroup"></path>
+                <path d="M0.254259356,78.7458624 C-3.90463112,49.153819 38.8040741,43.1515019 38.8040741,43.1515019 L40.5310605,55.4396486 C40.5310605,55.4396486 11.4379098,59.528424 13.8698138,76.8323198 C16.3017177,94.1362157 45.4477271,90.4235498 45.4477271,90.4235498 L47.3262688,103.790068 C47.3262688,103.790068 4.41314983,108.337906 0.254259356,78.7458624 Z" id="Rectangle-3-Copy" fill="#C9DCE0" sketch:type="MSShapeGroup"></path>
+                <path d="M138.867241,78.7458624 C143.026132,49.153819 100.317427,43.1515019 100.317427,43.1515019 L98.5904402,55.4396486 C98.5904402,55.4396486 127.683591,59.528424 125.251687,76.8323198 C122.819783,94.1362157 93.6737735,90.4235498 93.6737735,90.4235498 L91.7952319,103.790068 C91.7952319,103.790068 134.708351,108.337906 138.867241,78.7458624 Z" id="Rectangle-3-Copy-2" fill="#C9DCE0" sketch:type="MSShapeGroup"></path>
+                <text id="1" sketch:type="MSTextLayer" font-family="Courier New" font-size="72" font-weight="bold" sketch:alignment="middle" fill="#000000">
+                    <tspan x="48.6159881" y="85">2</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

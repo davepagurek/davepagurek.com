@@ -15,12 +15,33 @@
   <div class="row spread">
 % for $year.value.list -> $post {
     <a class='post' href='<%= $post.link %>'>
+      <h3><%= $post.meta<title> %></h3>
+
 %   if $post.meta<thumbnail> {
       <div class='thumbnail' style='background-image:url(<%= $post.meta<thumbnail> %>)'></div>
 %   }
-      <h3><%= $post.meta<title> %></h3>
+
+%   if $post.meta<languages> {
+      <div class='languages'>
+%     if $post.meta<languages>.elems == 1 {
+        Made with <%= $post.meta<languages>[0] %>
+%     } elsif $post.meta<languages>.elems == 2 {
+        Made with <%= $post.meta<languages>.join(' and ') %>
+%     } else {
+        Made with <%= $post.meta<languages>[0..*-2].join(', ') %> and <%= $post.meta<languages>[*-1] %>
+%     }
+      </div>
+%   }
       <p><%= $post.meta<excerpt> %></p>
-      <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+
+      <div class="footer">
+%   if $post.meta<awards> {
+%     for $post.meta<awards>.list -> $award {
+        <div class='award <%= $award<award> %>' title='<%= $award<description> %>'></div>
+%     }
+%   }
+        <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+      </div>
     </a>
 % }
   </div>

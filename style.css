@@ -150,21 +150,63 @@ a.post .thumbnail {
   background-position: center;
 }
 a.post h3 {
-  background-color: #222;
+  background-color: #D9042B;
   color: #fff;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
+a.post .languages {
+  background-color: #222;
+  color: #EEE;
+  padding: 0.8rem 1.5rem;
+  font-style: italic;
+}
 a.post p {
   color: #000;
+  font-size: 1em;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
+  padding-bottom: 0.6em;
 }
 a.post .date {
-  text-align: center;
+  padding: 0 0.5em;
+  display: block;
+}
+a.post .footer {
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+  display: flex;
   color: #777;
   padding: 0.5rem;
+}
+.award {
+  display: inline-block;
+  width: 1.6em;
+  height: 1.6em;
+  background-size: cover;
+}
+.award.first {
+  background-image: url("/content/images/icons/first.svg");
+}
+.award.second {
+  background-image: url("/content/images/icons/second.svg");
+}
+.award.third {
+  background-image: url("/content/images/icons/third.svg");
+}
+.award.fourth {
+  background-image: url("/content/images/icons/fourth.svg");
+}
+.award.fifth {
+  background-image: url("/content/images/icons/fifth.svg");
+}
+.award.review {
+  background-image: url("/content/images/icons/review.svg");
+}
+.award.round {
+  background-image: url("/content/images/icons/round.svg");
 }
 
 /* Browser */

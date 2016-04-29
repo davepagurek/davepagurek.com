@@ -1,1 +1,8 @@
-page
+<section>
+  <h2><%= $params<page>.meta<title> %></h2>
+  <div class="date"><%= strftime("%B %e, %Y", DateTime.new(date => $params.meta<date>)) %></div>
+% if $params<page>.meta<awards> {
+  
+% }
+  <%= $params<page>.rendered %>
+<section>
