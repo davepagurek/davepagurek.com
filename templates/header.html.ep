@@ -12,17 +12,23 @@
   <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
   <meta name='theme-color' content='#e74c3c' />
   <meta name='viewport' content='width=device-width' />
-  <link href='/style.css' rel='stylesheet' type='text/css' />
+  <link href='<%= $params<root> %>/style.css' rel='stylesheet' type='text/css' />
   <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js'></script>
+% if $params<type> eq 'page' {
+  <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/tomorrow-night.min.css">
+  <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+% }
 </head>
 <body>
   <header>
     <nav>
       <h1>
-        <a href='#'>Dave Pagurek</a>
+        <a href='<%= $params<root> %>'>Dave Pagurek</a>
       </h1>
+      <a class='toggle' onclick='var nav = document.querySelector("nav"); nav.className = nav.className == "" ? "open" : "";'>Menu</a>
       <a class='<%= $params<type> eq 'home' ?? 'selected' !! '' %>' href='<%= $params<root> %>'>About</a>
       <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug eq 'blog') || ($params<type> eq 'category' && $params<category>.slug eq 'blog') ?? 'selected' !! '' %>' href='<%= "{$params<root>}/blog" %>'>Blog</a>
-      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug ne 'blog') || ($params<type> eq 'category' && $params<category>.slug ne 'blog') ?? 'selected' !! '' %>' href='{$params<root>}/archives'>Portfolio</a>
+      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug ne 'blog') || ($params<type> eq 'category' && $params<category>.slug ne 'blog') || $params<type> eq 'archives' ?? 'selected' !! '' %>' href='<%= $params<root> %>/archives'>Portfolio</a>
     </nav>
   </header>

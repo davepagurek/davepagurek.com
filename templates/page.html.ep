@@ -1,8 +1,50 @@
-<section>
-  <h2><%= $params<page>.meta<title> %></h2>
-  <div class="date"><%= strftime("%B %e, %Y", DateTime.new(date => $params.meta<date>)) %></div>
+% if $params<page>.meta<youtube> {
+<section class='youtube'>
+  <iframe class='youtube' width='560' height='315' src='http://www.youtube.com/embed/<%= $params<page>.meta<youtube> %>?rel=0' frameborder='0' allowfullscreen></iframe>
+</section>
+% } elsif my $art = $params<page>.meta<art> {
+<section class='art-header'>
+  <a href="<%= $art %>"><img src="<%= $art %>" class="art" /></a>
+</section>
+% } elsif any($params<page>.meta.keys) eq any('browser', 'android', 'embed', 'video', 'buttons') {
+<section class='post-header'>
+%   if my $browser = $params<page>.meta<browser> {
+  <a class="browser" data-url="<%= $browser<url> %>" href="<%= $browser<url> %>">
+    <img src="<%= $browser<image> %>" />
+  </a>
+%   }
+
+%   if my $android = $params<page>.meta<android> {
+  <a class="android" data-url="<%= $android<url> %>" href="<%= $android<url> %>">
+    <img src="<%= $android<image> %>" />
+  </a>
+%   }
+
+  <%= $params<page>.meta<embed> || "" %>
+
+  <%= $params<page>.meta<video> || "" %>
+
+%   if my $buttons = $params<page>.meta<buttons> {
+  <p>
+%     for $buttons.list -> $button {
+    <a class='button' href='<%= $button<url> %>'><%= $button<text> %></a>
+%     }
+  </p>
+%   }
+% }
+</section>
+<section class='post'>
+  <h1><%= $params<page>.meta<title> %></h1>
+  <div class="content date"><%= strftime("%B %e, %Y", DateTime.new(date => $params<page>.meta<date>)) %></div>
 % if $params<page>.meta<awards> {
-  
+  <div class='content awards'>
+%   for $params<page>.meta<awards>.list -> $award {
+    <div class='award-row'>
+      <div class='award <%= $award<award> %>'></div>
+      <div class='award-description'><%= $award<description> %></div>
+    </div>
+%   }
+  </div>
 % }
   <%= $params<page>.rendered %>
-<section>
+</section>
