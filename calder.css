@@ -1,0 +1,96 @@
+#world {
+  background-color:none;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
+  overflow:visible;
+  /*animation-duration:10s;*/
+  /*animation-name: rotate;*/
+  /*animation-timing-function: linear;*/
+  /*animation-iteration-count: infinite;*/
+}
+#world div {
+  /*backface-visibility: hidden;*/
+  -webkit-transform: translate3d(0, 0, 0);
+  transform-origin: top center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -o-transform-style: preserve-3d;
+  position:absolute;
+  overflow:visible;
+  position: relative;
+  animation-duration:1s;
+  animation-name: fadeIn;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+#world div > div {
+  position: absolute;
+  bottom: 0;
+}
+#world div.branch {
+  width: 0.2em;
+  background-color:#000;
+}
+#world div.branch::after {
+  content: '';
+  display: block;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background-color:#000;
+  transform:rotateY(90deg);
+}
+#world div.branch.beam::after {
+  transform:rotateX(90deg);
+}
+#world div.branch.beam {
+  height: 0.2em;
+  transform-origin: center;
+}
+#world div.leaf {
+  border-radius: 0 100% 0 0;
+  transform: translateY(-50%) rotate(20deg);
+  /*background-color:#D33;*/
+  /*opacity: 0.8;*/
+  transform-origin: bottom left;
+}
+#world div.leaf.flipped {
+  border-radius: 100% 0 0 0;
+  transform-origin: bottom right;
+  transform: translateY(-50%) rotate(-20deg);
+}
+#world div.leaf.ball {
+  border-radius: 50%;
+  transform: none;
+}
+#world div.leaf.ball.dave {
+  background-image: url("http://www.davepagurek.com/content/images/2015/1/dave.jpg");
+  background-position: center;
+  background-size: cover;
+  transform-origin: top center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateY(0deg);
+  }
+
+  to {
+    transform: rotateY(-360deg);
+  }
+}

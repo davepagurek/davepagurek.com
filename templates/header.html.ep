@@ -13,12 +13,14 @@
   <meta name='theme-color' content='#e74c3c' />
   <meta name='viewport' content='width=device-width' />
   <link href='<%= $params<root> %>/style.css' rel='stylesheet' type='text/css' />
-  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js'></script>
 % if $params<type> eq 'page' {
   <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/tomorrow-night.min.css">
   <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+% } elsif $params<type> eq 'home' {
+  <link rel="stylesheet" type="text/css" href="calder.css" />
 % }
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js'></script>
 </head>
 <body>
   <header>

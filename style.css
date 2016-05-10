@@ -529,11 +529,26 @@ nav a.toggle {
   width: 100%;
   padding-top: 1.5rem;
 }
-#intro img {
-  border-radius: 1.5rem;
+#intro #world {
+  flex: 1;
+  transform-origin: top center;
+  margin:-5rem auto 1rem auto;
   max-width: 15rem;
+  box-sizing: border-box;
+  align-self: stretch;
+  height: 22rem;
+  font-size: 0.5rem;
+  z-index: 1;
+  position: relative;
+}
+#intro #world > div.branch {
+  position: absolute;
+  top:0;
+  left:50%;
+  margin-left:-0.1em;
 }
 #intro #description {
+  z-index: 2;
   flex: 1;
   margin-left: 2rem;
   font-size: 1.1em;
@@ -559,12 +574,11 @@ nav a.toggle {
 #overlay.transparent {
   background-color:rgba(0, 0, 0, 0.5);
 }
-#header canvas {
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
+#header {
+  overflow: hidden;
+  background-image: url("http://davepagurek.com/wp-content/uploads/2014/08/cliffs-blurred.jpg");
+  background-size: cover;
+  background-position: center;
 }
 #header p {
   font-size: 1em;

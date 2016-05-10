@@ -1,8 +1,6 @@
 <section id="header">
-    <canvas id="landscape"></canvas>
-    <div id="overlay"></div>
     <div id="intro">
-      <img alt="Dave Pagurek" src="http://www.davepagurek.com/content/images/2015/1/dave.jpg" />
+      <div id="world"></div>
       <div id="description">
         <h2>Hi, I'm Dave Pagurek.</h2>
         <p>I'm a programmer, web developer, and digital artist studying Software Engineering at the University of Waterloo.</p>
@@ -12,10 +10,6 @@
           <a class="button" href="archives">Portfolio</a>
         </p>
       </div>
-      <p>
-      <span class="avoid_wrap">This background is procedurally generated.</span>
-      <span class="avoid_wrap">Click on it to make a new one! <a href="https://github.com/davepagurek/Frontier" target="_blank">View source on GitHub</a></span>
-      </p>
     </div>
   </section>
   <section>
@@ -57,3 +51,4 @@
       <a class="button primary" href="http://www.davepagurek.com/art/">View More Art and Design</a>
     </div>
   </section>
+  <script type="text/javascript" src="calder.js"></script>
