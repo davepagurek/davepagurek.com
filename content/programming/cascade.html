@@ -1,0 +1,42 @@
+<!--
+{
+    "title": "Cascade",
+    "date": "2015-11-14",
+    "excerpt": "A language for writing scripts on your phone",
+    "thumbnail": "%root%/content/images/2016/1/cascade-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "CSS",
+        "Javascript",
+        "React"
+    ],
+    "awards": [
+      {
+        "award": "first",
+        "description": "Won First Place at EngHack Fall 2015"
+      }
+    ],
+    "android": {
+        "url": "http://wentinghu.github.io/cascade/",
+        "image": "%root%/content/images/2016/1/cascade.png"
+    },
+    "buttons": [
+        {
+            "url": "http://wentinghu.github.io/cascade/",
+            "text": "View Cascade"
+        },
+        {
+            "url": "https://github.com/wentinghu/cascade",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+We created a webapp to make simple programs on your phone, designed to be a completely different experience than traditional languages, which were made without phones in mind.
+
+Rather than typing commands, add operations to the pipeline. The pipeline is like a stack: to add two numbers, first add two values to the stack, then add the `Add` function, and then an Apply block to run the last function. The stack will then collapse into the sum!
+
+<img src="http://i.imgur.com/x2pOjsl.gif" full="http://i.imgur.com/x2pOjsl.gif" caption="Adding elements to the stack" />
+
+Arrays can be made with `Value -> Value -> Range -> Apply` to make an array of numbers from the low to the high value. Arrays can be mapped, too. To increment every element by one, you would do: `Value -> Value -> Range -> Apply -> Value(1) -> Add -> Map -> Apply`

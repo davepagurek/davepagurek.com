@@ -13,7 +13,7 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12 {
   font-family: 'Josefin Sans', sans-serif;
 }
 h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, p,
-nav, .content, pre, ul, ol, section.post div {
+nav, .content, pre, ul, ol, section.post > div {
   box-sizing: border-box;
   width: 100%;
   max-width: 64rem;
@@ -61,6 +61,7 @@ nav, .row {
   justify-self: stretch;
   margin-right: 1.5rem;
   margin-left: 1.5rem;
+  display: flex;
 }
 section, header, footer, .row, nav, iframe {
   display: flex;
@@ -157,6 +158,18 @@ a img {
   border:0;
 }
 
+span.code {
+  font-family: monospace;
+  unicode-bidi: embed;
+  background-color: rgba(0,0,0,0.1);
+  border-radius:4px;
+  -webkit-border-radius:4px;
+  font-size:0.9em;
+  padding:0.3em;
+  vertical-align:middle;
+  word-wrap: normal;
+}
+
 /* Post lists */
 a.post {
   min-width: 18em;
@@ -215,12 +228,14 @@ a.post .footer {
   color: #777;
   padding: 0.5rem;
 }
-.awards {
+section.post div.awards {
   max-width: 800px;
+  font-size: 1.2rem;
 }
 .award-row {
   display: flex;
   align-items: flex-start;
+  margin-bottom:0.4em;
 }
 .award-description {
   flex: 1;
@@ -404,6 +419,10 @@ a.browser:hover {
   color: rgba(255, 255, 255, 0.4);
   font-size: 1.5em;
 }
+.android img {
+  width: 400px;
+  max-width:100%;
+}
 
 /* Menu */
 header {
@@ -506,7 +525,7 @@ nav a.toggle {
   position: relative;
 }
 #intro {
-  padding: 3rem 4rem;
+  padding: 1rem 4rem;
   max-width: 45rem;
   display: flex;
   align-items: center;
@@ -532,7 +551,7 @@ nav a.toggle {
 #intro #world {
   flex: 1;
   transform-origin: top center;
-  margin:-5rem auto 1rem auto;
+  margin:-3rem auto 1rem auto;
   max-width: 15rem;
   box-sizing: border-box;
   align-self: stretch;
