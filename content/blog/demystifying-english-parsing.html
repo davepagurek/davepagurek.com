@@ -148,7 +148,7 @@ In Perl 6, the `<?{  }>` token lets you return true or false to indicate whether
 Now we can set up the rest of the grammar:
 
 ```perl6
-grammar English::Grammar {
+grammar English {
   token TOP { ^ <sentence> $ }
 
   proto regex sentence {*}

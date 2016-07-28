@@ -5,7 +5,6 @@
 <head>
   <title>
     <%= $params<type> eq 'home' ?? $params<title> !! "{$params<title>} - Dave Pagurek" %>
-    Dave Pagurek - Programmer, Web Developer, Digital Artist
   </title>
   <link href='http://fonts.googleapis.com/css?family=Bitter:400' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300' rel='stylesheet' type='text/css'>

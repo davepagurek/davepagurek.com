@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, p,
 nav, .content, pre, ul, ol, section.post > div {
   box-sizing: border-box;
   width: 100%;
-  max-width: 64rem;
+  max-width: 66rem;
   padding: 1.4em 3rem 1em 3rem;
   margin: 0;
 }
@@ -45,7 +45,7 @@ h3 {
   padding-bottom: 0.5em;
 }
 nav, .row {
-  max-width: 64rem;
+  max-width: 63rem;
   padding: 0;
   display: flex;
 }
@@ -318,7 +318,7 @@ div.img p {
 }
 
 section.youtube iframe.youtube {
-  max-width: 64rem;
+  max-width: 66rem;
 }
 iframe.youtube {
   width:100%;
