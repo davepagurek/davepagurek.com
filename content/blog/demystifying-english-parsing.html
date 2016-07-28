@@ -1,0 +1,223 @@
+<!--
+{
+  "title": "Demystifying English Parsing",
+  "category": "blog",
+  "date": "2016-07-28",
+  "excerpt": "Natural Language Processing is one of those things which can seem too complicated and daunting to understand. I break down some of the base concepts to make it less of a magic black box."
+}
+-->
+
+Natural Language Processing is one of those things which can seem too complicated and daunting to understand how it works under the hood, but by combining some fundamental concepts from CS and linguistics, we can create a decent model that works for some circumstances. Or, at the very least, it helps make NLP seem like less of a magic black box.
+
+## Getting structure from text
+
+If you have taken a course on compilers or have tried doing pattern matching on any text with recursive patterns, you may have heard of **context-free grammars** (CFGs) before. It is the tool of choice for breaking up complicated input into a structured tree. It uses symbols that represent parts of a language, production rules for how symbols can be made from smaller symbols, and base-case "terminal" symbols that do not have any recursion at all.
+
+For example, here is a simple context-free grammar for parsing an algebraic expression of just addition and subtraction:
+
+```
+TOP        -> operation
+operation  -> expression operator expression | expression
+expression -> variable | '(' operation ')'
+variable   -> 'x' | 'y' | 'z'
+operator   -> '+' | '-'
+```
+
+We read this by first looking at the `TOP` symbol, which will represent the entirety of the text we are parsing. `TOP` is composed of a single `operation`. So now we need to look at what an `operation` can be made from: two `expression`s separated by an `operator`, or just a single `expression`. This alternation is shown with the `|` symbol. An `expression` can be one of two options: either a `variable`, or another `operation` wrapped in brackets. We can see already that the production rules are recursive, since an operation can be an expression and an expression can have an operation. The reason why `expression`s aren't all infinite is that it will not recurse unless it encounters brackets. Additionally, if it is composed simply of a `variable`, there is no more recursion, because `variable`s are terminal: it is just one of the letters `x`, `y`, or `z`. An `operator` is also terminal, composed of one of a selection of characters as well.
+
+Let's say we have the text `(x+y)-z` that we want to parse using our grammar. Here is how it would get broken down:
+
+```
+｢(x+y)-z｣
+ operation => ｢(x+y)-z｣
+  expression => ｢(x+y)｣
+   operation => ｢x+y｣
+    expression => ｢x｣
+     variable => ｢x｣
+    operator => ｢+｣
+    expression => ｢y｣
+     variable => ｢y｣
+  operator => ｢-｣
+  expression => ｢z｣
+   variable => ｢z｣
+```
+
+So, our grammar broke up our text into a tree. Now that we know what each part of the text represents, we can analyze the text with a program. There are plenty of uses for grammars like these; for example, this post is actually written in <a href="https://github.com/davepagurek/Cantilever/blob/20fdc9359c7f632b808f47a03a2e7a24382564cb/lib/Cantilever/Page/Grammar.pm6">a weird Frankenstein's monster of HTML and Markdown</a> that I wrote a grammar for, which then gets turned into styled HTML for my website.
+
+## Trying it with English
+
+We can do something similar with English text. Although English is large and complicated, we can focus on one of the most fundamental types of sentences: the independent clause. Put simply, an independent clause is the smallest complete thought you will find in English. We can separate parts of an independent clause into the following base categories:
+- **Nouns**: *things*, whether they are concrete or abstract. They are the subjects of statements or the objects of statements.
+- **Verbs**: *actions* and *description of state*. They are typically applied to nouns to describe something *being* or something *happening*.
+- **Adjectives**: descriptors for nouns
+- **Adverbs**: descriptors for verbs or adjectives
+- **Prepositions**: words that relate nouns to another part of the sentence, by comparisons like relative position ("on", "around") or relative time ("before", "after")
+
+These pieces can be single words, but they can also appear as **phrases**, which are compositions of words that, together, perform the specified function in the sentence. As an example, "apple" is a noun, and "the gross, decomposing apple" is a phrase that functions as a noun. You'll notice that noun phrases also include a noun, but additionally can include adjectives describing the noun. The same thing applies for verbs: "run" is a verb, and "run quickly" is a verb phrase. We can also include prepositions to get even more complicated phrases, such as "run to the store" and "the gross, decomposing apple in the back of my fridge." You can even have a noun phrase in a preposition phrase in a verb phrase, such as "run to the store to replace the gross, decomposing apple in the back of my fridge." Prepositions can be found in many locations in sentences, so for simplicity, we'll ignore them for now.
+
+An independent clause is made of a noun phrase followed by a verb phrase: the subject, and the predicate. This gives us a grammar for English independent clauses without prepositions that looks like this:
+
+```
+TOP  -> S
+S    -> NP VP
+NP   -> A ADJP? N
+VP   -> ADVP? V ADVP?
+ADJP -> ADVP* ADJ+
+ADVP -> ADV+
+A    -> 'a' | 'an' | 'the'
+N    -> 'person' | 'group' | ...
+V    -> 'runs' | 'sings' | ...
+ADV  -> 'terribly' | ...
+ADJ  -> 'big' | ...
+```
+
+I borrowed some syntax from regular expressions here: in addition to **alternation** with the `|`, I also used some **quantifiers**. The `*` means "zero or more", The `+` means "one or more," and the `?` means "zero or one" in reference to the previous symbol. The ellipsis is there because I'm too lazy to write every single word in each part of speech. Even without the limited vocabulary defined, this grammar would let us parse a sentence such as "The big group sings terribly" into a syntax tree:
+
+```
+｢The big group sings terribly｣
+ S => ｢The big group sings terribly｣
+  NP => ｢The big group｣
+   A => ｢The｣
+   ADJP => ｢big｣
+    ADJ => ｢big｣
+   N => ｢group｣
+  VP => ｢sings terribly｣
+   V => ｢sings｣
+   ADVP => ｢terribly｣
+    ADV => ｢terribly｣
+```
+
+There is an issue with parsing using grammars like these, though. Sometimes, grammars are **ambiguous**. In the earlier example with addition and subtraction, if we omit the brackets, there are multiple correct parses. `x+y-z` can be grouped as `{x+y}-z`, and also as `x+{y-z}`. On its own, the grammar doesn't specify which is correct, if any. Depending on what parsing algorithm you use, you could either get an arbitrary correct parse, or possibly a set of all the possible parses.
+
+If there is a clearly defined Correct Parse&trade;, then we can make the grammar unambiguous so that only the correct parse is possible (for example, if we made a grammar for *all* arithmetic, we would ensure that multiplication and division have a higher precedence than addition and subtraction.) However, for English, we can't always define a clear winner without external context (or sometimes, even in context, it is impossible to identify what something actually means without asking for clarification.) In the sentence "I saw the man with the binoculars," is it semantically equivalent to "I saw the man through my binoculars", or "I saw the man who had binoculars"? The difference is from grouping the preposition phrase, "with the binoculars," with the noun, "the man," or the verb, "saw." There isn't a way to know.
+
+Notable linguists such as Noam Chomsky have stated that CFGs alone are not complex enough to represent human languages for these sorts of reasons. However, still in the family of CFGs, there are ways we can better approximate how language works in these ambiguous situations. One way is to use a **probabilistic context-free grammar**. This is like a normal CFG, but each production rule also has an associated probability. As rules nest recursively, the overall probability is the product of the probabilities of the rules used to generate that parse. If multiple parses are possible, the most likely one is picked.
+
+## Programming it
+
+Let's create a simple parser that works on basic sentences. I'm choosing to implement my code in Perl 6 because of its builtin support for parsing and gramamrs, but any language will do.
+
+The first thing we'll want is a database of parts of speech. This will likely be the first limiting factor you run into when your parser doesn't work on a valid English sentence, because English is large and complicated and a single missing word can prevent a sentence using it to parse correctly. I downloaded the <a href="http://wordlist.aspell.net/12dicts/">unofficial 12dicts parts of speech list</a>, and used a quick script to make a separate file for each type of word. Then, I can define subsets of `Str` in perl for strings belonging to different parts of speech.
+
+```perl6
+my $nouns = "data/noun".IO.lines.map(*.lc).Set;
+my $verbs = "data/verb".IO.lines.map(*.lc).Set;
+my $adjs = "data/adj".IO.lines.map(*.lc).Set;
+my $articles = "data/article".IO.slurp.lines.map(*.lc).Set;
+my $preps = "data/prep".IO.lines.map(*.lc).Set;
+my $advs = "data/adv".IO.lines.map(*.lc).Set;
+
+subset Noun of Str where *.lc (elem) $nouns;
+subset Verb of Str where *.lc (elem) $verbs;
+subset Adv of Str where *.lc (elem) $advs;
+subset Adj of Str where *.lc (elem) $adjs;
+subset Article of Str where *.lc (elem) $articles;
+subset Prep of Str where *.lc (elem) $preps;
+```
+
+Each word is on its own line, so I map the lines of the file to lowercase (I'm sure this introduces some ambiguity, but for a toy grammar, it should be fine) and put them into a `Set` for later lookup. I then define parts of speech subtypes to be strings where their lowercase versions are present in the set for a given part of speech.
+
+These can then be used in a grammar to match words of those types:
+
+```perl6
+grammar English {
+  token word{ \w+ }
+  token noun {
+    <word> <?{~$/ ~~ Noun}>
+  }
+  token verb {
+    <word> <?{~$/ ~~ Verb}>
+  }
+  token adv {
+    <word> <?{~$/ ~~ Adv}>
+  }
+  token adj {
+    <word> <?{~$/ ~~ Adj}>
+  }
+  token article {
+    <word> <?{~$/ ~~ Article}>
+  }
+  token prep {
+    <word> <?{~$/ ~~ Prep}>
+  }
+}
+```
+
+In Perl 6, the `<?{  }>` token lets you return true or false to indicate whether what has been matched so far (`$/` is the match variable) should really be considered a valid match. The `~` casts the match to a string first.
+
+Now we can set up the rest of the grammar:
+
+```perl6
+grammar English::Grammar {
+  token TOP { ^ <sentence> $ }
+
+  proto regex sentence {*}
+  regex sentence:sym<compound> {
+    [ [ <independent-clause> ','? ]+ % <conj>] <end>?
+  }
+
+  regex independent-clause {
+    <NP> <.ws> <VP>
+  }
+
+  regex NP {
+    [<article> <.ws>]? [<ADJP> <.ws>]? [ <noun>+ % <.ws> ]
+  }
+
+  regex VP {
+    [[ [<ADVP> <.ws>]? <verb> [<.ws> <ADVP>]?]+ % <.ws>] [<.ws> <NP>]? [<.ws> <ADVP>]? [<.ws> <PP> [<.ws> <ADVP>]?]*
+  }
+
+  regex ADJP {
+    [ [<ADVP> <.ws>]? <adj> ]+ % <.ws>
+  }
+
+  regex ADVP {
+    <adv>+ % <.ws>
+  }
+
+  regex PP {
+    <prep> <.ws> <NP>
+  }
+
+  # ...
+}
+```
+
+Using a grammar like this, and calling `English.parse(some_string)`, you can get pretty good results:
+
+```
+｢The quick brown fox jumped over the lazy dog.｣
+ sentence => ｢The quick brown fox jumped over the lazy dog.｣
+  independent-clause => ｢The quick brown fox jumped over the lazy dog｣
+   NP => ｢The quick brown fox｣
+    article => ｢The｣
+     word => ｢The｣
+    ADJP => ｢quick brown｣
+     ADVP => ｢quick｣
+      adv => ｢quick｣
+       word => ｢quick｣
+     adj => ｢brown｣
+      word => ｢brown｣
+    noun => ｢fox｣
+     word => ｢fox｣
+   VP => ｢jumped over the lazy dog｣
+    verb => ｢jumped｣
+     word => ｢jumped｣
+    PP => ｢over the lazy dog｣
+     prep => ｢over｣
+      word => ｢over｣
+     NP => ｢the lazy dog｣
+      article => ｢the｣
+       word => ｢the｣
+      ADJP => ｢lazy｣
+       adj => ｢lazy｣
+        word => ｢lazy｣
+      noun => ｢dog｣
+       word => ｢dog｣
+  end => ｢.｣
+```
+
+The whole code for my toy English parser can be found <a href="https://github.com/davepagurek/English">on GitHub.</a> There's lots of room for more optimization and breadth of valid English that can be parsed, but it gets the job done for simple sentences.
+
+Hopefully this provides a bit more insight into the logic that goes on behind the scenes when you use an NLP library or API!
