@@ -84,8 +84,6 @@ my $app = Cantilever.new(
 $app.generate(copy => {
   "content/images" => "content/images",
   "style.css" => "style.css",
-  "./mountains.svg" => "mountains.svg",
-  "./abstract.svg" => "abstract.svg",
   "./calder.js" => "calder.js",
   "./calder.css" => "calder.css"
 });

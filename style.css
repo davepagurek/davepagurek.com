@@ -179,7 +179,7 @@ a.post {
   text-decoration: none;
   display: block;
   -webkit-font-smoothing: antialiased;
-  translate3d( 0, 0, 0);
+  transform: translate3d( 0, 0, 0);
   -webkit-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   -moz-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   -ms-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
@@ -571,6 +571,7 @@ nav a.toggle {
   flex: 1;
   margin-left: 2rem;
   font-size: 1.1em;
+  transform: translateZ(0); /* safari render bug fix */
 }
 @media all and (max-width: 800px) {
   #intro {
