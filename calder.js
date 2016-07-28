@@ -43,7 +43,7 @@ function makeLeaf(depth, side, size) {
   leaf.style.height = size + "em";
   leaf.style.marginBottom = "-" + size/2 + "em";
   leaf.style.marginLeft = -size + "em";
-  var bg = lerpColor("#88EBCF", "#0B7DBA", Math.random());
+  var bg = lerpColor("#C993CF", "#1D9CE0", Math.random());
   var bgStr = "rgba(" + Math.round(bg.r) + "," + Math.round(bg.g) + "," + Math.round(bg.b) + ",0.8)";
   leaf.style.backgroundColor = bgStr;
   if (side === 0) {

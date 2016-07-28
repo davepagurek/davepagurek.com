@@ -1,0 +1,58 @@
+<!--
+{
+  "title": "Open Letter to CS247",
+  "category": "blog",
+  "date": "2016-06-06",
+  "excerpt": "I feel like our Software Engineering Principles course fell short, so I wrote a letter to the staff explaining what was wrong and how I thought it could be fixed."
+}
+-->
+
+<em>For context, I wrote this to the profs of our Software Engineering Principles course after the first assignment was handed back. I did not agree with the type of programming that the course assignments were reenforcing and I hoped to outline how we might address these issues. Later projects, although not without missteps, did go more smoothly (I doubt I had any impact on those), so I'm not bitter. For posterity, though here is the letter I wrote. The original copy and comments from others can be found <a href="https://gist.github.com/davepagurek/b40d48856a6d7491491df3ab08e18e90">on GitHub as a Gist.</a></em>
+
+The past two assignments in this course have had what I feel to be significant issues that impede learning. I disagree with the philosophy behind the assignments' design decisions, and I feel like my opinions need to be voiced in order to help improve the quality of the course and, by extension, our education.
+
+## Counter-productive requirements
+For a course about learning good C++ design, the decision to disallow all of STL, templating, arrays, and multiple files confuses me. The first assignment requires the creation of multiple container types, many of which can have very similar implementations. We are marked on not repeating ourselves, so every student completing this assignment needs to refactor their collections into some sort of heirarchy to achieve this and avoid simply copy-and-pasting code. There are a few ways to do this without using the tools we are restricted from using, and all of them lead to poor C++ code:
+
+- **Void pointer casting**: One can make a generic container class that accepts a void pointer for each element. This removes all of the type checking help the compiler can give you and makes memory management much more difficult and time consuming. This is the sort of thing that actual companies don't want to see in their code.
+- **Inheritance**: Another option is to make a generic container that accepts a `Node*`, and then any type that you want to be able to put in the list can extend `Node`. This is an abuse of object orientation: there can be no methods in common between `Node` subclasses because the C++ type system (without using templates) prevents this.
+- **Unions**: A union can be made of all the types that one could potentially put in a list, but like using void pointers, it is up to the programmer to figure out what type the inner content of the union actually is.
+
+There are other ways of addressing this problem, too, and all of them involve trying to replicate the functionality that a C++ template would give. Allowing templates would not diminish the importance of learning how to use pointers, it only diminishes the need to write long, convoluted code that serves no real-world purpose. Preventing using templates because we have not been taught them yet is not a good reason to increase the complexity of the assignment exponentially like this. It is a much better solution to simply *teach us how to use templates*, since that is arguably the proper C++ way to solve this sort of problem. By not doing so, many more hours need to be spent on the assignment and we end up learning less.
+
+I can understand the need to want students to implement their own collections instead of using the STL. However, the argument that we have not learned STL before is invalid, since we have all seen STL use before in previous courses.
+
+I have similar complaints about the requirement to have all of our code in one file. We have learned how to make header guards in past courses that everyone in the class took, so not being taught it yet is not a valid reason to disallow using multiple files. This requirement, like the lack of templating, forces us to write *bad C++ code*, which is directly opposed to the point of the course.
+
+Because of these reasons, the claim on the postmortem that we have poorly organized code *because we did not plan well enough* is ridiculous and is frankly immature. Refusing to accept any blame for this is an attempt to invalidate the very real problems with the assignment.
+
+## Poor testing and specs
+
+In the second assignment, we are given a set of constraints that our programs must conform to. This is, of course, a standard situation that someone in the software industry will encounter. However, in the real world, a developer is given the actual specs that they must conform to. What we received instead was a spec and an "ideal" implementation, which our program must match. The issue is that the implementation did not match the specs, and there were many undocumented behaviours that one must hunt for in the implementation in order to find out why an otherwise valid program fails the given test cases. As a result, an undeservedly large amount of time must be spent trying to discover what undocumented rules a program must follow rather than spending that time actually learning.
+
+Question 2 of assignment 2 is largely based off of question 3 in assignment 1, except a lot of whitespace is different in the expected output. The only thing this accomplished was that it made people spend time hunting down changed and then trying to find out the logic behind them; it does not teach us anything programming-related and is therefore educationally a waste of time. This was addressed recently by making Marmoset not care about whitespace, but it is unfortunately too late: it is not reasonable to change requirements the day before an assignment is due. Hours have already been spent by students working on conforming to the spec that could have been spent actually learning.
+
+## Lack of open-endedness
+
+When marking a question like question 2 of assignment 1, where a student needs to justify their design decisions, it is not reasonable to mark them harshly against a set "right answer". There is more than one valid design pattern when programming, and this was not reflected in the comments.
+
+For example, one might argue that a building must be mutable because a school might want to rename it later. I rebut: this is a program in which a building does not change, so why prepare for features that are out of the scope of the project? Why not create a new immutable Building instance with different properties and use that instead of mutating a Building? In real life projects, decisions like these are conversations and debates, and there are multiple correct answers.
+
+There is a great emphasis placed on using ADTs as real-world metaphors, but that is a limiting perspective. There are entire languages where every data type is immutable, and companies are productive in them, so it cannot be called an invalid approach. We are programmers, writing programs: we should not consider every odd edge case that might happen to a real-life object when they are not relevant to the scope of a program.
+
+There is, of course, a line: if you have an opinion, it must be backed up. But when an opinion is dismissed *based on someone else's opinion*, it doesn't teach us how to think critically and make reasonable decisions; instead, it teaches us to conform to what is wanted to be heard.
+
+## Fixing the Problems
+I don't want to write a list of complaints just for the sake of ranting. I think that the course has a useful curriculum and can be made useful, but in order to do so, there are some key things that I think need to be changed. All of these changes keep student learning as the focus.
+
+- **Make sure testing isn't an afterthought.** As students who have to do the assignment, we have to work with what we are given. When constraints are present in the example executable but not specs, we can't test our programs well. In order to truly practice test-driven development, one must be able to write unit tests from the spec alone.
+- **Ask whether a constraint is beneficial to the learning.** Constraints are useful teaching tools, but they need to have an actual benefit. When introducing a constraint, ask the question, "why is this being added?" If the answer isn't strictly because it enhances the learning experience, then the constraint should not be added.
+- **Make the challenge of assignments be relevant to the coursework.** When an assignment is hard because code organization for a large program in one file is hard, that means that the work being done is not helping us learn.
+- **Don't hide the best way to do something from us.** We learn by doing: if we are forced to write poor code because we haven't been shown the right way to do something yet, that is a sign that *we need to be shown the right way to do it.* Otherwise, we learn how to do it the wrong way. That would be counter-productive.
+
+These are my personal opinions, and you might not agree with all of them. That is perfectly acceptable; mostly, I hope that this can be the beginning of a discussion with the class about the assignments and their purpose in our education. Our class cares deeply about quality of the education we receive and I know we can do better.
+
+
+Thanks for your time,
+
+Dave Pagurek

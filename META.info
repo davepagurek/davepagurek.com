@@ -6,7 +6,9 @@
     "provides": {},
     "depends": [
         "Template::Mojo",
-        "DateTime::Format"
+        "DateTime::Format",
+        "JSON::Tiny",
+        "HTML::Entity"
     ],
     "source-url": "git@github.com:davepagurek/davepagurek.com.git"
 }

@@ -164,8 +164,7 @@ span.code {
   background-color: rgba(0,0,0,0.1);
   border-radius:4px;
   -webkit-border-radius:4px;
-  font-size:0.9em;
-  padding:0.3em;
+  padding:0.2em;
   vertical-align:middle;
   word-wrap: normal;
 }
@@ -240,6 +239,7 @@ section.post div.awards {
 .award-description {
   flex: 1;
   margin-left: 2em;
+  transform: translateZ(0); /* safari render bug fix */
 }
 .award {
   display: inline-block;
@@ -300,21 +300,21 @@ iframe.cp_embed_iframe {
   margin: 0;
 }
 
-.img {
-  display: flex;
-  flex: 0 1;
-  flex-direction: column;
-  align-items: center;
+div.img {
+  display: table;
+  width: auto !important;
 }
-.img img {
+div.img img {
   max-width: 100%;
 }
-.img p {
+div.img p {
   padding-top: 0.5rem;
   padding-bottom: 2rem;
   width: auto;
   font-size: 1em;
   font-style: italic;
+  display: table-caption;
+  caption-side: bottom;
 }
 
 iframe.youtube {
@@ -595,7 +595,7 @@ nav a.toggle {
 }
 #header {
   overflow: hidden;
-  background-image: url("http://davepagurek.com/wp-content/uploads/2014/08/cliffs-blurred.jpg");
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url("/content/images/2016/7/mc-large.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -610,7 +610,7 @@ nav a.toggle {
 footer {
   background-color: #011C26;
   background-image: url("mountains.svg");
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url("mountains.svg");
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url("/content/images/2016/7/hillside-large.jpg");
   background-position: center;
   background-size: cover;
   color: #fff;
