@@ -317,6 +317,9 @@ div.img p {
   caption-side: bottom;
 }
 
+section.youtube iframe.youtube {
+  max-width: 64rem;
+}
 iframe.youtube {
   width:100%;
   height:600px;
