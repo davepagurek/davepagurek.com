@@ -14,7 +14,7 @@
   </section>
   <section>
     <h2>Web and Programming</h2>
-    <p>I'm a programmer, web designer and developer. I have demonstrated expertise in <strong>Javascript</strong>, <strong>Runy</strong>, <strong>HTML</strong>, and <strong>hand-crafted CSS</strong>, and I also have extensive experience in Perl 6, SQL, Scala, and Linux.</p>
+    <p>I'm a programmer, web designer and developer. I have demonstrated expertise in <strong>Javascript</strong>, <strong>Ruby</strong>, <strong>HTML</strong>, and <strong>hand-crafted CSS</strong>, and I also have extensive experience in Perl 6, SQL, Scala, and Linux.</p>
     <div class="row">
       <div class="column">
         <p>I made <a href="http://davepagurek.com/programming/truthful">Truthful</a>, a tool for parsing Boolean algebraic expressions and making truth tables out of them. Made and tested with JavaScript.</p>
