@@ -83,6 +83,7 @@ my $app = Cantilever.new(
 
 $app.generate(copy => {
   "content/images" => "content/images",
+  "icons" => "icons",
   "style.css" => "style.css",
   "./calder.js" => "calder.js",
   "./calder.css" => "calder.css"

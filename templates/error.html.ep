@@ -1,1 +1,8 @@
-error
+<section class="error">
+<h1>Page not found :(</h1>
+<p>This page doesn't exist. Maybe <a href="/">go home instead?</a></p>
+<div class="img">
+  <img src="/content/images/2016/7/andrewfish.jpg" />
+  <p>You have been visited by the 404 page Andrew Fish. He lives here.</p>
+</div>
+</section>

@@ -81,6 +81,9 @@ section:nth-child(even) {
 section.post {
   background-color: #ecf0f1;
 }
+section.error {
+  background-color: #FFF;
+}
 iframe {
   flex: 1;
   margin-left: 3rem;
