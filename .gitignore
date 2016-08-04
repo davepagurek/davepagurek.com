@@ -1,6 +1,7 @@
 export
 .htaccess
 lib
+secret.txt
 
 
 # Windows image file caches

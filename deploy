@@ -1,0 +1,9 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+my $params = $*IN.get;
+spurt "info.txt", $params;
+if ($params eq "secret.txt".IO.slurp) {
+  spurt "out.txt", "got shit!";
+}
