@@ -1,0 +1,38 @@
+<!--
+{
+    "title": "English Parser",
+    "date": "2016-08-15",
+    "excerpt": "A program to analyze the components of simple Enlish sentences",
+    "thumbnail": "%root%/content/images/2016/10/english_focus-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "Perl 6"
+    ],
+    "browser": {
+        "url": "http://english.davepagurek.com/",
+        "image": "%root%/content/images/2016/10/english.png"
+    },
+    "buttons": [
+        {
+            "url": "http://english.davepagurek.com/",
+            "text": "View English Parser"
+        },
+        {
+            "url": "https://github.com/davepagurek/English",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+This is a small demo of a <a href="https://github.com/davepagurek/English">Perl 6 English parsing module I wrote.</a> It matches words against a limited dictionary of parts of speech, and fits the tokens to a context-free grammar. You can <a href="%root%/blog/demystifying-english-parsing/">read about how it works on my blog.</a>
+
+It currently has support for:
+- Simple sentences (noun phrase followed by verb phrase)
+- Compound sentences (independent clauses separated by "and")
+
+In progress:
+- Imperative sentences
+- Infinitives and verbs as nouns
+- Nouns as adjectives
+- Commas

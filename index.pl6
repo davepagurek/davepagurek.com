@@ -70,7 +70,7 @@ my $app = Cantilever.new(
     Cantilever::Page::CustomTag.new(
       matches-fn => -> $t { $t.type eq "code" },
       render-fn => -> $t, %options {
-        "<pre><code class='hljs " ~
+        "<pre><code class='" ~
           ($t.attributes<lang> || "") ~
           "'>" ~
           $t.children[0].to-html(%options).subst(/^\n*/, '') ~

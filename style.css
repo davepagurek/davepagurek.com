@@ -22,6 +22,7 @@ nav, .content, pre, ul, ol, section.post > div {
 }
 ul, ol {
   padding-left: 5rem;
+  padding-top: 0.5rem;
   font-size: 1.2rem;
 }
 h1 {
@@ -80,6 +81,12 @@ section:nth-child(even) {
 }
 section.post {
   background-color: #ecf0f1;
+}
+section.post p img {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
 section.error {
   background-color: #FFF;
@@ -367,6 +374,9 @@ section.youtube {
 section.youtube, section.art-header {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+section.art-header p {
+  text-align: center;
 }
 
 /* Browser */

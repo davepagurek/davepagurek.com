@@ -5,6 +5,13 @@
 % } elsif my $art = $params<page>.meta<art> {
 <section class='art-header'>
   <a href="<%= $art %>"><img src="<%= $art %>" class="art" /></a>
+%   if my $buttons = $params<page>.meta<buttons> {
+  <p>
+%     for $buttons.list -> $button {
+    <a class='button' href='<%= $button<url> %>'><%= $button<text> %></a>
+%     }
+  </p>
+%   }
 </section>
 % } elsif any($params<page>.meta.keys) eq any('browser', 'android', 'embed', 'video', 'buttons') {
 <section class='post-header'>
