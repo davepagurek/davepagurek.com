@@ -135,6 +135,7 @@ iframe.soundcloud {
   translate3d( 0, 0, 0);
   background-color: #fff;
   color: #588C8C;
+  text-align: center;
   text-decoration: none;
   -webkit-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   -moz-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
@@ -393,6 +394,9 @@ section.art-header p {
   -o-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
 }
+.browser.no-url {
+  padding-top: 1.8em;
+}
 a.browser:hover {
   transform: scale(1.05);
 }
@@ -408,7 +412,7 @@ a.browser:hover {
 .post-header .browser img {
   max-width: 60rem;
 }
-.browser:before {
+.browser:not(.no-url):before {
   display:block;
   position: absolute;
   top: 1.6em;

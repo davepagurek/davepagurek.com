@@ -2,12 +2,12 @@
 {
   "title": "How Raytracing Works",
   "category": "blog",
-  "date": "2016-10-25",
+  "date": "2016-10-27",
   "excerpt": "After writing a raytracer, I thought I'd make a walkthrough sharing the strategies you can use to make a 3D renderer"
 }
 -->
 
-Recently I went about making <a href="%root%/programming/raytracer">a 3D renderer</a>. Before researching, it seemed like a daunting task, shrouded in the promise of complicated math and a variety subtle, deeply-hidden bugs. As it turns out, there *is* a fair amount of linear algebra, and it *is* hard to tell if your glass rendering is weird or if glass itself is just weird. That said, the core concepts are more accessible than I thought they would be, and when you encounter the other challenges 3D rendering involves, they come one at a time so you can solve them, abstract them, and move on. I learned a lot, so I thought I'd share how a system like the one I wrote works.
+Recently I went about making <a href="%root%/programming/raytracer">a 3D renderer</a>. Before researching, it seemed like a daunting task, shrouded in the promise of complicated math and a variety subtle, deeply-hidden bugs. As it turns out, there *is* a fair amount of linear algebra, and it *is* hard to tell if your glass rendering is weird or if glass itself is just weird. That said, the core concepts are more accessible than I thought they would be. When you encounter challenges 3D rendering involves, they come one at a time, so you can solve them, abstract them, and move on. I learned a lot, so I thought I'd share how a system like the one I wrote works.
 
 ## What is 3D rendering, anyway?
 We can think of the camera as a 2D rectangle in 3D space. It's like the film of a camera: when a photon hits this rectangle, we see its colour value in the location that it hit the film. The image we get from a camera is a 2D projection of the 3D world onto the rectangle of that piece of film.
@@ -143,6 +143,6 @@ Because it takes multiple samples to get a good looking result, it would make se
 
 After implementing everything so far, there is still plenty that you can add. For example, most 3D models aren't made from spheres, so it would be helpful to be able to render polygonal meshes. By jittering the angle of each ray cast slightly, you can make a nice depth of field effect where objects closer and further from the camera than a focal lenth appear more blurred. You can try rendering gaseous volumes rather than just solids. You can subdivide the space in front of the camera so that you don't have to check collisions with every object on the screen.
 
-The code for the raytracer I wrote is <a href="https://github.com/davepagurek/raytracer">available on GitHub</a> for reference, although it is also still a work in progress. Writing something with great visual feedback is incredibly rewarding, so I encourage you to try it yourself too! I hope the topics I've covered so far are enough enough to shed light on what goes into raytracing. Pun indended, of course.
+The code for the raytracer I wrote is <a href="https://github.com/davepagurek/raytracer">available on GitHub</a> for reference, although it is also still a work in progress. It's incredibly rewarding to write programs like this where the feedback is so visual, so I encourage you to try it yourself too! I hope the topics I've covered so far are enough to shed light on what goes into raytracing. Pun indended, of course.
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/languages/swift.min.js"></script>
