@@ -3,18 +3,18 @@ use lib '../Cantilever/lib';
 use Cantilever;
 use Template::Mojo;
 
-my $header = "templates/header.html.ep".IO.slurp;
-my $footer = "templates/footer.html.ep".IO.slurp;
-my $home-template = Template::Mojo.new($header ~ "templates/home.html.ep".IO.slurp ~ $footer);
-my $page-template = Template::Mojo.new($header ~ "templates/page.html.ep".IO.slurp ~ $footer);
-my $category-template = Template::Mojo.new($header ~ "templates/category.html.ep".IO.slurp ~ $footer);
-my $archives-template = Template::Mojo.new($header ~ "templates/archives.html.ep".IO.slurp ~ $footer);
-my $error-template = Template::Mojo.new($header ~ "templates/error.html.ep".IO.slurp ~ $footer);
+my $header = "{$?FILE.IO.dirname}/templates/header.html.ep".IO.slurp;
+my $footer = "{$?FILE.IO.dirname}/templates/footer.html.ep".IO.slurp;
+my $home-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/home.html.ep".IO.slurp ~ $footer);
+my $page-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/page.html.ep".IO.slurp ~ $footer);
+my $category-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/category.html.ep".IO.slurp ~ $footer);
+my $archives-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/archives.html.ep".IO.slurp ~ $footer);
+my $error-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/error.html.ep".IO.slurp ~ $footer);
 
 my $app = Cantilever.new(
   dev => True,
   port => 80,
-  export-dir => "/Users/dpagurek/Sites/export",
+  export-dir => "/var/www/html",
   #export-dir => "/Users/dpagurek/Sites",
   root => "http://www.davepagurek.com",
   #root => "http://localhost",
