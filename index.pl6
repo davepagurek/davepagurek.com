@@ -1,5 +1,5 @@
 use v6;
-use lib '../Cantilever/lib';
+use lib "{$?FILE.IO.dirname}/../Cantilever/lib";
 use Cantilever;
 use Template::Mojo;
 
