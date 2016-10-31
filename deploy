@@ -18,6 +18,7 @@ if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", "got shit!";
   say "Status: 200 OK\n";
 
+  shell "cp src/deploy deploy";
   shell "cd src && git reset --hard";
   shell "cd src && git pull";
   shell "perl6 src/index.pl6";
