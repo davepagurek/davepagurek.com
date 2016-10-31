@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Digest::HMAC;
+use OpenSSL::Digest;
+
+sub verify-signature(Str $payload) returns Bool {
+  my $secret = "{$?FILE.IO.dirname}/secret.txt".IO.slurp.trim;
+  my $signature = "sha1=" ~ hmac-hex($secret, $payload, &sha1);
+  return $signature eq %*ENV<HTTP_X_HUB_SIGNATURE>;
+}
+
+say "Content Type: text/html";
+my $payload = $*IN.get;
+spurt "{$?FILE.IO.dirname}/env.txt", %*ENV<HTTP_X_HUB_SIGNATURE> || "not set";
+spurt "{$?FILE.IO.dirname}/info.txt", $payload || "nothing";
+if $payload && verify-signature($payload) {
+  spurt "{$?FILE.IO.dirname}/out.txt", "got shit!";
+  say "Status: 200 OK\n";
+
+  shell "git reset --hard";
+  shell "git pull";
+  shell "perl6 index.pl6";
+} else {
+  spurt "{$?FILE.IO.dirname}/out.txt", "no match :(";
+  say "Status: 400 Bad Request\n";
+}

@@ -1,8 +1,5 @@
 use v6;
 use lib '../Cantilever/lib';
-use lib '../perl6-web/lib';
-use lib '../perl6-psgi/lib';
-use lib '../perl6-http-easy/lib';
 use Cantilever;
 use Template::Mojo;
 
@@ -85,6 +82,7 @@ $app.generate(copy => {
   "content/images" => "content/images",
   "icons" => "icons",
   "style.css" => "style.css",
+  ".htaccess.export" => ".htaccess",
   "./calder.js" => "calder.js",
   "./calder.css" => "calder.css"
 });

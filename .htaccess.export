@@ -1,0 +1,11 @@
+ErrorDocument 404 /404.html
+Options +ExecCGI
+
+<FilesMatch deploy$>
+SetHandler cgi-script
+</FilesMatch>
+
+<Files "secret.txt">
+Order Allow,Deny
+Deny from all
+</Files>

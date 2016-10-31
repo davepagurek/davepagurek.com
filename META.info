@@ -8,7 +8,9 @@
         "Template::Mojo",
         "DateTime::Format",
         "JSON::Tiny",
-        "HTML::Entity"
+        "HTML::Entity",
+        "Digest::HMAC",
+        "OpenSSL"
     ],
     "source-url": "git@github.com:davepagurek/davepagurek.com.git"
 }
