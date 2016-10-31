@@ -20,7 +20,7 @@ if $payload && verify-signature($payload) {
 
   shell "git reset --hard";
   shell "git pull";
-  shell "perl6 index.pl6";
+  shell "perl6 src/index.pl6";
 } else {
   spurt "{$?FILE.IO.dirname}/out.txt", "no match :(";
   say "Status: 400 Bad Request\n";
