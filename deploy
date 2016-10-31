@@ -18,8 +18,8 @@ if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", "got shit!";
   say "Status: 200 OK\n";
 
-  shell "git reset --hard";
-  shell "git pull";
+  shell "cd src && git reset --hard";
+  shell "cd src && git pull";
   shell "perl6 src/index.pl6";
 } else {
   spurt "{$?FILE.IO.dirname}/out.txt", "no match :(";
