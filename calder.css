@@ -24,7 +24,7 @@
   animation-duration:1s;
   animation-name: fadeIn;
   animation-timing-function: linear;
-  animation-fill-mode: both;
+  animation-fill-mode: backwards;
 }
 #world div > div {
   position: absolute;
@@ -55,8 +55,6 @@
 #world div.leaf {
   border-radius: 0 100% 0 0;
   transform: translateY(-50%) rotate(20deg);
-  /*background-color:#D33;*/
-  /*opacity: 0.8;*/
   transform-origin: bottom left;
 }
 #world div.leaf.flipped {
@@ -77,11 +75,10 @@
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    background-color: rgba(0,0,0,0);
   }
 
   to {
-    opacity: 1;
   }
 }
 
