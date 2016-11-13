@@ -21,8 +21,6 @@ if $payload && verify-signature($payload) {
   shell "cd src && panda installdeps .";
   shell "cd src && git fetch";
   shell "cd src && git reset --hard origin/master";
-  shell "cd Cantilever && git fetch";
-  shell "cd Cantilever && git reset --hard origin/master";
   shell "cp src/deploy deploy";
   shell "perl6 src/index.pl6";
 } else {
