@@ -15,7 +15,7 @@ my $payload = $*IN.get;
 spurt "{$?FILE.IO.dirname}/env.txt", %*ENV<HTTP_X_HUB_SIGNATURE> || "not set";
 spurt "{$?FILE.IO.dirname}/info.txt", $payload || "nothing";
 if $payload && verify-signature($payload) {
-  spurt "{$?FILE.IO.dirname}/out.txt", "got shit!";
+  spurt "{$?FILE.IO.dirname}/out.txt", %*ENV.perl;
   say "Status: 200 OK\n";
 
   shell "cd src && panda installdeps .";
