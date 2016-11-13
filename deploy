@@ -18,10 +18,10 @@ if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", "got shit!";
   say "Status: 200 OK\n";
 
+  shell "cd src && panda installdeps .";
+  shell "cd src && git fetch";
+  shell "cd src && git reset --hard origin/master";
   shell "cp src/deploy deploy";
-  shell "cp src && panda installdeps .";
-  shell "cd src && git reset --hard";
-  shell "cd src && git pull";
   shell "perl6 src/index.pl6";
 } else {
   spurt "{$?FILE.IO.dirname}/out.txt", "no match :(";
