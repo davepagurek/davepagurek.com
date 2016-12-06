@@ -4,7 +4,7 @@
     <p>
       <span class="avoid_wrap">
         <a href="mailto:dave@davepagurek.com" class="button">dave@davepagurek.com</a>
-        <a href="https://github.com/pahgawk/" class="button external" target="_blank">GitHub</a>
+        <a href="https://github.com/davepagurek/" class="button external" target="_blank">GitHub</a>
         <a href="http://codepen.io/davepvm/" class="button external" target="_blank">CodePen</a>
         <a href="http://soundcloud.com/davidpvm" class="button external" target="_blank">Soundcloud</a>
       </span>
@@ -18,7 +18,5 @@
   % for $params<scripts> || [] -> $src {
   <script type="text/javascript" src="<%= $src %>"></script>
   % }
-  <!--<script type="text/javascript" src="http://www.davepagurek.com/Frontier/js/frontier.min.js"></script>-->
-  <!--<script type="text/javascript" src="intro.js"></script>-->
 </body>
 </html>
