@@ -14,6 +14,7 @@ say "Content Type: text/html";
 my $payload = $*IN.get;
 spurt "{$?FILE.IO.dirname}/env.txt", %*ENV<HTTP_X_HUB_SIGNATURE> || "not set";
 spurt "{$?FILE.IO.dirname}/info.txt", $payload || "nothing";
+shell "perl6 -v > version.txt";
 if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", %*ENV.perl;
   say "Status: 200 OK\n";
