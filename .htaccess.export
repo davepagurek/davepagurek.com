@@ -3,6 +3,7 @@ Options +ExecCGI
 
 <FilesMatch deploy$>
 SetHandler cgi-script
+SetEnv PATH /.rakudobrew/bin:/usr/local/bin:/usr/bin
 </FilesMatch>
 
 <Files "secret.txt">
