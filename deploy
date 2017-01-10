@@ -23,7 +23,7 @@ if $payload && verify-signature($payload) {
   shell "cd src && git fetch";
   shell "cd src && git reset --hard origin/master";
   shell "cp src/deploy deploy";
-  shell "cd src && perl6 index.pl6";
+  shell "cd src && /usr/bin/env perl6 index.pl6";
 } else {
   spurt "{$?FILE.IO.dirname}/out.txt", "no match :(";
   say "Status: 400 Bad Request\n";
