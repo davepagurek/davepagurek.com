@@ -2,7 +2,7 @@
   <h2><%= $params<category>.meta<name> %></h2>
   <p>
   <%=
-    $params<content>.all-cats.map(-> $p {
+    $params<content>.all-cats.sort(*.meta<rank>).map(-> $p {
       "<a href='{$p.link}'>{$p.meta<name>.gist}</a>"
     }).join(' ')
   %>
