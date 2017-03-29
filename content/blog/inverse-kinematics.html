@@ -23,7 +23,7 @@ You might want to attempt to compute the angles algebraically. Given a mouse coo
 
 <img src="%root%/content/images/2017/3/trig.png" full="%root%/content/images/2017/3/trig.png" caption="This gets messy fast, and I forgot all my trig identities after first year :'(" />
 
-This is doable for a length-2 chain of joints, but becomes really tedious for anything more than that (or if you add a third dimension, since 3D models need IK as well). Instead, we can come up with a numerical solution that, over a few iterations, approximates the result for arbitrarily many joints.
+This is doable for a length-2 chain of joints, but becomes really tedious for anything more than that (or if you add a third dimension, since 3D models need IK as well). Instead, we can come up with a numerical solution that, over a few iterations, approximates the result for arbitrarily many joints. I'm going to describe an algorithm called **Cyclic Coordinate Descent**.
 
 Here's the gist of the algorithm:
 - Start at the lowest level joint (e.g. the hand, in the above examples)
@@ -36,7 +36,7 @@ Visually, here's what that looks like:
 
 In code, the most difficult part of this is figuring out where to point a given joint. We know we want to get the angle between the start of the joint to the end of the chain, but we need to do a little work to get that when the child joints are defined relative to their parent. The key is to take the endpoint from the lowest-level joint, and then apply the transform of that joint when passing it up to the parent. As we pass the endpoint up, joint to joint, we keep adding on to its transformation. This works much the same way forward kinematics works, except we start from the lowest level and work up.
 
-When programming it, we usually don't have direct access to the lowest-level joint. Instead, higher-level joints have references to their children. With a setup like that, we just need to run the algorithm in **pre-order**: before updating the current joint, tell the child to update. This way, we end up waiting for the most deeply nested joint to finish before working our way back up.
+When programming it, we usually don't have direct access to the lowest-level joint. Instead, higher-level joints have references to their children. With a setup like that, we just need to run the algorithm in **post-order**: before updating the current joint, tell the child to update. This way, we end up waiting for the most deeply nested joint to finish before working our way back up.
 
 If we have a `Bone` object with `x`, `y`, `angle`, `length`, and `child` properties, the algorithm might look like this:
 
