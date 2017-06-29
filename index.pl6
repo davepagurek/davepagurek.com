@@ -74,6 +74,14 @@ my $app = Cantilever.new(
           "</code></pre>";
       },
       block => True
+    ),
+    Cantilever::Page::CustomTag.new(
+      matches-fn => -> $t { $t.type eq "math" },
+      render-fn => -> $t, %options {
+        "<span class='math inline'>\\(" ~
+        $t.children.map(*.to-html(%options)).join("") ~
+        "\\)</span>";
+      }
     )
   ]
 );

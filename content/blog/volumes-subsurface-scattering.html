@@ -1,0 +1,68 @@
+<!--
+{
+  "title": "Volumes and Subsurface Scattering",
+  "category": "blog",
+  "date": "2017-06-24",
+  "excerpt": "An explanation on how we use probability densities to represent permeable materials in 3D rendering"
+}
+-->
+
+To render anything for use in film, you'll want to have more advanced materials than just the ones I described <a href="%root%/blog/how-raytracing-works">in my last post about 3D rendering.</a> Those materials only take into account light colliding with objects at their surfaces. In reality, many objects interact with light more complexly than that. Have you ever held your hand up to a light source and seen your fingers glow red? Clearly, the light from behind your hand makes its way *through* your fingers to your eyes somehow, and our previous system doesn't let us do that. We'll need to add it in order to be able to render humans convincingly. So, let's talk about how that works.
+
+<img src="%root%/content/images/2017/6/subsurface-fingers-medium.jpg" full="%root%/content/images/2017/6/subsurface-fingers.jpg" caption="My fingers glowing slightly red from the sun behind them" />
+
+## Volumes
+
+Let's start by modelling clouds. They're the prototypical example of something that only partially lets light through. In real life, clouds are made of a bunch of tiny particles. Any light that goes in may or may not hit one of the particles in the cloud, and the chance that it does hit something is proportional to how dense the particles are in the cloud. Materials like this that are filled with some density of particles are typically referred to as **volumes** in rendering. There's an element of randomness involved, so to get a good final image, you cast photons multiple times and average the results to get a convincing final image. Although it's not fast, it is still useful as a ground truth to compare with when testing approximations, so that's how we're going to build our volumes.
+
+So, we have a photon heading through a volume on its way to the camera. The question we have to answer is how far in it goes before it hits a particle and bounces, if at all.
+
+<img src="%root%/content/images/2017/6/light-thru-volume.png" full="%root%/content/images/2017/6/light-thru-volume.png" caption="Some particles make it all the way through, and others interact with the particles in the volume and bounce (possibly many times)" />
+
+One way to solve this is to model the distances photons go as an exponential distribution. I didn't pull this distribution out of nowhere: we can divide the volume into a bunch of strips of particles that the light must pass through, one after the other. Each strip lets some percentage of photons through based on how dense the slice is with particles. Out of the photons that make it through, another percentage of that is let through the next slice. In the next slice, again, a percentage is let through. The result is an exponential decay of particles passing through, forming an exponential distribution of distances photons travel. This is called the <a href="https://en.wikipedia.org/wiki/Beer-Lambert_law">Beer-Lambert Law</a>.
+
+<img src="%root%/content/images/2017/6/strips.png" full="%root%/content/images/2017/6/strips.png" caption="Some percentage of photons make it through each strip, while others bounce" />
+
+We'll define a property <math>\\lambda</math> of the volume, where <math>\\lambda</math> is a collision rate per unit distance. This is used in the **cumulative distribution function** (or "CDF") of an exponential distribution, <math>p = 1 - e^{-\\lambda x}</math>. The CDF tells us the probability that a photon heading into the volume for a distance <math>x</math> will hit a particle on the way. If we look at the graph, we see it starts at <math>(0,0)</math>. This makes sense: it tells us that if the photon goes a distance of 0 through the volume, there is no chance of it hitting anything. The graph goes to an asymptote of 1 as the distance goes to infinity, which tells us that if a photon goes through a volume longer and longer, it becomes ever closer to certain that it will hit something at some point.
+
+<img src="%root%/content/images/2017/6/cdf.png" full="%root%/content/images/2017/6/cdf.png" caption="A graph of the cumulative density function of an exponential distribution density fog" />
+
+With this equation, if we're given a distance the photon travels, we can figure out the probability of it making it that far. But that's the opposite of what we want when we are throwing the photons instead of observing them: we want to generate a random value and see how far the photon goes. We want the inverse of this graph: given a random value between 0 and 1, we want to find a distance from 0 to infinity representing the distance the light travels. If we rearrange the CDF for the distance <math>x</math>, we find that we get <math>\\frac{-\\ln(1 - p)}{\\lambda}</math>. Since <math>1 - p</math> is a value between 0 and 1, we can replace it with a uniform random variable between 0 and 1. Code that looks like `-ln(rand())/lambda` will generate the distance travelled through the volume.
+
+If the distance generated is greater than the distance the photon needs to go through to escape the volume, then we say it went all the way through without any collisions. Otherwise, it went our generated distance, and then hit a particle. After moving the photon, we dim its colour the same way as we would have if it hit a regular solid object. After averaging multiple samples, including both the times when the photon hits nothing and the times when it bounces, we end up with a blurry looking fog. So here's out algorithm:
+
+<ol>
+  <li>Calculate the distance the photon has to go through the volume, following its current path</li>
+  <li>Generate a random distance the photon travels according to our exponential distribution</li>
+  <li>If the distance is less than the length it must go through to exit the volume:
+    <ul>
+      <li>Move that distance</li>
+      <li>Adjust the direction of the photon (scatter it)</li>
+      <li>Adjust the color of the photon (make it lose energy)</li>
+      <li>Go back to step 1</li>
+    </ul></li>
+  <li>Otherwise, move the photon out of the volume and let it continue on its path</li>
+</ol>
+
+With that, you get volumes that look something like this:
+
+<img src="%root%/content/images/2017/6/volume-medium.jpg" full="%root%/content/images/2017/6/volume.png" caption="A sphere of fog" />
+
+## Subsurface Scattering
+
+All of this relates to that phenomenon of glowing fingers because of something called **subsurface scattering.** As the name implies, some photons go through the surface of our fingers, get scattered when inside, and pop out somewhere else. From the outside of the object, it looks like the light hits the object, but instead of bouncing off from the point of collision, it bounces off from a point with a random offset from the point of collision. This is because the inside of the object has particles that photons bounce off of before exiting. The effect of this is that every photon that goes into the object also influences points some distance away. The light from the sun behind your finger can still influence the colour of the front of your finger because of this, despite it not being directly illuminated.
+
+<img src="%root%/content/images/2017/6/scattering-offset.png" full="%root%/content/images/2017/6/scattering-offset.png" caption="The bounce offset caused by subsurface scattering" />
+
+I implemented objects with subsurface scattering as a skin and a dense volume within it. The skin randomly lets some photons through into the volume within. The volume then scatters the photon, and after bouncing a few times, by the time the photon exits the volume, it has been randomly offset from its entry point. After the photon exits the volume, I bounce it as if the photon had just hit the surface at this new location.
+
+<img src="%root%/content/images/2017/6/ss-demo-medium.jpg" full="%root%/content/images/2017/6/ss-demo.png" caption="The subsurface scattering for this sphere tints the light slightly red, kind of like fingers do" />
+
+Here's a gif of a sphere with subsurface scattering for its material being toggled on and off, for comparison:
+
+<img src="%root%/content/images/2017/6/ss-toggle.gif" full="%root%/content/images/2017/6/ss-toggle.gif" caption="This sphere has no subsurface scattering tint so you can see how just the scattering affects the image" />
+
+As usual, the code for this is <a href="https://github.com/davepagurek/raytracer">available on Github</a> if you want to check out my implementation.
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
