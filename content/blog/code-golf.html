@@ -1,0 +1,181 @@
+<!--
+{
+  "title": "Anatomy of a Code Golf Solution",
+  "category": "blog",
+  "date": "2017-08-11",
+  "excerpt": "I learned a few tricks by trying to compress some Javascript source code as much as possible."
+}
+-->
+
+This summer, I happened upon the sport of code golf. The game is simple: given a problem, write a program that passes its set of test cases. The goal is to write a program in as few bytes of source code as possible.
+
+It seems simple. Tantalizingly simple. I have spent literal hours of my spare time each week on code golf recently. I ended up learning a lot about the quirks of Javascript and just how much you can do in only a few characters of code, so I thought I would dissect one of my code golf entries.
+
+## The problem
+
+PBM is a simple file format for transmitting black and white images.  Initially there was the "plain" PBM format, which allows images to be specified entirely in printable characters, following this layout:
+
+<ul>
+  <li>`P1\n` = magic number and newline.</li>
+  <li>`<width> <height>\n` = image dimensions in decimal, followed by newline.</li>
+  <li>List of integers describing the pixel values.  1 is black and 0 is white.</li>
+</ul>
+
+Here is an example of a 6x5 image (67 bytes):
+
+```
+P1
+6 5
+0 1 1 1 1 1
+0 1 1 1 1 0
+0 1 1 1 0 0
+0 1 1 0 0 0
+0 1 0 0 0 0
+```
+
+Since this plain text format is very inefficient, most people use the binary format instead, which follows this layout:
+
+<ul>
+  <li>`P4\n` = magic number and newline.</li>
+  <li>`<width> <height>\n` = image dimensions in decimal, followed by newline.</li>
+  <li>List of bytes that describe the pixel values.  Most significant bit of the first byte specifies the leftmost pixel, 1 bit is black and 0 bit is white.</li>
+  <li>Bytes are padded with zero bits such that the start of each scanline always falls on byte boundary.</li>
+</ul>
+
+Here is the same image as the earlier example, but in binary (12 bytes):
+
+```
+P4
+6 5
+|xp`@
+```
+
+Note how the 5 rows are encoded in 5 bytes:
+
+```
+| = 0x7c = 0b01111100
+x = 0x78 = 0b01111000
+p = 0x70 = 0b01110000
+` = 0x60 = 0b01100000
+@ = 0x40 = 0b01000000
+```
+
+
+Given a plain PBM file, convert it to binary PBM.
+
+## My solution
+
+My entry (118 bytes):
+
+```js
+g={g(a)a.replace(/.{1,16}\s/g,{f(b,o)o?o<4?b:String.fromCharCode(eval('for(c=i=0;++i<8;)c=c<<1|b[i*2]')):"P4\n"}.f)}.g
+```
+
+This technically got me second place even though the first place solution also had 118 bytes because I was the second person to submit an entry of this size. I'm still slightly salty about it, because I realized I had a redundant pair of brackets that I could have removed earlier and been *first*. But alas, c'est la vie.
+
+Here's my entry with better spacing, longer variable names, and comments:
+
+```js
+// Convert a text .pb to binary
+g = {
+  g(text) text.replace(
+
+    // Replace chunks of up to 16 characters, stopping at newlines
+    /.{1,16}\s/g,
+
+    {
+      f(chunk, offset)
+
+        // Is this not the first chunk? (offset isn't 0)
+        offset ?
+
+          // Is this the second chunk?
+          offset < 4 ?
+
+            // The second line is the same in both formats
+            chunk :
+
+            // Otherwise, replace the chunk with a byte
+            String.fromCharCode(
+              eval(`
+                for(value=0,i=0;++i<8;)
+                  // Set each bit of this chunk's byte by looking at the value
+                  // of the corresponding character ("1" or "0" or undefined)
+                  // in the chunk
+                  value = (value << 1) | chunk[i*2]
+              `)) :
+
+        // Otherwise, it's the first line
+        "P4\n"
+    }.f
+  )
+}.g
+```
+
+### Defining a function
+
+The first weird thing here is that the keyword `function` is nowhere to be found. The `function` and `return` keywords take a lot of bytes, so it makes sense to try to get rid of them. Normally, in modern Javascript, you could use an arrow function instead: `function(x){return x+1}` can be written as `x => x+1`. However, this code golf problem uses <a href="https://github.com/mozilla/rhino/releases">Mozilla Rhino 1.7</a> to grade solutions. In this version of Javascript, arrow functions aren't a thing, so it's not an option. 
+
+As an alternative, I make an object with a method in it, since object methods don't need the `function` keyword. Then, I can return a reference to the method I just defined:
+
+```js
+{
+  f(x) {
+    return x+1;
+  }
+}.f
+
+// When there is only one expression:
+{
+  f(x)x+1;
+}.f
+
+// As a one-liner:
+{f(x)x+1}.f
+```
+
+### Chunking into 8-bit groups
+
+One part of the problem involves grouping 1s and 0s into groups of 8. If a line has less than 8 bits in it, the whole line should be a chunk. If there are more than 8 bits in the line, it must be broken up into multiple 8-bit chunks.
+
+I deal with this using the regex `/.{1,16}\s/g`. The `{1,16}` means it matches the previous token between 1 and 16 times, trying to match as many as it can. I use 16 here to account for the whitespace between bits in the text encoding. In Javascript regexes, `.` refers to any character *except for a newline*, so if there are less than 16 characters in a line, it will stop at the end of the line and not start including characters from the next line. Each bit is followed by either a space or a newline, so I match that with the whitespace matcher `\s`.
+
+I use these length-up-to-16 chunks for the entire string, including the `P1` at the beginning and the width and height. The first line is always the same, so it will always be matched. There is the potential that the second line is too long to be matched in one chunk if the width and height are 8 digits long, but that doesn't happen in any of the test cases for this code golf problem (I guess they didn't think to make a test case with an image width on the order of 10<sup>16</sup> pixels!)
+
+### Replacing each group
+
+In Javascript, when calling `.replace` on a string, you can pass a function as the second parameter to specify what to replace with. The first two parameters to the function are the string matched by the regex and the offset of the matched string relative to the source string. I use the offset to figure out if I'm looking at the one of the two "header" lines or a body line.
+
+The first two lines get treated differently from the rest, so I use two nested ternary operators to deal with the case of the first line (offset is 0) and the second line (offset is 3). I don't use an if statement to do this partially because `if` and `else` are fairly long, but also because an if statement can't be used as a value in Javascript. It's the difference between a **statement** and an **expression**. An expression evaluates to a value, whereas a statement does not. In a language like Ruby, you can assign to an if-else block because every control structure is an expression:
+
+```rb
+my_value =
+  if condition?
+    1
+  else
+    0
+  end
+```
+
+...but this isn't how it works in Javascript: an if statement is a statement. A ternary, however, is an expression, so I can use it as a return value for the function. Because it lets me make my function body be a single expression, I can avoid braces and the `return` keyword in my function, saving precious bytes.
+
+### Getting a chunk's character representation
+
+Given a string with up to 8 1s and 0s in it, I need to convert it to a character with a matching binary value. There's no short way to cast an integer to a character in Javascript, you have to use `String.fromCharCode`. It's basically just an upfront cost of using the language for this problem.
+
+```js
+for(value=0,i=0;++i<8;)
+  value = (value << 1) | chunk[i*2]
+```
+
+To compute the value of each chunk, I start off with 0, which is the byte `0b00000000`. I then iterate through each bit in the string with a for loop. Because of the spaces in the input, bit `i` in the string is found at `chunk[i*2]`. For each bit `i`, I slide all the binary digits of `value` over one space using `<< 1`, which leaves the rightmost digit as a zero. Then, I add in the digit `i` by doing a logical OR with `chunk[i*2]`. The `|` OR operator coerces the right hand side to a number. If it was the string `"1"`, this gets translated into the number 1, which is `0b00000001`. The string `"0"` turns into `0b00000000`, and when `chunk[i*2]` is undefined (the number of bits in the line wasn't evenly divisible by 8), it also gets turned into zero.
+
+You'll also notice that my for loop increments at the same time as it checks the condition. This means, in the body of the for loop, `i` is never 0, because it always gets incremented beforehand. I noticed that none of the test cases actually needed the first bit of the chunk, so I technically never *needed* `i` to be 0. This optimization makes my program not work for every possible input, but it worked for all the test cases, so I went for it!
+
+Now, normally, for loops, like if statements, are statements in Javascript and therefore cannot be used as an argument to `String.fromCharCode`. You can get around this by putting it in an `eval` as a string. `eval` has the interesting property of returning the "completion value" of the code, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval#Return_value">according to MDN.</a> Effectively, this means it returns the value of the last expression it calculated, regardless of whether or not the entire code in the `eval` was a statement or expression. The last expression that gets evaluated in my case is the assignment to `value`, since in Javascript, the assignment operation is an expression that evaluates to the right hand side of the equals sign. So, the return value of the whole `eval` with a for loop in it is the final value of `value`, which I can use as an argument.
+
+## ...But don't program like this
+
+It's pretty fun doing code golf to see how far you can get. That said, I managed to cram into my program a regex that behaves in an unintuitive way, a for loop that almost looks right but technically isn't, some bit shifting, automatic type coerscion from strings to numbers, and an `eval` to top it off. I think if I tried to write any of this code for actual work, I'd get punched.
+
+So now, in addition to having the reputation of being "the guy who talks about Perl 6 a lot," I'm also "the guy who writes dense, disgusting Javascript for code golf." But I think I'm alright with that!
