@@ -140,7 +140,7 @@ One part of the problem involves grouping 1s and 0s into groups of 8. If a line 
 
 I deal with this using the regex `/.{1,16}\s/g`. The `{1,16}` means it matches the previous token between 1 and 16 times, trying to match as many as it can. I use 16 here to account for the whitespace between bits in the text encoding. In Javascript regexes, `.` refers to any character *except for a newline*, so if there are less than 16 characters in a line, it will stop at the end of the line and not start including characters from the next line. Each bit is followed by either a space or a newline, so I match that with the whitespace matcher `\s`.
 
-I use these length-up-to-16 chunks for the entire string, including the `P1` at the beginning and the width and height. The first line is always the same, so it will always be matched. There is the potential that the second line is too long to be matched in one chunk if the width and height are 8 digits long, but that doesn't happen in any of the test cases for this code golf problem (I guess they didn't think to make a test case with an image width on the order of 10<sup>16</sup> pixels!)
+I use these length-up-to-16 chunks for the entire input string, including the `P1` at the beginning, and the width and height following it. The first line is always the same, so it will always be matched. There is the potential that the second line is too long to be matched in one chunk if the width and height are 8 digits long, but that doesn't happen in any of the test cases for this code golf problem (I guess they didn't think to make a test case with an image width on the order of 10<sup>8</sup> pixels!)
 
 ### Replacing each group
 
@@ -161,14 +161,14 @@ my_value =
 
 ### Getting a chunk's character representation
 
-Given a string with up to 8 1s and 0s in it, I need to convert it to a character with a matching binary value. There's no short way to cast an integer to a character in Javascript, you have to use `String.fromCharCode`. It's basically just an upfront cost of using the language for this problem.
+Given a string with up to 8 1s and 0s in it, I need to convert it to a character with a matching binary value. There's no short way to cast an integer to a character in Javascript; you have to use `String.fromCharCode`. It's basically just an upfront cost of using the language for this problem.
 
 ```js
 for(value=0,i=0;++i<8;)
   value = (value << 1) | chunk[i*2]
 ```
 
-To compute the value of each chunk, I start off with 0, which is the byte `0b00000000`. I then iterate through each bit in the string with a for loop. Because of the spaces in the input, bit `i` in the string is found at `chunk[i*2]`. For each bit `i`, I slide all the binary digits of `value` over one space using `<< 1`, which leaves the rightmost digit as a zero. Then, I add in the digit `i` by doing a logical OR with `chunk[i*2]`. The `|` OR operator coerces the right hand side to a number. If it was the string `"1"`, this gets translated into the number 1, which is `0b00000001`. The string `"0"` turns into `0b00000000`, and when `chunk[i*2]` is undefined (the number of bits in the line wasn't evenly divisible by 8), it also gets turned into zero.
+To compute the value of each chunk, I start off with 0, which is the byte `0b00000000`. I then iterate through each bit in the string with a for loop. Because of the spaces in the input, bit `i` in the string is found at `chunk[i*2]`. For each bit `i`, I slide all the binary digits of `value` over one space using `<< 1`, which leaves the rightmost digit as a zero. Then, I add in the digit `i` by doing a logical OR with `chunk[i*2]`. The `|` OR operator coerces the right hand side to a number. If it was the string `"1"`, this gets translated into the number 1, which is `0b00000001`. The string `"0"` turns into `0b00000000`, and when `chunk[i*2]` is undefined (the number of bits in the line wasn't evenly divisible by 8), it also gets turned into zero, which deals with the zero-padding described in the original problem.
 
 You'll also notice that my for loop increments at the same time as it checks the condition. This means, in the body of the for loop, `i` is never 0, because it always gets incremented beforehand. I noticed that none of the test cases actually needed the first bit of the chunk, so I technically never *needed* `i` to be 0. This optimization makes my program not work for every possible input, but it worked for all the test cases, so I went for it!
 
