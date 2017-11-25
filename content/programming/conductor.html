@@ -1,0 +1,34 @@
+<!--
+{
+    "title": "Conductor",
+    "date": "2017-11-26",
+    "excerpt": "A distributed job management system with dynamic dispatch",
+    "thumbnail": "%root%/content/images/2017/11/conductor-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "Ruby on Rails",
+        "Python",
+        "React"
+    ],
+    "browser": {
+        "url": "http://conductor-se464.herokuapp.com/",
+        "image": "%root%/content/images/2017/11/conductor-large.jpg"
+    },
+    "buttons": [
+        {
+            "url": "http://conductor-se464.herokuapp.com/",
+            "text": "View Conductor"
+        },
+        {
+            "url": "https://github.com/AndrewMcBurney/conductor",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+Conductor is a distributed job scheduler and management system. The availability of cheap computing resources, often not even present in the same physical location, now means that many instances of a program one may want to run are no longer local to one's own personal computer. There exist systems to systematically distribute applications across servers, but these typically require a large amount of setup and are optimized for production systems with large loads (i.e. map-reduce systems) rather than manually triggered jobs consisting of smaller periodic tasks where an individual may want to check up on the status frequently.
+
+Conductor allows you to manage jobs on a cluster of machines from a centralized web app and get notifications based on job status. The web format allows usage from any web connected device. Coordination is done in the cloud, so if a client disconnects, jobs will still execute properly. A user can view job output and logs from this web console and specify certain reactive behaviour based on the status of a job, such as notification or retrying of failed jobs.
+
+<img src="%root%/content/images/2017/11/conductor-event-medium.jpg" full="%root%/content/images/2017/11/conductor-event.png" caption="Jobs can be dispatched dynamically based on the output of other jobs." />

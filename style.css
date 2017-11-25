@@ -34,6 +34,10 @@ h1 {
 p {
   font-size: 1.2em;
 }
+.post > p {
+  line-height: 1.8em;
+  padding-bottom: 1.4em;
+}
 h1+p, h2+p, h3+p, h4+p, h5+p, h6+p, h7+p, h8+p, h9+p,
 h10+p, h11+p, h12+p, p+p {
   padding-top: 0;

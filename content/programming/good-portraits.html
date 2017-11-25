@@ -1,0 +1,47 @@
+<!--
+{
+    "title": "Good Portraits",
+    "date": "2017-11-12",
+    "excerpt": "Artisan abstract portraits generated with hand-crafted code",
+    "thumbnail": "%root%/content/images/2017/11/out3-thumbnail.jpg",
+    "category": "programming",
+    "languages": [
+        "OpenCV",
+        "YOLO",
+        "Node"
+    ],
+    "art": "%root%/content/images/2017/11/out3-large.jpg",
+    "buttons": [
+        {
+            "url": "https://github.com/davepagurek/good-portraits",
+            "text": "View Source on GitHub"
+        }
+    ]
+}
+-->
+
+https://www.youtube.com/watch?v=L861ndVikjc
+
+When technology and art combine, that is when society gets truly pushed forward. Andy Warhol pioneered the technique of leveraging technology to produce art _en masse_ to force consideration of what art even means, so I intend to continue this mission and reduce the meaning in art even more.
+
+This script takes in a regular image and produces a high-quality, carefully thought-out portrait. It's abstract, which packs even more meaning into the image while I put even less thought into it.
+
+Sometimes it gets too abstract, so you can pass in a command line flag to label things in the image for you so you can still tell what they are.
+
+<img src="%root%/content/images/2017/11/out-medium.jpg" full="%root%/content/images/2017/11/out.jpg" caption='"The turmoil of the soul", 2017' />
+
+<img src="%root%/content/images/2017/11/out2-medium.jpg" full="%root%/content/images/2017/11/out2.jpg" caption='"Life is meaningless", 2017' />
+
+## Setup
+Install darknet as per the instructions here: https://github.com/moovel/node-yolo
+
+```
+curl -L http://pjreddie.com/media/files/yolo.weights > yolo.weights
+yarn install
+```
+
+## Run the script
+```
+node index.js adam.jpg && open out.jpg
+node index.js andrew3.jpg true && open out.jpg
+```
