@@ -32,16 +32,23 @@ Sometimes it gets too abstract, so you can pass in a command line flag to label 
 
 <img src="%root%/content/images/2017/11/out2-medium.jpg" full="%root%/content/images/2017/11/out2.jpg" caption='"Life is meaningless", 2017' />
 
-## Setup
-Install darknet as per the instructions here: https://github.com/moovel/node-yolo
+## How it works
+Using OpenCV, edge detection and filtering is used to distill a photo into a line drawing. In regions where a face is detected, lines are allowed to be finer, whereas in areas with just background, coarser lines are preferred.
 
-```
+Then, the edge contours are refined to an ordered set of points. A cubic spline is fitted through these points, with a high enough tightness that the line bulges out in parts and doesn't follow exactly. The line is coloured based on the average colour of the area the contour surrounds.
+
+YOLO, an object detector and classifier network, is run on the original image. If recognizable objects are present in the original image (e.g. a person), then the label is whimsically added to the portrait with an arrow pointing to the region of the detected object.
+
+## Setup
+Install darknet as per the <a href="https://github.com/moovel/node-yolo">instructions on the Node YOLO bindings readme.</a>
+
+```sh
 curl -L http://pjreddie.com/media/files/yolo.weights > yolo.weights
 yarn install
 ```
 
 ## Run the script
-```
+```sh
 node index.js adam.jpg && open out.jpg
 node index.js andrew3.jpg true && open out.jpg
 ```
