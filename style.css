@@ -13,11 +13,11 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12 {
   font-family: 'Josefin Sans', sans-serif;
 }
 h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, p,
-nav, .content, pre, ul, ol, section.post > div {
+nav, .content, pre, ul, ol, hr, section.post > div {
   box-sizing: border-box;
   width: 100%;
   max-width: 66rem;
-  padding: 1.4em 3rem 1em 3rem;
+  padding: 1.6em 3rem 1.2em 3rem;
   margin: 0;
 }
 ul, ol {
@@ -36,7 +36,18 @@ p {
 }
 .post > p {
   line-height: 1.8em;
-  padding-bottom: 1.4em;
+}
+hr {
+  background: none;
+  border: 0;
+}
+hr::after {
+  content: '⁂';
+  display: block;
+  opacity: 0.8;
+  line-height: 1em;
+  font-size: 1.2em;
+  text-align: center;
 }
 h1+p, h2+p, h3+p, h4+p, h5+p, h6+p, h7+p, h8+p, h9+p,
 h10+p, h11+p, h12+p, p+p {

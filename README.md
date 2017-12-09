@@ -3,7 +3,7 @@ Content of my site
 
 ## Setup
 - `git clone` this repo into `/src`
-- run `panda installdeps .`
+- run `zef install .`
 - set up webhook from this repository:
   - hit `/deploy`
   - use `application/json` body

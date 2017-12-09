@@ -19,7 +19,13 @@ if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", %*ENV.perl;
   say "Status: 200 OK\n";
 
-  shell "cd src && panda installdeps .";
+  # Update framework
+  shell "cd Cantilever && git fetch";
+  shell "cd Cantilever && git reset --hard origin/master";
+  shell "cd Cantilever && zef install . --force-install";
+
+  # Update site
+  shell "cd src && zef install . --force-install";
   shell "cd src && git fetch";
   shell "cd src && git reset --hard origin/master";
   shell "cp src/deploy deploy";
