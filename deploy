@@ -21,7 +21,6 @@ if $payload && verify-signature($payload) {
 
   # Update framework
   shell "cd Cantilever && git reset --hard origin/master";
-  shell "cd Cantilever && zef install . --force-install";
 
   # Update site
   shell "cd src && git fetch";
