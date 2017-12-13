@@ -17,12 +17,12 @@
     <p>I'm a programmer with an interest in computer graphics. I have demonstrated expertise in <strong>Javascript</strong>, <strong>Ruby</strong>, <strong>HTML</strong>, and <strong>hand-crafted CSS</strong>, and I also have extensive experience in C++, Java, Swift, SQL, and Linux.</p>
     <div class="row">
       <div class="column">
-        <p>I made a <a href="http://www.davepagurek.com/programming/raytracer/">Raytracer</a>, a 3D renderer which supports glass, motion blur, soft shadows, depth of field, and multithreading. Written in Swift.</p>
-        <a class="button secondary" href="http://davepagurek.com/programming/raytracer">View Documentation and Demo</a>
+        <p>I made a <a href="https://www.davepagurek.com/programming/raytracer/">Raytracer</a>, a 3D renderer which supports glass, motion blur, soft shadows, depth of field, and multithreading. Written in Swift.</p>
+        <a class="button secondary" href="https://davepagurek.com/programming/raytracer">View Documentation and Demo</a>
       </div>
       <div class="column before">
         <a class="browser no-url" href="http://davepagurek.com/programming/raytracer">
-          <img alt="Raytracer" src="http://www.davepagurek.com/content/images/2016/10/lights_on_plane-medium.jpg" />
+          <img alt="Raytracer" src="https://www.davepagurek.com/content/images/2016/10/lights_on_plane-medium.jpg" />
         </a>
       </div>
     </div>
@@ -32,13 +32,13 @@
         <a class="button secondary" href="http://davepagurek.com/programming/truthful">View Documentation and Demo</a>
       </div>
       <div class="column before">
-        <a class="browser" data-url="davepagurek.com/truthful" href="http://www.davepagurek.com/programming/truthful/">
-          <img alt="Truthful" src="http://www.davepagurek.com/content/images/2016/1/truthful-medium.jpg" />
+        <a class="browser" data-url="davepagurek.com/truthful" href="https://www.davepagurek.com/programming/truthful/">
+          <img alt="Truthful" src="https://www.davepagurek.com/content/images/2016/1/truthful-medium.jpg" />
         </a>
       </div>
     </div> 
     <div class="row">
-      <a class="button primary" href="http://www.davepagurek.com/programming/">View More Programming</a>
+      <a class="button primary" href="https://www.davepagurek.com/programming/">View More Programming</a>
     </div>
   </section>
   <section>
@@ -48,7 +48,7 @@
       <iframe class="soundcloud" width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276903834&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
     </div>
     <div class="row">
-      <a class="button primary" href="http://www.davepagurek.com/art/">View Art</a>
+      <a class="button primary" href="https://www.davepagurek.com/art/">View Art</a>
       <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Listen on Soundcloud</a>
     </div>
   </section>
