@@ -21,15 +21,15 @@
         <a class="button secondary" href="https://davepagurek.com/programming/raytracer">View Documentation and Demo</a>
       </div>
       <div class="column before">
-        <a class="browser no-url" href="http://davepagurek.com/programming/raytracer">
+        <a class="browser no-url" href="https://www.davepagurek.com/programming/raytracer">
           <img alt="Raytracer" src="https://www.davepagurek.com/content/images/2016/10/lights_on_plane-medium.jpg" />
         </a>
       </div>
     </div>
     <div class="row">
       <div class="column">
-        <p>I made <a href="http://davepagurek.com/programming/truthful">Truthful</a>, a tool for parsing Boolean algebraic expressions and making truth tables out of them. Made and tested with JavaScript.</p>
-        <a class="button secondary" href="http://davepagurek.com/programming/truthful">View Documentation and Demo</a>
+        <p>I made <a href="https://www.davepagurek.com/programming/truthful">Truthful</a>, a tool for parsing Boolean algebraic expressions and making truth tables out of them. Made and tested with JavaScript.</p>
+        <a class="button secondary" href="https://www.davepagurek.com/programming/truthful">View Documentation and Demo</a>
       </div>
       <div class="column before">
         <a class="browser" data-url="davepagurek.com/truthful" href="https://www.davepagurek.com/programming/truthful/">
