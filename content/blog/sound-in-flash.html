@@ -3,7 +3,7 @@
 {
 	"title": "Sound in Flash",
 	"excerpt": "Ahh, Flash... so many people fail to use its sound capabilities! Here's a tutorial about using sound in Flash and how to make it stay in sync.",
-	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2010/05/Sound_Wave-220x220.jpg",
+	"thumbnail": "%root%/wp-content/uploads/2010/05/Sound_Wave-220x220.jpg",
 	"category": "blog",
 	"date": "2010-05-21"
 }
@@ -11,20 +11,20 @@
 
 Ahh, Flash. One of the most superior animation programs there is. But  ohh, how so many people fail to use its sound capabilities! I'm here with a tutorial to  tell you about how you should use sound in Flash and how to make the  sound stay in sync.
 <h2>The Basics</h2>
-<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/basics1.jpg" alt=""  width="350" height="178" class="alignleft size-full wp-image-2269" />
+<img src="%root%/wp-content/uploads/2010/05/basics1.jpg" alt=""  width="350" height="178" class="alignleft size-full wp-image-2269" />
 Okay, so you've got your audio file, be it a .wav, .mp3, .aiff, whatever. In flash, go to File &gt; Import to Library, select your file, and open it. Now, in your timeline, make a new layer for your sound. A new layer is not needed for each new sound unless you want them to overlap, which needs separate layers. Anyway, make a keyframe where you want it to start. Now, in the properties panel,open the dropdown menu next to the "sound" label and select your sound.
 
 <h2>Set it to "Stream"!</h2>
-<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/stream.jpg" alt="" width="350" height="178" class="alignright size-full wp-image-2270" />
+<img src="%root%/wp-content/uploads/2010/05/stream.jpg" alt="" width="350" height="178" class="alignright size-full wp-image-2270" />
 You see how it says "Sync" and has a dropdown? Change it from "event" to "stream". This makes the sound become attached to the video so that the sound and video never go unsynchronized (well, they still do, but I'll address that later.) Also, it allows you to "scrub" through the sound (click and drag the timeline's red bar thing) and it will play the sound for that frame. You would not believe how useful this is for lip sync! It's crazy how difficult it is to sync blindly when you don't know what sound it on what frame.
 
 <p>&lt;rant&gt; Now, the number one thing I hate about inexperienced Flash artists is that they complain that when they do this, it doesn't go through all their scenes. Ok, look guys: If you have music or something that plays continuously, it should not be split into multiple scenes in he first place. There is no way that you're going to have the same music playing through the whole video unless you're making a music video, at which point you NEED to use stream to keep everything synchronized. If you have a movie that's split up into like 30 scenes and it's less than three minutes long, you've got a serious problem. <em>Around the Sun </em>was <em>EIGHT </em>minutes, and it only had <em>SIX </em>scenes! Sure, your organization is slightly compromised, but reusing layers is NOT as bad as you think it is. In fact, it's good practice. &lt;/rant&gt; Now that I've got that out of my system, time to move on. ;)</p>
 
 <h2>Compression</h2>
-<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/pubsettings.jpg" alt="" width="350" height="178" class="alignleft size-full wp-image-2271" />
+<img src="%root%/wp-content/uploads/2010/05/pubsettings.jpg" alt="" width="350" height="178" class="alignleft size-full wp-image-2271" />
 When you first set a sound to stream and you export a movie, unless you changed something beforehand, it will sound like total crap. There's an easy way to fix this. In flash, make sure nothing is selected. In the properties panel, click the "Publish Settings" button (or if you're using CS4, select the "edit" button next to the word "Profile".)
 
-<img src="http://www.davepagurek.com/wp-content/uploads/2010/05/streamsettings.jpg" alt="" width="350" height="400" class="alignright size-full wp-image-2272" />
+<img src="%root%/wp-content/uploads/2010/05/streamsettings.jpg" alt="" width="350" height="400" class="alignright size-full wp-image-2272" />
 <p>Ok, now you'll see two things in the middle of the window: Audio Stream settings and Audio Event settings. Now, if you're a good child and you're using streams, you shouldn't need to touch the events one. Anyway, if you do sneak an event in, the setting are the same as the stream ones, so I don't need to go over them specifically. So, press the "Edit" button next to the Stream setting. You'll now have a few options. Most of the time, I'd go for MP3 compression that is 64 kbps, but if fast downloading isn't a problem for you, I'd go higher. But if your movie is getting long and tedious like mine have recently become, I would set it to Speech, 44kz. This has a nice quality but also helps keep the sound in sync somehow. Don't ask me why... it just does. Flash is sort of glitchy sometimes. Anyway, Press OK, test your movie, and fool around with the settings until you reach a balance of fast download time and good-quality sound.</p>
 
 

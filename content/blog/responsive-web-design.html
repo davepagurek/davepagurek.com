@@ -2,7 +2,7 @@
 {
 	"title": "Responsive Web Design",
 	"excerpt": "Some tips regarding websites that scale and change to fit the screen and device it's on.",
-	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2012/02/responsive1-220x220.jpg",
+	"thumbnail": "%root%/wp-content/uploads/2012/02/responsive1-220x220.jpg",
 	"category": "blog",
 	"date": "2012-02-18"
 }
@@ -13,7 +13,7 @@ It used to be that web designers didn't really need to worry too much about how 
 <h2>What does "responsive" mean?</h2>
 A responsive website is a website that adjusts the layout of its elements at certain screen sizes to better lay out the content on the display. To demonstrate what I mean by this, I will use the website of professional artist Adrian G&ouml;llner, which I made a few months ago. I invite you to <a href="http://adriangollner.ca/content/?page_id=341">visit the art page</a> of his website using a modern browser (not an old version of Internet Explorer, anyway) and try resizing the browser window. A few things happen:
 
-<img src="http://www.davepagurek.com/wp-content/uploads/2012/02/resize.jpg" alt="" title="resize" width="820" height="376" class="aligncenter size-large wp-image-2244" />
+<img src="%root%/wp-content/uploads/2012/02/resize.jpg" alt="" title="resize" width="820" height="376" class="aligncenter size-large wp-image-2244" />
 <ol>
 <li><strong>The title and menu font size gets smaller,</strong> letting the menu use up less horizontal space.</li>
 <li><strong>The menu sidebar collapses into a dropdown menu.</strong> This not only conserves horizontal space, but it also is very beneficial for a touchscreen interface. It is not easy to select an item in a series of close-together links on a touchscreen because the area you select with the tip of your finger could easily be about 40 pixels in diameter. However, when presented with a dropdown menu, smartphones generally provide a modal window with large, easy-to-press buttons for each option. It saves you work and saves the user frustration. Win-win!</li>
@@ -78,7 +78,7 @@ This technique is not so much a technique as it is a tool that can be used for a
 
 This code creates two columns that are next to each other when the browser window is wider than 900 pixels. The styling inside the @media section is not applied. However, once the screen resized to less than 900px wide (as declared in the media query), the additional styling is applied, and the columns shift so they are on top of each other, allowing each one of them to have more horizontal space than if they were next to each other.
 
-<img src="http://www.davepagurek.com/wp-content/uploads/2012/02/responsive1.jpg" alt="" width="700" height="400" class="aligncenter size-full wp-image-2252" />
+<img src="%root%/wp-content/uploads/2012/02/responsive1.jpg" alt="" width="700" height="400" class="aligncenter size-full wp-image-2252" />
 
 Let's examine the parts of a media query. The first part is the media type. In the example above, the media type I used was "all", but you can narrow it down further easily. Some other useful media types are handheld, print, projection, tv, and screen, which all target their respective devices and form factors only.
 

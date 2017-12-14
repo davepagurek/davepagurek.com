@@ -3,7 +3,7 @@
 {
 	"title": "Webcam-Controlled Games",
 	"excerpt": "It's a test to see if I could control a sniper game with a webcam.",
-	"thumbnail": "http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0247-220x220.jpg",
+	"thumbnail": "%root%/wp-content/uploads/2011/01/IMGA0247-220x220.jpg",
 	"category": "blog",
 	"languages": [
 		"Actionscript" 
@@ -12,7 +12,7 @@
 }
 -->
 
-<a href="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0243.jpg"><img src="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0243-300x168.jpg" title="IMGA0243" width="300" height="168" class="alignleft size-medium wp-image-1481" /></a>
+<a href="%root%/wp-content/uploads/2011/01/IMGA0243.jpg"><img src="%root%/wp-content/uploads/2011/01/IMGA0243-300x168.jpg" title="IMGA0243" width="300" height="168" class="alignleft size-medium wp-image-1481" /></a>
 
 My most recent game-creation endeavor is unlike any that I've attempted before. Rather than using conventional methods to control the gameplay (for example, the arrow keys) I decided to see if I could use the webcam to track the player's motion and use <em>that</em> in a game.
 
@@ -22,7 +22,7 @@ To aim, you move around as you would in real life. You can crouch, or go on your
 
 <h2>Demo</h2>
 <strong>Before you play:</strong> You need to have a webcam plugged in. Click "allow" on the security window of the game. Make sure the webcam is pointing in a way that your head isn't cut off. It's easest to play when you're standing back a bit from the screen because it gives you more room to move and makes everything less glitchy. Press SPACE to fire.
-<embed src="http://www.davepagurek.com/wp-content/uploads/2011/01/sniper1.swf" width="100%" height="500"></embed>
+<embed src="%root%/wp-content/uploads/2011/01/sniper1.swf" width="100%" height="500"></embed>
 
 
 <h2>What will be in the "full game"</h2>
@@ -37,7 +37,7 @@ If/when I get around to making an actual game out of this, there are quite a few
 
 <h2>How it works</h2>
 
-<a href="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0241.jpg"><img src="http://www.davepagurek.com/wp-content/uploads/2011/01/IMGA0241-300x168.jpg" title="IMGA0241" width="300" height="168" class="alignright size-medium wp-image-1486" /></a>
+<a href="%root%/wp-content/uploads/2011/01/IMGA0241.jpg"><img src="%root%/wp-content/uploads/2011/01/IMGA0241-300x168.jpg" title="IMGA0241" width="300" height="168" class="alignright size-medium wp-image-1486" /></a>
 
 Wanting to try something like this on your own? Well, basically what it does is it stores the webcam's previous image, and then uses Actionscript 3 to apply it on top of the webcam's current image with a "difference" filter. That way, the only part left that you see is the part of the image that changed. With that, you can determine the approximate location of where the person in front of the camera is (because nothing else in the picture moves.) From there you can move other things around the screen in relation to that area or, alternatively, you can adjust other variables (you could make sounds play based on the amount of movement, move the mouse cursor based on the location, or even use it to control external hardware.) 
 
