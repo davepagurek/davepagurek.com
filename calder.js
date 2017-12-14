@@ -37,7 +37,6 @@ function makeLeaf(depth, side, size) {
   var leaf = document.createElement("div");
   leaf.className = "leaf";
   var angle = Math.random()*120-60;
-  //leaf.style.transform = "scale(" + (Math.random()*2+1) + ") rotate3d(" + (Math.random()>0.5?1:0) + "," + (Math.random()>0.5?1:0) + "," + (Math.random()>0.5?1:0) + "," + angle + "deg)";
   size = size || (Math.random()*4+4)*(0.3+(MAX_DEPTH-depth+1)/MAX_DEPTH);
   leaf.style.width = size + "em";
   leaf.style.height = size + "em";
@@ -57,7 +56,6 @@ function makeAntenna(depth) {
   var antenna = document.createElement("div");
   antenna.className = "branch";
   antenna.style.height = height + "em";
-  //antenna.style.marginBottom = height + "em";
   var top = makeLeaf(depth+1, null, 3);
   top.style.marginLeft = -parseFloat(top.style.width)/2 + "em";
   top.style.marginBottom = height + "em";
@@ -125,9 +123,6 @@ function makeBranch(depth, prevAngle) {
 }
 
 var tree = makeBranch();
-console.log(world);
-console.log(world.appendChild);
-console.log(tree);
 world.appendChild(tree);
 
 var center = {};
@@ -149,7 +144,6 @@ document.body.addEventListener("mousemove", function(e) {
 		m[r] *= 0.1;
 		m[r] = Math.max(-60, m[r]);
 		m[r] = Math.min(60, m[r]);
-    //if (r == "ry") m[r] += 60;
 	});
   if (window.requestAnimationFrame) {
     window.requestAnimationFrame(function() {
