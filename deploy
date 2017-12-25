@@ -19,9 +19,6 @@ if $payload && verify-signature($payload) {
   spurt "{$?FILE.IO.dirname}/out.txt", %*ENV.perl;
   say "Status: 200 OK\n";
 
-  # Update framework
-  shell "cd Cantilever && git reset --hard origin/master";
-
   # Update site
   shell "cd src && git fetch";
   shell "cd src && git reset --hard origin/master";
