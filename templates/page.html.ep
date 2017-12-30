@@ -1,6 +1,6 @@
 % if $params<page>.meta<youtube> {
 <section class='youtube'>
-  <iframe class='youtube' width='560' height='315' src='http://www.youtube.com/embed/<%= $params<page>.meta<youtube> %>?rel=0' frameborder='0' allowfullscreen></iframe>
+  <iframe class='youtube' width='560' height='315' src='//www.youtube.com/embed/<%= $params<page>.meta<youtube> %>?rel=0' frameborder='0' allowfullscreen></iframe>
 </section>
 % } elsif my $art = $params<page>.meta<art> {
 <section class='art-header'>
