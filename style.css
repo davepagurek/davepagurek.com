@@ -34,7 +34,7 @@ h1 {
 p {
   font-size: 1.2em;
 }
-.post > p {
+.post > p, .post > ul, .post > ol {
   line-height: 1.8em;
 }
 hr {
