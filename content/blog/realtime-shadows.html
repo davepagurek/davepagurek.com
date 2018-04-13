@@ -34,16 +34,16 @@ A system like this does not integrate with existing technologies; it requires pr
 The fact that global illumination sampling is slow is intuitive, since the lighting at every pixel depends on the geometry of the entire scene. If you want to compute shading quickly, it makes sense that you would want to use a more limited set of information when figuring out what colour to make a pixel. The Phong shading model uses the following information for each pixel:
 
 <ul>
-<li>A base diffuse color</li>
+<li>A base diffuse colour</li>
 <li>A number representing specular intensity</li>
 <li>The 3D world-space position of the point at that pixel</li>
 <li>A 3D vector representing the surface normal at that point</li>
-<li>The color, position, and intensity of each light in the scene</li>
+<li>The colour, position, and intensity of each light in the scene</li>
 </ul>
 
 The diffuse lighting of an object ends up being a product of the angle between the surface normal at a point and the direction of the light (as well as the distance away.) Specular highlights also take into account the position of the camera relative to the object and the light. This means that for each pixel on the screen, after having already done an initial rasterization pass to figure out which piece of geometry is visible for each pixel, the time it takes to shade the image is a linear function of the number of lights in the scene. This calculation is fast and predictable.
 
-To say that this technique fits in with existing architectures is a bit of a lie. Existing architectures were made specifically to optimize for this sort of shading. It is not meaningful to talk about the cost of introducing Phong shading to a pipeline because it is the assumed default. A typical OpenGL pipeline first uses a **vertex shader** to use perspective to place each 3D point on a 2D image and record additional information such as the position, angle, base color, and specular intensity for each pixel. The rendering pipeline automatically builds up a **z-buffer** to keep track of which fragment is closest to the camera for each pixel and is therefore visible. Then, a **fragment shader** can produce the colour for that pixel using the information stored from the vertex shader. This basic setup will reliably work on all platforms. You can push it pretty far artistically by using a variety of textures and lights, too.
+To say that this technique fits in with existing architectures is a bit of a lie. Existing architectures were made specifically to optimize for this sort of shading. It is not meaningful to talk about the cost of introducing Phong shading to a pipeline because it is the assumed default. A typical OpenGL pipeline first uses a **vertex shader** to use perspective to place each 3D point on a 2D image and record additional information such as the position, angle, base colour, and specular intensity for each pixel. The rendering pipeline automatically builds up a **z-buffer** to keep track of which fragment is closest to the camera for each pixel and is therefore visible. Then, a **fragment shader** can produce the colour for that pixel using the information stored from the vertex shader. This basic setup will reliably work on all platforms. You can push it pretty far artistically by using a variety of textures and lights, too.
 
 <img src="%root%/content/images/2018/4/forward-rendering.png" full="%root%/content/images/2018/4/forward-rendering.png" caption='The traditional rendering pipeline used for Phong shading, called "forward rendering"' />
 
