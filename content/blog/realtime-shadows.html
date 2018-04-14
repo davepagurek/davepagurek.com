@@ -55,7 +55,7 @@ However, while it produces good local depth from shading, it lacks any shading o
 
 A key observation from the discussion of global illumination was that areas that were darker in the raytraced version were areas that light had to bounce more on average to get to. They were "harder to get to" for the light rays. We can use this insight to come up with an approximation for global illumination without actually computing it. This is the basis for calculating **ambient occlusion.**
 
-<img src="%root%/content/images/2018/4/monkey.gif" full="%root%/content/images/2018/4/monkey.gif" caption="The same scene, with and without ambiant occlusion added. Rendered using Blender's built-in ambient occlusion." />
+<img src="%root%/content/images/2018/4/monkey.gif" full="%root%/content/images/2018/4/monkey.gif" caption="The same scene, with and without ambient occlusion added. Rendered using Blender's built-in ambient occlusion." />
 
 As the name implies, ambient occlusion is a measure of how much geometry there is around a point that would stop light from hitting it directly. The more direct light is prevented, the more bounces light will make on average to get to the point, and the darker it will appear. This can be accomplished by casting a sample of rays out from a point (usually in a hemisphere oriented along the surface normal) and seeing how many of them get occluded by other geometry. If this information is passed to the fragment shader in addition to the previously mentioned information, the ambient occlusion value for each point can then be multiplied with Phong shading to add shadows in occluded areas. While it is only an approximation of global illumination, it looks orders of magnitude more realistic than simple Phong shading.
 
