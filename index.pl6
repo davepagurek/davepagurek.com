@@ -55,12 +55,12 @@ my $app = Cantilever.new(
             "</p>";
         }
 
-        "<div class='img'>"
+        "<div class='img-container'><div class='img'>"
         ~ "<a href='{$t.formatted-attributes<full>}'>"
         ~ "<img src='{$t.formatted-attributes<src>}' />"
         ~ "</a>"
         ~ $caption
-        ~ "</div>";
+        ~ "</div></div>";
       },
       block => True
     ),

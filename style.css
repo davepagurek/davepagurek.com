@@ -37,6 +37,16 @@ p {
 .post > p, .post > ul, .post > ol {
   line-height: 1.8em;
 }
+td, th {
+  padding: 0.2em;
+}
+th {
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+}
+table {
+  border-spacing: 1em;
+}
 hr {
   background: none;
   border: 0;
@@ -131,6 +141,9 @@ iframe.soundcloud {
   padding-right: 1.5em;
   align-items: center;
   justify-content: center;
+}
+.column.uncentered {
+  justify-content: flex-start;
 }
 .column:last-child {
   padding-right: 0;
@@ -329,6 +342,9 @@ iframe.cp_embed_iframe {
   margin: 0;
 }
 
+div.img-container {
+  width: auto !important;
+}
 div.img {
   display: table;
   width: auto !important;
@@ -337,6 +353,8 @@ div.img img {
   max-width: 100%;
 }
 div.img p {
+  padding-left: 0;
+  padding-right: 0;
   padding-top: 0.5rem;
   padding-bottom: 2rem;
   width: auto;
