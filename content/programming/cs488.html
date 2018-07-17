@@ -25,6 +25,8 @@ When a light ray intersects with normal geometry, the intersection point and the
 
 The bump map itself is a function that takes a coordinate and returns a height offset for that point. To then compute the amount to perturb the normal by, the slope of the bump map at the given point is taken by sampling points a small distance apart, as described by Blinn. [1]
 
+<img src="%root%/content/images/2018/7/bumpmap.png" full="%root%/content/images/2018/7/bumpmap.png" caption="Looking up the perturbation for a surface normal in the bump map." />
+
 <img src="%root%/content/images/2018/7/orange.gif" full="%root%/content/images/2018/7/orange.gif" caption="Bump mapping on an orange." />
 
 ### Refraction
@@ -33,13 +35,13 @@ Refractive materials bend light according to their index of refraction. You may 
 
 <p align="center"><math>\\frac{\\sin\\theta_2}{\\sin\\theta_1} = \\frac{n_1}{n_2}</math></p>
 
-Sometimes light is reflected instead of refracted. This happens when there is no solution to the refraction calculation (this is called "total internal reflection"), but materials also tend to reflect light as incident angles get shallow. The Schlick Approximation is used to find the likelihood of reflection given an angle. The resulting light colour is a mix of a reflected and refracted ray according to this proportionality. [2]
+Sometimes a solution to the equation in Snell's Law doesn't exist. In this case, there is total internal reflection, and the material acts like a reflective one. Additionally, refractive materials start acting more like reflective materials as incident angles grow closer to becoming tangent with the surface. The Schlick Approximation is used to calculate how much the material behaves like a reflective surface. [2] The resulting colour is a mix of a reflected and refracted ray according to the proportionality given by the Schlick Approximation.
 
 <img src="%root%/content/images/2018/7/cornell-refraction-no-gloss.png" full="%root%/content/images/2018/7/cornell-refraction-no-gloss.png" caption="A glass sphere." />
 
 ### Glossy transmission
 
-An additional parameter describing glossiness is present in refractive materials. As described by Whitted, glossiness can be created by randomly perturbing the surface normal. [3] The glossiness parameter is used as a proportion with which to mix the original surface normal with an entirely random surface normal (so 0 glossiness is the original normal, and 1 is entirely random in a cosine distribution about the surface normal.)
+An additional parameter describing glossiness was added to the refractive material command. As described by Whitted, glossiness can be created by averaging random perturbations of the refracted ray. [3] I implemented this by generating a random ray in a cosine distribution about the refracted ray. The glossiness parameter on the material is used as a proportion with which to mix the original ray with the randomly perturbed ray (so 0 glossiness is just the original normal, and 1 is just the randomly perturbed one.)
 
 <div class="row">
   <div class="column uncentered">
@@ -52,9 +54,7 @@ An additional parameter describing glossiness is present in refractive materials
 
 ### Glossy reflection
 
-Similar to glossy transmission, a glossiness parameter was added to the `gr.reflective()` command to create reflective materials. This parameter is used to mix the surface normal with a random surface normal. [3]
-
-Code for this feature is present in `ReflectiveMaterial.cpp`.
+Similar to glossy transmission, a glossiness parameter was added to the `gr.reflective()` command to create reflective materials. In this case, the surface normal is the vector that gets perturbed. The glossiness parameter is used to mix the surface normal with a surface normal perturbed randomly in a cosine distribution. [3]
 
 <div class="row">
   <div class="column uncentered">
@@ -110,6 +110,8 @@ The render time with and without using spacial partitioning was measured and plo
 
 Rather than assuming the camera is a pinhole camera, I use a camera model with a finite radius. Cook outlines how this camera model works: primary rays start from a random point in a circle with the given aperture size rather than a focal point, and then go out into the scene in the direction of the pixel being coloured. To ensure that objects at a certain distance are in focus, the model slides the focal plane (the plane that has the pixels rays travel toward) out to the specified focal distance. [7] This way, no matter where in the aperture circle the ray starts from, it will always go through the same point at the focal distance.
 
+<img src="%root%/content/images/2018/7/focalblur.png" full="%root%/content/images/2018/7/focalblur.png" caption="Anything in the focal plane will end up sharp since every randomly sampled ray from the aperture still goes through the target point on the plane." />
+
 <div class="row">
   <div class="column uncentered">
     <img src="%root%/content/images/2018/7/sample-no-defocus.png" full="%root%/content/images/2018/7/sample-no-defocus.png" caption="A recreation of M. C. Escher's self portrait through a reflective sphere." />
@@ -134,6 +136,8 @@ Although the bump map has a 2d domain, where <math>u,v</math> maps to <math>x,y<
 ### Ambient occlusion
 
 To better approximate ambient light in scenes where, in the interest of time, I don't want to use full global illumination, I implemented an ambient occlusion calculation. Since objects surrounded by other geometry tend to require more light bounces to receive indirect illumination, one can cast rays out from a point to see how much geometry is around it. Zhukov et al. describe the amount of occlusion at a point on a surface as an integral over the normal-aligned hemisphere, taking into account the distance to the nearest object for each angle in the integral. [9] To approximate the integral, sample rays are generated in the normal-aligned hemisphere at the surface. If the samples find that there is geometry within a certain radius, the ambient light is decreased. The closer the geometry is, the more ambient light is decreased.
+
+<img src="%root%/content/images/2018/7/ao.png" full="%root%/content/images/2018/7/ao.png" caption="How ambient occlusion sample rays affect shading." />
 
 <img src="%root%/content/images/2018/7/overtheshoulder020.png" full="%root%/content/images/2018/7/overtheshoulder020.png" caption="This image was rendered without any direct lighting. The only shading present is due to ambient occlusion. Note how the corners and crevices get shaded the most." />
 
@@ -200,6 +204,8 @@ To render clouds, I implemented volumetric materials.
 In the scatter phase, a light ray travels some distance into the volume before possibly interacting with a particle. How far the light ray travels into the volume depends on the density of the medium. I assume a constant density, meaning there is an exponential distribution of distances travelled through the volume according to the Beer-Lambert Law. I model distances travelled through the volume according to the cumulative distribution function for an exponential distribution, <math>p = 1-e^{\\lambda x}</math>. The inverse, <math>x = \\frac{-\\ln(1-p)}{\\lambda}</math>, is used to generate random distances through the volume before an interaction with the volume occurs. <math>\\lambda</math> is effectively the density of the medium and is a parameter specified for a given object. A ray is raymarched through volumes and is scattered after each interaction until it escapes the volume. At each interaction, a photon is stored in the photon map. The albedo of the material is used as a probability of photon absorption.
 
 Adapting the gather phase of the photon map from earlier to support volumes is a relatively simple change. In the gather phase for a *surface*, the gathered photon illumination is divided by the projected area of the gather catchment area onto the surface. <math>\\pi r^2</math> is present in the denominator. For a *volume*, there is no surface to project onto. Instead, the gathered illumination is divided by the volume the photons were collected in, so <math>\\frac{4}{3} \\pi r^3</math> is present in the denominator. Jensen and Christensen also divide by the albedo to account for the proportion of absorbed photons. [13]
+
+<img src="%root%/content/images/2018/7/volume.png" full="%root%/content/images/2018/7/volume.png" caption="Rays deposit photons in the photon map as they scatter through a volume, which get gathered from near an intersection point later." />
 
 <img src="%root%/content/images/2018/7/suncloud004.png" full="%root%/content/images/2018/7/suncloud004.png" caption="A volumetric storm cloud in front of the sun. Note how the thinner regions of the cloud bleed more scattered light than the thicker regions." />
 
