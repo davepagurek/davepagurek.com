@@ -254,6 +254,8 @@ I implemented inverse kinematics for hierarchical nodes in a scene. A Lua comman
 
 The method I use is called Cyclic Coordinate Descent. [19] The basic algorithm involves starting from the end of a joint chain and working up to the root. For each joint in the chain, it is rotated so that the line from the joint to the end of the chain points toward the target. Multiple iterations of this joint traversal are run so that joint angles converge to a steady state value.
 
+<img src="%root%/content/images/2017/3/ik-algo.gif" full="%root%/content/images/2017/3/ik-algo.gif" caption="One iteration of the IK algorithm pointing a joint chain at a target" />
+
 <img src="%root%/content/images/2018/7/ik.gif" full="%root%/content/images/2018/7/ik.gif" caption="IK being run on a joint chain. The left side of the red ellipse is the anchor, and the right side of the blue ellipse is the end of the chain." />
 
 ## Acknowledgements
