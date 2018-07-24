@@ -1,6 +1,6 @@
 <!--
 {
-    "title": "Raytracer",
+    "title": "Path Tracer",
     "date": "2016-10-24",
     "excerpt": "A multithreaded Monte Carlo 3D renderer",
     "thumbnail": "%root%/content/images/2016/10/lights_on_plane-thumbnail.jpg",
@@ -8,51 +8,14 @@
     "languages": [
         "Swift"
     ],
-    "art": "%root%/content/images/2016/10/lights_on_plane.png",
-    "buttons": [
-        {
-            "url": "https://github.com/davepagurek/raytracer",
-            "text": "View Source on GitHub"
-        }
-    ]
+    "art": "%root%/content/images/2016/10/lights_on_plane.png"
 }
 -->
 
-This is a Monte Carlo style 3d renderer (so the more samples you use, the closer to a perfect render it gets.) In addition to the image above, showcasing some reflections, refraction, emission, and depth of field, here are some images I've rendered with it so far:
+This is a Monte Carlo style 3d renderer (so the more samples you use, the closer to a perfect render it gets) written in Swift. In addition to the image above, showcasing some reflections, refraction, emission, and depth of field, here are some images I've rendered with it so far:
 
 <img src="%root%/content/images/2016/10/motionblur-medium.jpg" full="%root%/content/images/2016/10/motionblur.png" caption="A demo of motion blur" />
 
 <img src="%root%/content/images/2016/10/prisms-medium.jpg" full="%root%/content/images/2016/10/prisms.png" caption="Hey look it does more than spheres!" />
 
-<img src="%root%/content/images/2017/6/volume.png" full="%root%/content/images/2017/6/volume.png" caption="A sphere of fog" />
-
-<img src="%root%/content/images/2017/6/ss-demo.png" full="%root%/content/images/2017/6/ss-demo.png" caption="Subsurface scattering in a sphere where the inside tints the light red" />
-
 For a more thorough description of how this is implemented, <a href="%root%/blog/how-raytracing-works">read my blog post about it.</a>
-
-<h2>Features</h2>
-Shapes
-<ul>
-  <li>Sphere</li>
-  <li>Plane</li>
-  <li>Triangle</li>
-  <li>Rectangle</li>
-  <li>Rectangular prism</li>
-</ul>
-
-Materials
-<ul>
-  <li>Diffuse</li>
-  <li>Reflective</li>
-  <li>Refractive</li>
-  <li>Light emitter</li>
-  <li>Volumes</li>
-  <li>Subsurface Scattering</li>
-</ul>
-
-Other features
-<ul>
-<li>Multithreading</li>
-<li>Lens blur</li>
-<li>Motion blur</li>
-</ul>
