@@ -133,6 +133,23 @@ Although the bump map has a 2d domain, where <math>u,v</math> maps to <math>x,y<
 
 <img src="%root%/content/images/2018/7/cathedral000.png" full="%root%/content/images/2018/7/cathedral000.png" caption="Ripples using a Perlin noise bump map applied to an infinite plane." />
 
+### Multithreading and distribution
+
+I partition the pixels of the final image into batches to be run across multiple threads to take advantage of multiple processors on the computer doing the render. I take care to make randomization deterministic to increase the amount of temporal coherence across frames. Due to the high number of photons needed to reach full convergence and the number of frames needing to be rendered to produce an animation, relying on convergence is not practical. Instead, by deterministically seeding random generation, there is less distracting flicker between frames at the cost of the movement of individual photons across frames becoming slightly visible. The former is distracting; the latter is unnatural but more aesthetically pleasing. This a reasonable tradeoff for my purposes.
+
+I also take advantage of the computational resources provided by the University of Waterloo's CS department. Using the `--distribute` command line flag, the renderer will `ssh` into the three CS servers and run renders on all three simultaneously. One frame is rendered completely on one CS server in this mode, but the frame range specified in the `--frames` flag gets partitioned between the CS servers. Since a multithreaded task is capped at one hour of computation time on the CS servers, each frame is run as a new `ssh` command after the previous has finished. For the sake of other students using the CS servers, I generously decided to not use up all the cores on every server while rendering.
+
+<table>
+  <tr>
+    <th>Threads</th><th>Time</th>
+  </tr>
+  <tr><td>1</td><td>30m 31.592s</td></tr>
+  <tr><td>4</td><td>7m 36.888s</td></tr>
+  <tr><td>8</td><td>4m 4.390s</td></tr>
+  <tr><td>15</td><td>2m 37.270s</td></tr>
+  <tr><td>30</td><td>1m 28.938s</td></tr>
+</table>
+
 ### Ambient occlusion
 
 To better approximate ambient light in scenes where, in the interest of time, I don't want to use full global illumination, I implemented an ambient occlusion calculation. Since objects surrounded by other geometry tend to require more light bounces to receive indirect illumination, one can cast rays out from a point to see how much geometry is around it. Zhukov et al. describe the amount of occlusion at a point on a surface as an integral over the normal-aligned hemisphere, taking into account the distance to the nearest object for each angle in the integral. [9] To approximate the integral, sample rays are generated in the normal-aligned hemisphere at the surface. If the samples find that there is geometry within a certain radius, the ambient light is decreased. The closer the geometry is, the more ambient light is decreased.
@@ -177,23 +194,6 @@ end)
 ```
 
 <img src="%root%/content/images/2018/7/jump.gif" full="%root%/content/images/2018/7/jump.gif" caption="Keyframed animation of a cow jumping around a flooded Stonehenge." />
-
-### Multithreading and distribution
-
-I partition the pixels of the final image into batches to be run across multiple threads to take advantage of multiple processors on the computer doing the render. I take care to make randomization deterministic to increase the amount of temporal coherence across frames. Due to the high number of photons needed to reach full convergence and the number of frames needing to be rendered to produce an animation, relying on convergence is not practical. Instead, by deterministically seeding random generation, there is less distracting flicker between frames at the cost of the movement of individual photons across frames becoming slightly visible. The former is distracting; the latter is unnatural but more aesthetically pleasing. This a reasonable tradeoff for my purposes.
-
-I also take advantage of the computational resources provided by the University of Waterloo's CS department. Using the `--distribute` command line flag, the renderer will `ssh` into the three CS servers and run renders on all three simultaneously. One frame is rendered completely on one CS server in this mode, but the frame range specified in the `--frames` flag gets partitioned between the CS servers. Since a multithreaded task is capped at one hour of computation time on the CS servers, each frame is run as a new `ssh` command after the previous has finished. For the sake of other students using the CS servers, I generously decided to not use up all the cores on every server while rendering.
-
-<table>
-  <tr>
-    <th>Threads</th><th>Time</th>
-  </tr>
-  <tr><td>1</td><td>30m 31.592s</td></tr>
-  <tr><td>4</td><td>7m 36.888s</td></tr>
-  <tr><td>8</td><td>4m 4.390s</td></tr>
-  <tr><td>15</td><td>2m 37.270s</td></tr>
-  <tr><td>30</td><td>1m 28.938s</td></tr>
-</table>
 
 ### Constructive solid geometry (CSG)
 
