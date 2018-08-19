@@ -217,7 +217,6 @@ a.post {
   max-width: 30em;
   margin: 0 1.5em 2em 1.5em;
   flex: 1 0 18em;
-  background-color: #fff;
   text-decoration: none;
   display: block;
   -webkit-font-smoothing: antialiased;
@@ -227,6 +226,9 @@ a.post {
   -ms-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   -o-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
+}
+a.post .meta {
+  background-color: #fff;
 }
 a.post:hover {
   transform: scale(1.05);
@@ -257,6 +259,15 @@ a.post p {
   padding-top: 1rem;
   padding-bottom: 0.6em;
 }
+a.post .dank {
+  color: #999;
+  font-size: 1em;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1rem;
+  padding-bottom: 0.6em;
+  font-style: italic;
+}
 a.post .date {
   padding: 0 0.5em;
   display: block;
@@ -269,6 +280,31 @@ a.post .footer {
   color: #777;
   padding: 0.5rem;
 }
+a.post.detailed h3 {
+  border-top: 5px solid #f3d61b;
+}
+@media all and (min-width: 50em) {
+  a.post.detailed .thumbnail {
+    height: 18em;
+    max-width: 30em;
+    flex: 2;
+  }
+  a.post.detailed {
+    flex: 1 0 44em;
+    min-width: 44em;
+    max-width: 60em;
+    /*width:100%;*/
+  }
+  a.post.detailed .info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  a.post.detailed .meta {
+    flex: 3;
+  }
+}
+
 section.post div.awards {
   max-width: 800px;
   font-size: 1.2rem;

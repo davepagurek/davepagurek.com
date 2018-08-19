@@ -14,33 +14,50 @@
   <h2><%= $year.key %></h2>
   <div class="row spread">
 % for $year.value.list -> $post {
-    <a class='post' href='<%= $post.link %>'>
+    <a
+        class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'
+        href='<%= $post.link %>'>
       <h3><%= $post.meta<title> %></h3>
 
+      <div class='info'>
+
 %   if $post.meta<thumbnail> {
-      <div class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></div>
+        <div class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></div>
 %   }
 
+        <div class="meta">
 %   if $post.meta<languages> {
-      <div class='languages'>
+          <div class='languages'>
 %     if $post.meta<languages>.elems == 1 {
-        Made with <%= $post.meta<languages>[0] %>
+            Made with <%= $post.meta<languages>[0] %>
 %     } elsif $post.meta<languages>.elems == 2 {
-        Made with <%= $post.meta<languages>.join(' and ') %>
+            Made with <%= $post.meta<languages>.join(' and ') %>
 %     } else {
-        Made with <%= $post.meta<languages>[0..*-2].join(', ') %> and <%= $post.meta<languages>[*-1] %>
+            Made with <%= $post.meta<languages>[0..*-2].join(', ') %> and <%= $post.meta<languages>[*-1] %>
 %     }
-      </div>
+          </div>
 %   }
-      <p><%= $post.meta<excerpt> %></p>
 
-      <div class="footer">
+          <p><%= $post.meta<excerpt> %></p>
+%   if $post.meta<details> {
+          <p><%= $post.meta<details> %></p>
+%   }
+
+%   if $post.meta<dank> {
+          <div class='dank'>
+            This project is functional but highly sarcastic.
+          </div>
+%   }
+
+          <div class="footer">
 %   if $post.meta<awards> {
 %     for $post.meta<awards>.list -> $award {
-        <div class='award <%= $award<award> %>' title='<%= $award<description> %>'></div>
+            <div class='award <%= $award<award> %>' title='<%= $award<description> %>'></div>
 %     }
 %   }
-        <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+            <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
+          </div>
+        </div>
       </div>
     </a>
 % }
