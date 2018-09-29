@@ -1,0 +1,56 @@
+<!--
+{
+	"title": "Bloom",
+	"category": "programming",
+	"date": "2018-09-21",
+	"excerpt": "Interactive art through growing vine people.",
+	"thumbnail": "%root%/content/images/2018/9/bloom-thumbnail.jpg",
+	"languages": [
+		"Javascript", "WebGL"
+	],
+	"buttons": [
+		{
+			"url": "https://github.com/davepagurek/Bloom",
+			"text": "View Source on GitHub"
+		} 
+	]
+}
+-->
+
+
+This was a project created in collaboration with <a href="http://joshshi.com">Josh Shi</a> for a little art show put together at <a href="https://www.figma.com">Figma</a>. The people in the frame of your computer's webcam are detected, and vines are grown around them. A TensorflowJS model is used to do the person detection, and then everything is drawn with WebGL. Here it is in action:
+
+https://www.youtube.com/watch?v=QnM37DWjqaI
+
+## Design
+
+There were a bunch of interesting implementation details that went into this project to get everything to work. Here's a little description of a few of them.
+
+### Thick lines
+
+It turns out Chrome no longer supports drawing lines in WebGL with a thickness value of anything other than 1. That isn't ideal when drawing vines, so we re-implemented thick lines from scratch. Here is how it works, at a high level:
+
+<img src="%root%/content/images/2018/9/thick-lines.png" full="%root%/content/images/2018/9/thick-lines.png" caption="The steps in creating thick lines." />
+
+<ol>
+  <li>Take the points making up the curve and put them into screen space.</li>
+  <li>Have a second copy of all of the points.</li>
+  <li>Push each copy away from the other along the normal. The tangent is approximated by finding the slope between two nearby points, and then a vector `[x, y]` has the normal `[y, -x]` in 2D space.</li>
+  <li>Triangulate using these points.</li>
+</ol>
+
+### Shared data
+
+The positions for every point on every person are used to position each vine and flower. This means that each vertex will need access to some subset of this data.
+
+Additionally, for every vine and every flower, there will also be more than one vertex: a flower is composed of four vertices to draw a textured rectangle, and each vine segment has multiple points along its curve, all duplicated to get thick lines. A geometry shader could be used in OpenGL to turn one flower particle into the required four points or to duplicate vine vertices for thick lines, but WebGL doesn't support those.
+
+To deal with all of these problems, all shared state is stored in textures, which are effectively used as 2D lookup tables. For example, for flower particles, each row in the state texture represents a different flower, and each column represents a different property, such as the person index it is attached to, the two joints it is between, the offset between the joints, and which frame of its animation it is in. A static list of index + rectangle corner vertex attributes is used, which never changes between frames. This way, the state texture can be placed on the GPU once, and then everything can be re-rendered immediately without a CPU cost of duplicating data.
+
+Data for each particle is stored in a `Float32Array` so that it can be directly sent to the GPU as a texture. Getting or setting a property for a specific particle simply involves indexing into the array correctly in the same way that one would look up the data from a texture on the GPU.
+
+### Aesthetics
+
+Stacked sine waves with random offsets per vine segment are used to make the vines wavy. To ensure that segments connect directly at endpoints, offsets are multiplied with a function with `f(0) = 0`, `f(1) = 0`, and `f(0.5) = 1` so that there is never an offset at the endpoints of a segment, and full offset in the middle.
+
+Finally, to counteract the shakiness of the output from TensorflowJS, when a new joint coordinate is given each frame, the existing joint for that person only moves a third of the way there. This way, if a joint outputted from TensorflowJS moves and then stays in its new location for multiple frames, the joint used in Bloom will ease into that new location over a few frames. This way, if there is any single-frame noise in joint locations, its impact on the resulting final location is dampened and the overall picture moves more smoothly. This introduces lag, since it now takes more time for joints to end up in their proper locations if there is a real, non-noise movement. However, since the underlying webcam video is not displayed on screen, the lag is much less perceivable.
