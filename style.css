@@ -58,7 +58,7 @@ hr {
   border: 0;
 }
 hr::after {
-  content: '⁂';
+  content: '\2042';
   display: block;
   opacity: 0.8;
   line-height: 1em;

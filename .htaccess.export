@@ -1,6 +1,10 @@
 ErrorDocument 404 /404.html
 Options +ExecCGI
 
+SetEnvIf Origin ^(https?://(?:.+\.)?davepagurek\.com(?::\d{1,5})?)$   CORS_ALLOW_ORIGIN=$1
+Header append Access-Control-Allow-Origin  %{CORS_ALLOW_ORIGIN}e   env=CORS_ALLOW_ORIGIN
+Header merge  Vary "Origin"
+
 <FilesMatch deploy$>
 SetHandler cgi-script
 SetEnv PATH /.rakudobrew/bin:/usr/local/bin:/usr/bin:/bin
