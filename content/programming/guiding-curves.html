@@ -35,7 +35,7 @@
 
 We present a likelihood function for Sequential Monte Carlo sampling that lets artists draw guiding curves to control the output of generating grammars. This  framework enables the high-level structure of models to be intuitively specified while allowing for sufficient variation in the low-level details. Our method can be computed at interactive rates to enable the short feedback loops required for exploratory design.
 
-We created a proof-of-concept editor that uses this method to enable real-time searching of models produced by a grammar to demonstrate this capability.
+We additionally created a proof-of-concept editor that uses this method to enable real-time searching of models produced by a grammar to demonstrate this capability.
 
 <img src="%root%/content/images/2018/10/calderplayground.png" full="%root%/content/images/2018/10/calderplayground.png" caption="The guiding curves editor, with a pane on the left to create a generating grammar, and a pane on the right to draw guiding curves." />
 
@@ -45,7 +45,7 @@ Procedural modelling is a great way to add a level of detail and richness to 3D 
 
 Grammars are a convenient way to express those patterns. Unfortunately, they produce a broader space of models than would be artistically desirable. For each good model produced, there may also be a weird one. Editing the grammar to prevent this is extremely hard (consider trying to modify the English grammar to prevent gross sentences from being valid for a sense of how hard this can be.)
 
-An alternative is to search the space of models produced by a grammar for samples that best fit a set of constraints. You can think of the constraint search as controlling the growth of generative models. <a href="https://dritchie.github.io/pdf/sosmc.pdf">Past work</a> has used probabilistic inference to do the search and have provided constraints on properties such as the volume a model occupies and the shape of its shadow. However, it takes a lot of effort to create targets for these constraints, and they take tens of seconds to run a search on. This prevents artists from working *iteratively,* where there is a quick feedback loop between the artist and the tool where the artist makes changes, looks at interactive feedback, and uses that to make more changes. This sort of feedback requires the search to run in under a second. This work aims to do as much useful work for the artist as possible in under a second to enable iterative design.
+An alternative is to search the space of models produced by a grammar for samples that best fit a set of constraints. You can think of the constraint search as controlling the growth of generative models. <a href="https://dritchie.github.io/pdf/sosmc.pdf">Past work</a> has used probabilistic inference to do the search and has provided constraints on properties such as the volume a model occupies and the shape of its shadow. However, it takes a lot of effort to create targets for these constraints, and they take tens of seconds to run a search on. This prevents artists from working *iteratively,* where there is a quick feedback loop between the artist and the tool. Ideally, we would have a workflow where the artist makes changes, looks at interactive feedback, and uses that to make more changes. This sort of feedback requires the search to run in under a second. This work aims to do as much useful work for the artist as possible in under a second to enable iterative design.
 
 ## Drawing guiding curves
 
