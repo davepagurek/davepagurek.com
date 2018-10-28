@@ -7,7 +7,7 @@
         <p>
           <a class="button" href="resume" target="_blank">Resume</a>
           <a class="button" href="https://github.com/davepagurek">GitHub</a>
-          <a class="button" href="archives">Portfolio</a>
+          <a class="button" href="archives">Projects</a>
         </p>
       </div>
     </div>
@@ -15,13 +15,26 @@
   <section>
     <h2>Programming</h2>
     <p>I'm a programmer with an interest in computer graphics. Particularly, I'm interested in how tools affect the things we make, and how software can influence design thought.</p>
-% for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<details>)[0..^3].grep({$_}) -> $post {
+% for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<details>)[0..^2].grep({$_}) -> $post {
     <article class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'>
 %   if $post.meta<thumbnail> {
         <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
 %   }
       <div class='info'>
         <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+% if $post.meta<coauthors> {
+  <p class="coauthors">
+    Written in collaboration with
+%   if $post.meta<coauthors>.elems == 1 {
+      <%= $post.meta<coauthors>[0]<name> %>.
+%   } elsif $post.meta<coauthors>.elems == 2 {
+      <%= $post.meta<coauthors>.map(*<name>).join(' and ') %>.
+%   } else {		
+      <%= $post.meta<coauthors>[0..*-2].map(*<name>).join(', ') %>
+      and <%= $post.meta<coauthors>[*-1]<name> %>.
+%   }
+  </p>
+% }
         <p class='date'>
           <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
 %   if $post.meta<awards> {
@@ -56,6 +69,9 @@
       </div>
     </article>
 % }
+    <div class="row">
+      <a class="button primary" href="https://www.davepagurek.com/programming/">More programming projects</a>
+    </div>
   </section>
   <section>
     <h2>Arts and Design</h2>
@@ -64,6 +80,8 @@
       <iframe class="soundcloud" width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276903834&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
     </div>
     <div class="row">
+      <a class="button primary" href="https://www.davepagurek.com/art/">View art</a>
+      <a class="button primary" href="https://www.davepagurek.com/film/">View animations</a>
       <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Listen on Soundcloud</a>
     </div>
   </section>

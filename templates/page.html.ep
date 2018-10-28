@@ -25,6 +25,21 @@
 % }
 
   <h1><%= $params<page>.meta<title> %></h1>
+
+% if $params<page>.meta<coauthors> {
+  <div class="content coauthors">
+    Written in collaboration with
+%   if $params<page>.meta<coauthors>.elems == 1 {
+      <%= $params<page>.meta<coauthors>[0]<name> %>.
+%   } elsif $params<page>.meta<coauthors>.elems == 2 {
+      <%= $params<page>.meta<coauthors>.map(*<name>).join(' and ') %>.
+%   } else {		
+      <%= $params<page>.meta<coauthors>[0..*-2].map(*<name>).join(', ') %>
+      and <%= $params<page>.meta<coauthors>[*-1]<name> %>.
+%   }
+  </div>
+% }
+
   <div class="content">
     <span class="date"><%= strftime("%B %e, %Y", DateTime.new(date => $params<page>.meta<date>)) %></span>
 
@@ -34,6 +49,7 @@
 %     }
 %   }
   </div>
+
 % if $params<page>.meta<awards> {
   <div class='content awards'>
 %   for $params<page>.meta<awards>.list -> $award {

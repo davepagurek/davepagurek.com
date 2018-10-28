@@ -54,6 +54,6 @@
       <a class='toggle' onclick='var nav = document.querySelector("nav"); nav.className = nav.className == "" ? "open" : "";'>Menu</a>
       <a class='<%= $params<type> eq 'home' ?? 'selected' !! '' %>' href='<%= $params<root> %>'>About</a>
       <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug eq 'blog') || ($params<type> eq 'category' && $params<category>.slug eq 'blog') ?? 'selected' !! '' %>' href='<%= "{$params<root>}/blog" %>'>Blog</a>
-      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug ne 'blog') || ($params<type> eq 'category' && $params<category>.slug ne 'blog') || $params<type> eq 'archives' ?? 'selected' !! '' %>' href='<%= $params<root> %>/archives'>Portfolio</a>
+      <a class='<%= ($params<type> eq 'page' && $params<page>.cat-slug ne 'blog') || ($params<type> eq 'category' && $params<category>.slug ne 'blog') || $params<type> eq 'archives' ?? 'selected' !! '' %>' href='<%= $params<root> %>/archives'>Projects</a>
     </nav>
   </header>

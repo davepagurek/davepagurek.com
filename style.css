@@ -321,8 +321,22 @@ section.post div.awards {
   font-style: italic;
   color: #999;
 }
+.coauthors {
+  color: #999;
+  font-style:italic;
+}
 section.post h1 {
   padding-bottom: 0;
+}
+.content.coauthors {
+  padding-bottom: 0;
+}
+article.post p.coauthors {
+  padding-bottom: 0.2rem;
+}
+
+.content.coauthors + .content {
+  padding-top: 0.6em;
 }
 
 section.post-header p {
@@ -702,7 +716,8 @@ footer {
 footer p {
   text-align: center;
 }
-.footer a.button {
+footer a.button {
   margin-left: 0;
-  padding: 0.5em;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
 }
