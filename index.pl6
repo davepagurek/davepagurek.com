@@ -57,7 +57,9 @@ my $app = Cantilever.new(
 
         "<div class='img-container'><div class='img'>"
         ~ "<a href='{$t.formatted-attributes<full>}'>"
-        ~ "<img src='{$t.formatted-attributes<src>}' />"
+        ~ "<img src='{$t.formatted-attributes<src>}'"
+        ~ ($t.formatted-attributes<width> ?? "width='{$t.formatted-attributes<width>}'" !! "")
+        ~ " />"
         ~ "</a>"
         ~ $caption
         ~ "</div></div>";
