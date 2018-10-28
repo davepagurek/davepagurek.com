@@ -1,66 +1,57 @@
 <section>
-  <h2><%= $params<category>.meta<name> %></h2>
+  <h1><%= $params<category>.meta<name> %></h1>
   <p>
   <%=
     $params<content>.all-cats.sort(*.meta<rank>).map(-> $p {
-      "<a href='{$p.link}'>{$p.meta<name>.gist}</a>"
+      "<a href='{$p.link}' class='button'>{$p.meta<name>.gist}</a>"
     }).join(' ')
   %>
-  <a href='<%= $params<root> %>/archives'>Everything</a>
+  <a href='<%= $params<root> %>/archives' class='button'>Everything</a>
   </p>
 </section>
 % for $params<category>.pages-by-date -> $year {
 <section class='posts'>
-  <h2><%= $year.key %></h2>
-  <div class="row spread">
+  <h3><%= $year.key %></h3>
 % for $year.value.list -> $post {
-    <a
-        class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'
-        href='<%= $post.link %>'>
-      <h3><%= $post.meta<title> %></h3>
-
-      <div class='info'>
-
+    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'>
 %   if $post.meta<thumbnail> {
-        <div class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></div>
+        <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
 %   }
+      <div class='info'>
+        <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+        <p class='date'>
+          <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
+%   if $post.meta<awards> {
+%     for $post.meta<awards>.list -> $award {
+            <span class='award <%= $award<award> %>' title='<%= $award<description> %>'></span>
+%     }
+%   }
+        </p>
 
         <div class="meta">
-%   if $post.meta<languages> {
-          <div class='languages'>
-%     if $post.meta<languages>.elems == 1 {
-            Made with <%= $post.meta<languages>[0] %>
-%     } elsif $post.meta<languages>.elems == 2 {
-            Made with <%= $post.meta<languages>.join(' and ') %>
-%     } else {
-            Made with <%= $post.meta<languages>[0..*-2].join(', ') %> and <%= $post.meta<languages>[*-1] %>
-%     }
-          </div>
-%   }
-
           <p><%= $post.meta<excerpt> %></p>
 %   if $post.meta<details> {
           <p><%= $post.meta<details> %></p>
 %   }
 
 %   if $post.meta<dank> {
-          <div class='dank'>
+          <p class='dank'>
             This project is functional but highly sarcastic.
-          </div>
+          </p>
 %   }
 
-          <div class="footer">
-%   if $post.meta<awards> {
-%     for $post.meta<awards>.list -> $award {
-            <div class='award <%= $award<award> %>' title='<%= $award<description> %>'></div>
+  <p class='links'>
+    <a href='<%= $post.link %>'>Read more</a>
+%   if my $buttons = $post.meta<buttons> {
+%     for $buttons.list -> $button {
+    <a href='<%= $button<url> %>'><%= $button<text> %></a>
 %     }
 %   }
-            <div class='date'><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></div>
-          </div>
+  </p>
+
         </div>
       </div>
-    </a>
+    </article>
 % }
-  </div>
 </section>
 % }

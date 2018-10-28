@@ -1,6 +1,13 @@
   <footer>
-    <p>My name is Dave and I'm a programmer, designer, and artist.</p>
-    <p>Want to get in touch? Find or contact me elsewhere:</p>
+    <hr />
+    <p>
+      <span class="avoid_wrap">
+        My name is Dave and I'm a programmer and artist.
+      </span>
+      <span class="avoid_wrap">
+        Want to get in touch? Find or contact me elsewhere:
+      </span>
+    </p>
     <p>
       <span class="avoid_wrap">
         <a href="mailto:dave@davepagurek.com" class="button">dave@davepagurek.com</a>

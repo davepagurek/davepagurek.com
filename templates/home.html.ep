@@ -14,41 +14,56 @@
   </section>
   <section>
     <h2>Programming</h2>
-    <p>I'm a programmer with an interest in computer graphics. I spend a lot of time working in <strong>Javascript</strong>, <strong>C++</strong>, and <strong>Ruby</strong>, and I also know my way around CSS, Java, Swift, SQL, and Linux.</p>
-    <div class="row">
-      <div class="column">
-        <p>I made a <a href="https://www.davepagurek.com/programming/cs488/">a raytracer</a> for a computer graphics class, implementing photon mapped global illumination, inverse kinematics, and controlled procedural modelling. Written in C++.</p>
-        <a class="button secondary" href="https://davepagurek.com/programming/cs488">Read more</a>
+    <p>I'm a programmer with an interest in computer graphics. Particularly, I'm interested in how tools affect the things we make, and how software can influence design thought.</p>
+% for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<details>)[0..^3].grep({$_}) -> $post {
+    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'>
+%   if $post.meta<thumbnail> {
+        <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
+%   }
+      <div class='info'>
+        <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+        <p class='date'>
+          <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
+%   if $post.meta<awards> {
+%     for $post.meta<awards>.list -> $award {
+            <span class='award <%= $award<award> %>' title='<%= $award<description> %>'></span>
+%     }
+%   }
+        </p>
+
+        <div class="meta">
+          <p><%= $post.meta<excerpt> %></p>
+%   if $post.meta<details> {
+          <p><%= $post.meta<details> %></p>
+%   }
+
+%   if $post.meta<dank> {
+          <p class='dank'>
+            This project is functional but highly sarcastic.
+          </p>
+%   }
+
+  <p class='links'>
+    <a href='<%= $post.link %>'>Read more</a>
+%   if my $buttons = $post.meta<buttons> {
+%     for $buttons.list -> $button {
+    <a href='<%= $button<url> %>'><%= $button<text> %></a>
+%     }
+%   }
+  </p>
+
+        </div>
       </div>
-      <div class="column before">
-        <a href="https://www.davepagurek.com/programming/cs488" class="imgblock">
-          <img alt="Raytracer" src="https://www.davepagurek.com/content/images/2018/7/lightup054-medium.jpg" />
-        </a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="column">
-        <p>I made <a href="https://www.davepagurek.com/programming/frontier">procedurally generated landscapes</a>, generating hills, trees, and houses using Perlin noise and fractals. Made in Javascript.</p>
-        <a class="button secondary" href="https://www.davepagurek.com/programming/frontier">Read more</a>
-      </div>
-      <div class="column before">
-        <a href="https://www.davepagurek.com/programming/frontier/" class="imgblock">
-          <img alt="Frontier" src="https://www.davepagurek.com/content/images/2015/6/buildings-day-medium.jpg" />
-        </a>
-      </div>
-    </div> 
-    <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/programming/">View More Programming</a>
-    </div>
+    </article>
+% }
   </section>
   <section>
     <h2>Arts and Design</h2>
-    <p>In my spare time I draw, make animations, and write music. I make a lot of sarcastic cover songs as well as serious music like the track below.</p>
+    <p>In my spare time, I <a href="https://www.davepagurek.com/art">draw</a>, make <a href="https://www.davepagurek.com/film">animations</a>, and write music. I make a lot of sarcastic cover songs as well as serious music like the track below.</p>
     <div class="row full">
       <iframe class="soundcloud" width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276903834&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
     </div>
     <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/art/">View Art</a>
       <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Listen on Soundcloud</a>
     </div>
   </section>

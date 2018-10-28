@@ -1,24 +1,12 @@
+<section class='post'>
+
 % if $params<page>.meta<youtube> {
-<section class='youtube'>
   <iframe class='youtube' width='560' height='315' src='//www.youtube.com/embed/<%= $params<page>.meta<youtube> %>?rel=0' frameborder='0' allowfullscreen></iframe>
-</section>
 % } elsif $params<page>.meta<vimeo> {
-<section class='youtube'>
   <iframe class='youtube' src='https://player.vimeo.com/video/<%= $params<page>.meta<vimeo> %>' width='560' height='315' frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-</section>
 % } elsif my $art = $params<page>.meta<art> {
-<section class='art-header'>
   <a href="<%= $art %>"><img src="<%= $art %>" class="art" /></a>
-%   if my $buttons = $params<page>.meta<buttons> {
-  <p>
-%     for $buttons.list -> $button {
-    <a class='button' href='<%= $button<url> %>'><%= $button<text> %></a>
-%     }
-  </p>
-%   }
-</section>
 % } elsif any($params<page>.meta.keys) eq any('browser', 'android', 'embed', 'video', 'buttons') {
-<section class='post-header'>
 %   if my $browser = $params<page>.meta<browser> {
   <a class="browser" data-url="<%= $browser<url> %>" href="<%= $browser<url> %>">
     <img src="<%= $browser<image> %>" />
@@ -34,19 +22,18 @@
   <%= $params<page>.meta<embed> || "" %>
 
   <%= $params<page>.meta<video> || "" %>
+% }
+
+  <h1><%= $params<page>.meta<title> %></h1>
+  <div class="content">
+    <span class="date"><%= strftime("%B %e, %Y", DateTime.new(date => $params<page>.meta<date>)) %></span>
 
 %   if my $buttons = $params<page>.meta<buttons> {
-  <p>
 %     for $buttons.list -> $button {
     <a class='button' href='<%= $button<url> %>'><%= $button<text> %></a>
 %     }
-  </p>
 %   }
-% }
-</section>
-<section class='post'>
-  <h1><%= $params<page>.meta<title> %></h1>
-  <div class="content date"><%= strftime("%B %e, %Y", DateTime.new(date => $params<page>.meta<date>)) %></div>
+  </div>
 % if $params<page>.meta<awards> {
   <div class='content awards'>
 %   for $params<page>.meta<awards>.list -> $award {
@@ -57,5 +44,6 @@
 %   }
   </div>
 % }
+
   <%= $params<page>.rendered %>
 </section>
