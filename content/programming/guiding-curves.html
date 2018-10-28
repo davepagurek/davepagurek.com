@@ -60,7 +60,14 @@ For each bone, there are two factors affecting the cost:
 1. **Alignment to a vector field.** We find the closest point on a guiding curve to the base of the bone and see how closely the direction of the bone aligns with the gradient of the curve at the closest point. Well-aligned bones have a negative cost, incentivizing adding well-aligned bones; poorly-aligned bones have a positive cost. How well-aligned a bone needs to be to have a negative cost is a tunable parameter.
 2. **Distance to the guiding curve.** When we find the closest guiding curve, we add a cost based on how far away the bone is to balance the alignment cost. You can pick if you want the cost to scale linearly or quadratically with distance.
 
-<img src="%root%/content/images/2018/10/cost_function_diagram-medium.jpg" full="%root%/content/images/2018/10/cost_function_diagram.png" caption="The information the cost function operates on when adding a new bone." />
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2018/10/cost_function_diagram-medium.jpg" full="%root%/content/images/2018/10/cost_function_diagram.png" caption="The information the cost function operates on when adding a new bone." />
+  </div>
+  <div class="column">
+    <img src="%root%/content/images/2018/10/vectorfield.png" full="%root%/content/images/2018/10/vectorfield.png" caption="The alignments for each point in space around some guides, coloured to represent the distance cost for that location." />
+  </div>
+</div>
 
 
 ## Performance

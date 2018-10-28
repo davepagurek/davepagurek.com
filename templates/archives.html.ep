@@ -1,6 +1,6 @@
 <section>
   <h1>Everything</h1>
-  <p>
+  <p class="categories">
   <%=
     $params<content>.all-cats.sort(*.meta<rank>).map(-> $p {
       "<a href='{$p.link}' class='button'>{$p.meta<name>.gist}</a>"
@@ -19,6 +19,21 @@
 %   }
       <div class='info'>
         <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+
+% if $post.meta<coauthors> {
+        <p class="coauthors">
+          Written in collaboration with
+%   if $post.meta<coauthors>.elems == 1 {
+          <%= $post.meta<coauthors>[0]<name> %>.
+%   } elsif $post.meta<coauthors>.elems == 2 {
+          <%= $post.meta<coauthors>.map(*<name>).join(' and ') %>.
+%   } else {		
+          <%= $post.meta<coauthors>[0..*-2].map(*<name>).join(', ') %>
+          and <%= $post.meta<coauthors>[*-1]<name> %>.
+%   }
+        </p>
+% }
+
         <p class='date'>
           <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
 %   if $post.meta<awards> {

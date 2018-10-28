@@ -158,10 +158,8 @@ iframe.soundcloud {
 .button {
   cursor: pointer;
   display: inline-block;
-  margin-left: 0.6em;
-  border-radius: 0.3em;
+  margin-left: 0.6rem;
   -webkit-font-smoothing: antialiased;
-  translate3d( 0, 0, 0);
   color: #D9042B;
   text-align: center;
   text-decoration: underline;
@@ -269,6 +267,24 @@ article.post.detailed {
   article.post a.thumbnail {
     width: 8em;
     height: 8em;
+  }
+}
+@media all and (max-width: 450px) {
+  article.post {
+    flex-direction: column;
+  }
+  article.post a.thumbnail {
+    width: 100%;
+    height: 12em;
+  }
+  article.post .info {
+    flex: 0;
+  }
+}
+
+@media all and (max-width: 500px) {
+  .categories a.button {
+    margin: 0;
   }
 }
 
@@ -588,7 +604,7 @@ nav a.toggle {
   nav {
     display: block;
     background-color: #FFF;
-    height: 9.5rem;
+    height: 8rem;
     overflow: hidden;
     -webkit-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
     -moz-transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
@@ -597,19 +613,21 @@ nav a.toggle {
     transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   }
   nav.open {
-    height: 21.5rem;
+    height: 20rem;
   }
   nav a.toggle {
-    background-color: rgba(88, 140, 140, 0.48);
+    background-color: rgba(88, 140, 140, 0);
     display: flex;
     cursor: pointer;
-    color:#FFF;
+  }
+  nav.open a.toggle {
+    background-color: rgba(88, 140, 140, 0.2);
   }
   nav h1 a {
     flex: 1;
     display: block;
     justify-content: center;
-    height:5.5rem;
+    height:4rem;
     line-height:3rem;
   }
   nav a {

@@ -13,13 +13,17 @@
         <a href="mailto:dave@davepagurek.com" class="button">dave@davepagurek.com</a>
         <a href="https://github.com/davepagurek/" class="button external" target="_blank">GitHub</a>
         <a href="http://www.youtube.com/pahgawk" class="button external" target="_blank">YouTube</a>
-        <a href="http://soundcloud.com/davidpvm" class="button external" target="_blank">Soundcloud</a>
       </span>
       <span class="avoid_wrap">
-        <a href="http://soundcloud.com/dont-cross-me" class="button external" target="_blank">Sarcastic Soundcloud</a>
-        <a href="http://pahgawk.newgrounds.com/" class="button external" target="_blank">Newgrounds</a>
-        <a href="http://codepen.io/davepvm/" class="button external" target="_blank">CodePen</a>
-      </span>
+        <span class="avoid_wrap">
+          <a href="http://soundcloud.com/davidpvm" class="button external" target="_blank">Soundcloud</a>
+          <a href="http://soundcloud.com/dont-cross-me" class="button external" target="_blank">Sarcastic Soundcloud</a>
+        </span>
+        <span class="avoid_wrap">
+          <a href="http://pahgawk.newgrounds.com/" class="button external" target="_blank">Newgrounds</a>
+          <a href="http://codepen.io/davepvm/" class="button external" target="_blank">CodePen</a>
+        </span>
+        </span>
     </p>
   </footer>
   % for $params<scripts> || [] -> $src {
