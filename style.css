@@ -44,14 +44,24 @@ p {
   line-height: 1.8em;
 }
 td, th {
-  padding: 0.2em;
+  padding: 0.6em;
+  margin: 0;
+  vertical-align: top;
+  border: 1px solid #DDD;
 }
 th {
   font-weight: bold;
-  border-bottom: 1px solid #000;
+  background-color: #f7f7f7;
 }
 table {
-  border-spacing: 1em;
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.table-container {
+  display: flex;
+  justify-content: center;
 }
 hr {
   background: none;

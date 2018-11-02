@@ -11,13 +11,13 @@ my $category-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templa
 my $archives-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/archives.html.ep".IO.slurp ~ $footer);
 my $error-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/error.html.ep".IO.slurp ~ $footer);
 
+my $local = %*ENV<ENV> eq "local";
+
 my $app = Cantilever.new(
   dev => True,
   port => 80,
-  export-dir => "/var/www/html",
-  #export-dir => "/Users/dpagurek/Sites",
-  root => "https://www.davepagurek.com",
-  #root => "http://localhost",
+  export-dir => $local ?? "/Users/dpagurek/Sites" !! "/var/www/html",
+  root => $local ?? "http://localhost" !!  "https://www.davepagurek.com",
   mimefile => '/etc/mime.types'.IO.e ?? '/etc/mime.types' !! '/etc/apache2/mime.types', # For OSX
   ignore => [ / 'templates' ['/' .*] $ / ],
   ignore-cats => [ / 'images'$ / ],
@@ -83,6 +83,14 @@ my $app = Cantilever.new(
         "<span class='math inline'>\\(" ~
         $t.children.map(*.to-html(%options)).join("") ~
         "\\)</span>";
+      }
+    ),
+    Cantilever::Page::CustomTag.new(
+      matches-fn => -> $t { $t.type eq "table" },
+      render-fn => -> $t, %options {
+        "<div class='table-container'><table>" ~
+        $t.children.map(*.to-html(%options)).join("") ~
+        "</table></div>";
       }
     )
   ]
