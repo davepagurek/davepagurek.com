@@ -1,0 +1,74 @@
+<!--
+{
+  "title": "Improving the procedural modelling workflow",
+  "category": "blog",
+  "date": "2018-11-14",
+  "excerpt": "A discussion of the most tedious parts of something made to make modelling less tedious, and how they can be improved."
+}
+-->
+
+There are a lot of things in art that are hard, but are *especially* hard in 3D.
+
+Say you wanted to make a forest landscape. If this were a painting, you probably wouldn't paint every leaf on every tree. Firstly, you don't have to worry about the ones you can't see. But even for the ones you can see, you're able to get away with using less detail in areas that aren't the focus. The patterns can be abstracted into dabs of paint that give the impression of leaves without the effort of clearly defining each one.
+
+3D doesn't afford this luxury. For better or for worse, everything in 3D graphics as we know it must be attached to some well-defined form. There's no way to dab a brush here and there just yet. Less detail could be used off in the distance, but in many cases, 3D is being used specifically so that a world can be inhabited, walked around, and explored, so there may not be a region that's "in the distance" all the time.
+
+You can try to save effort by modelling a tree and copy-and-pasting it around. Of course, the difficulty with this is that the regularity will look unnatural. You can rotate and distort them as you go to add some variation, and that may help, but it can only go so far. To get rid of that unwanted regularity, you'd want to apply the same process to components of each pasted tree, not just the whole thing, so that the overall model looks different. While this may be faster than modelling each tree from scratch, this still ends up being a lot of manual effort.
+
+It gets to a point where it becomes easier to describe the *procedure* with which models are created than to create the models by hand. This is what procedural modelling is: where you create a program of sorts that then creates models.
+
+## Generating from grammars
+
+Grammars are a convenient way of describing the sorts of patterns we want in our models. The name comes from how we describe the patterns in the structure of language. English, for example, has a grammar. You may have seen a sentence broken up into a structure like this:
+
+<table>
+  <tr><th>The</th><th>handsome</th><th>author</th><th>disseminated</th><th>knowledge</th><th>from</th><th>his</th><th>expansive</th><th>brain.</th></tr>
+  <tr><td>ARTICLE</td><td>ADJ</td><td>NOUN</td><td rowspan="3">VERB</td><td rowspan="2">NOUN</td><td rowspan="2">PREP</td><td>ADJ</td><td>ADJ</td><td>NOUN</td></tr>
+  <tr><td colspan="3" rowspan="3">NOUN PHRASE</td><td colspan="3">NOUN PHRASE</td></tr>
+  <tr><td colspan="5">NOUN PHRASE</td></tr>
+  <tr><td colspan="6">VERB PHRASE</td></tr>
+  <tr><td colspan="9">CLAUSE</td></tr>
+  <tr><td colspan="9">SENTENCE</td></tr>
+</table>
+
+Let's simplify things and ignore a bunch of parts of the English language to make a simple grammar, where everything is either a noun, a verb, or the joiner word "and."
+
+<table>
+  <tr><th>I</th><th>say</th><th>words.</th></tr>
+  <tr><td rowspan="2">NOUN</td><td>VERB</td><td>NOUN</td></tr>
+  <tr><td colspan="2">VERB PHRASE</td></tr>
+  <tr><td colspan="3">CLAUSE</td></tr>
+  <tr><td colspan="3">SENTENCE</td></tr>
+</table>
+
+If you read the sentence breakdown from the bottom up, you can see how one component of the sentence can be composed of multiple other components, eventually leading to concrete words. We'll call the concrete words *terminals* and we'll call the components *rules.* We can describe how it all works for our simplified version of English by showing the different ways you can break down each rule, starting from the broadest.
+
+As a convention, things in `ALL CAPS` will be rules and things in `lowercase` will be terminals. A | means "or," with brackets to help specify how alternatives are grouped. The symbol &epsilon; refers to nothing, so (<em>x</em> | &epsilon;) effectively means <em>x</em> is optional.
+
+<table>
+  <tr><th>`SENTENCE`</th><td>`CLAUSE` (`COMPOUND` | &epsilon;)</td></tr>
+  <tr><th>`COMPOUND`</th><td>`and` `CLAUSE`</td></tr>
+  <tr><th>`CLAUSE`</th><td>`NOUN` `VERB_PHRASE`</td></tr>
+  <tr><th>`VERB_PHRASE`</th><td>`VERB` (`NOUN` | &epsilon;)</td></tr>
+  <tr><th>`NOUN`</th><td>`abacus` | `babboon` | `cantaloupe` | ...</td></tr>
+  <tr><th>`VERB`</th><td>`arrive` | `bamboozle` | `capitulate` | ...</td></tr>
+</table>
+
+You can see how these definitions can be used to produce the sentence breakdown from earlier, starting from a sentence, breaking that down into a clause, and then a noun and verb phrase. An existing sentence can be analyzed by starting from the words in the sentence, grouping terminals into rules, and then grouping the rules into more rules, until no more grouping is possible.
+
+You can also go the other way to generate sentences. Start from a rule, pick some arbitrary breakdown of that rule into more rules, and eventually pick arbitrary terminals from the available options:
+
+<table>
+  <tr><td colspan="7">SENTENCE</td></tr>
+  <tr><td colspan="3">CLAUSE</td><td colspan="4">COMPOUND</td></tr>
+  <tr><td>NOUN</td><td colspan="2">VERB PHRASE</td><th style="vertical-align: bottom" rowspan="4">and</th><td colspan="3">CLAUSE</td></tr>
+  <tr><th style="vertical-align: bottom" rowspan="3">Ants</th><td>VERB</td><td>NOUN</td><td>NOUN</td><td colspan="2">VERB PHRASE</td></tr>
+  <tr><th style="vertical-align: bottom" rowspan="2">cover</th><th style="vertical-align: bottom" rowspan="2">surfaces</th><th style="vertical-align: bottom" rowspan="2">I</th><td>VERB</td><td>NOUN</td></tr>
+  <tr><th style="vertical-align: bottom">raise</th><th style="vertical-align: bottom">concerns.</th></tr>
+</table>
+
+In a way, it's like <a href="https://en.wikipedia.org/wiki/Mad_Libs">Mad Libs</a>, but where the sentence structure is also picked at random in addition to the words.
+
+## Grammars for constructing shapes
+
+Just like words, this can be done with shapes. We'll need a new vocabulary
