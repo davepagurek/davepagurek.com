@@ -1,3 +1,4 @@
+<%= $params<page>.date-tag %>
 <section class='post'>
 
 % if $params<page>.meta<youtube> {

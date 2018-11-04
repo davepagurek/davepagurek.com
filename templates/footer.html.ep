@@ -23,7 +23,7 @@
           <a href="http://pahgawk.newgrounds.com/" class="button external" target="_blank">Newgrounds</a>
           <a href="http://codepen.io/davepvm/" class="button external" target="_blank">CodePen</a>
         </span>
-        </span>
+      </span>
     </p>
   </footer>
   % for $params<scripts> || [] -> $src {

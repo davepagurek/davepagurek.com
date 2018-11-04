@@ -11,6 +11,14 @@ my $category-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templa
 my $archives-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/archives.html.ep".IO.slurp ~ $footer);
 my $error-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/error.html.ep".IO.slurp ~ $footer);
 
+my $regenerate-after = 0;
+for qw<header footer home page category archives error> -> $page {
+  my $file = "{$?FILE.IO.dirname}/templates/{$page}.html.ep".IO;
+  if $file.e {
+    $regenerate-after = max($regenerate-after, $file.modified.DateTime.posix);
+  }
+}
+
 my $local = %*ENV<ENV> eq "local";
 
 my $app = Cantilever.new(
@@ -103,4 +111,4 @@ $app.generate(copy => {
   ".htaccess.export" => ".htaccess",
   "./calder.js" => "calder.js",
   "./calder.css" => "calder.css"
-});
+}, regenerate-after => $regenerate-after);
