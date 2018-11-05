@@ -240,4 +240,78 @@ The previous method of simply generating a lot of samples and taking the best on
 
 In MCMC sampling, we first generate a random image using the grammar, and hold onto that as our reference image. Then, we produce a slightly mutated version of the image. If the mutated version has a better score, we use that as the reference image and mutate this new image in the next iteration instead of the old image. If the mutated image has a lower score, we might still randomly use it as the new reference, with a higher likelihood the closer it is to the score of the existing reference. The idea is that, over enough samples, the reference sample reaches an optimal score. Allowing it the possibility to jump to a lower score allows it to not get stuck at a local maximum when higher score peaks may exist elsewhere, and given enough time, it will probabilistically explore the space and converge on a good value.
 
+Here is the algorithm, written out into steps:
+
+<ol>
+  <li>Initially define `reference` by generating a shape from the grammar.</li>
+  <li>Make a new shape, `proposal`, by mutating the current `reference`.</li>
+  <li>If `likelihood(proposal) * score(proposal)` is greater than `likelihood(reference) * score(reference)`, set `reference = proposal`.</li>
+  <li>If `proposal` had did not have a better score, only set `reference = proposal` if a random number between 0 and 1 is less than `(likelihood(proposal) * score(proposal)) / (likelihood(reference) * score(reference))`.</li>
+  <li>Return to step 2.</li>
+</ol>
+
 <img width="800" src="%root%/content/images/2018/11/mcmc.png" full="%root%/content/images/2018/11/mcmc.png" caption="MCMC sampling exploring the distribution of generated images, climbing to higher and higher scores. Grey arrows represent samples explored by MCMC that it chose not to adopt as a new reference." />
+
+### A note on mutations
+
+What does it actually mean to say that we "mutate" the image? There is some precedent set by grammar-based algorithms in other domains.
+
+When writing computer programs, we often also write accompanying tests that use the program and assert that it did the thing we expected them to do. Mutations are useful for determining how good these tests are. An example of a bad test is one that simply runs `assert(1 == 1)` and nothing else, as this does not depend on the program being tested at all. The basic idea of <a href="https://en.wikipedia.org/wiki/Mutation_testing">mutation testing</a> is that if you randomly change a part of the program source code, this probably makes it work incorrectly, and the test suite should catch it. If it doesn't catch it, it probably indicates that the part of the source code that was mutated isn't tested very well.
+
+Since the source code for a program conforms to a grammar just like human language does, one can look at the grammar breakdown for some source code, and then replace a part of it with some other part to generate a mutant to run tests on. Say you have a part of the grammar talking about assignments and arithmetic:
+
+<table>
+  <tr><td></td><td>...</td></tr>
+  <tr><th>`ASSIGNMENT`</th><td>`IDENTIFIER` `=` `EXPRESSION`</td></tr>
+  <tr><th>`EXPRESSION`</th><td>(`IDENTIFIER` | `NUMBER`) (`OPERATOR` `EXPRESSION` | &epsilon;)</td></tr>
+  <tr><th>`OPERATOR`</th><td>`+` | `-` | `*` | `/`</td></tr>
+  <tr><td></td><td>...</td></tr>
+</table>
+
+And then you maybe have a line like this in your program:
+
+<table>
+  <tr><th>`something`</th><th rowspan="4">`=`</th><th>`something`</th><th>`+`</th><th>`1`</th></tr>
+  <tr><td rowspan="3">IDENTIFIER</td><td rowspan="2">IDENTIFIER</td><td rowspan="2">OPERATOR</td><td>NUMBER</td></tr>
+  <tr><td>EXPRESSION</td></tr>
+  <tr><td colspan="3">EXPRESSION</td></tr>
+  <tr><td colspan="5">ASSIGNMENT</td></tr>
+</table>
+
+To generate a mutant, we want to replace some subtree of the breakdown above with a different option from the grammar. We can see that there is an `EXPRESSION` rule which is just a `NUMBER` with a `1` in it. We could replace it with a different `EXPRESSION` that is just as valid, such as `1 / 8`.
+
+<table>
+  <tr><th>`something`</th><th rowspan="5">`=`</th><th>`something`</th><th>`+`</th><th>`1`</th><th>`/`</th><th>`8`</th></tr>
+  <tr><td rowspan="4">IDENTIFIER</td><td rowspan="3">IDENTIFIER</td><td rowspan="3">OPERATOR</td><td rowspan="2">NUMBER</td><td rowspan="2">OPERATOR</td><td>NUMBER</td></tr>
+  <tr><td>EXPRESSION</td></tr>
+  <tr><td colspan="3">EXPRESSION</td></tr>
+  <tr><td colspan="5">EXPRESSION</td></tr>
+  <tr><td colspan="7">ASSIGNMENT</td></tr>
+</table>
+
+The hope is that some test notices that things stop working the same way after making this mutation, and if it doesn't notice, we should write a test that uses this part of the source code.
+
+For MCMC sampling of our images, we do something similar. An image is actually the product of a decision tree we made as we broke down rules into more rules to generate the drawing instructions. We can make a new image by taking a subtree of the original image's drawing instructions grammar breakdown and replacing it with a different but also valid subtree. When picking a subtree to replace, we want to have the likelihood of a given subtree being replaced to be proportional to the likelihood of that subtree being generated in the first place so that we don't spend a disproportionate amount of time messing around in the little details of the extremities of a shape. We already talked about how likely a whole image is to be generated, and the likelihood of a subtree being generated is pretty much the same. The only difference is that we start looking at choices made at the beginning of the subtree rather than at the very start of the whole breakdown.
+
+<img width="900" src="%root%/content/images/2018/11/subtree-replacement.png" full="%root%/content/images/2018/11/subtree-replacement.png" caption="A mutation involves picking a subtree of drawing instructions generated by the grammar and replacing them with a different but also valid subtree." />
+
+## Improving the sampling performance with Sequential Monte Carlo sampling
+
+Unfortunately, MCMC sampling with a silhouette-matching score function is still not fast. In 3D, <a href="http://vladlen.info/papers/metropolis.pdf">it can take hours</a> to match a generated model to a drawn silhouette.
+
+One issue is that it is not "cheap" to generate a final image for each sample in each iteration of the MCMC process. Because a piece of the shape is removed and recreated differently in each successive sample, the image can't be reused, so it gets thrown out and regenerated from scratch. If we were only adding to the previous sample, though, we could keep the old image and modify it, which saves valuable computation time.
+
+This is where Sequential Monte Carlo (SMC) sampling becomes useful. SMC sampling was created for making probabilistic inferences as incremental information comes in. In our case, rather than taking a complete shape and mutating it, we can use SMC to guide the search as each rule in the grammar is incrementally broken down into more rules. Rather than having one reference shape at a time, SMC holds multiple shapes in each iteration. They all start out as a top-level grammar rule waiting to be broken down. In each sampling iteration, every shape is broken down by one increment. The score of each shape is then calculated. If there were *n* shapes in this sampling iteration, *n* shapes are picked to be expanded for the next generation, where shapes with higher scores are more likely to be picked. This means that a very promising partially-generated shape from one iteration can appear multiple times in the next iteration, where each copy continues to be generated independently. This helps the algorithm spend more time exploring the various subtrees of higher-scoring shapes.
+
+This is the algorithm, written out:
+
+<ol>
+  <li>For *n* samples per iteration, create a fresh top-level grammar rule for each `samples[i]`, 1 &le; `i` &le; *n*.</li>
+  <li>For each `samples[i]`, continue generating its shape by one increment by making one random choice when breaking down grammar rules that are not terminals.</li>
+  <li>For each `samples[i]`, calculate `likelihood(samples[i]) * score(samples[i])`. Call the sum of all of these values `total_likelihood_score`.</li>
+  <li>For 1 &le; `i` &le; <em>n</em>, randomly pick `next_samples[i]` from `samples`, where each `samples[n]` has the probability `likelihood(samples[n]) * score(samples[n]) / total_likelihood_score` of being picked.</li>
+  <li>Set `samples[i] = next_samples[i]` for each `i`.</li>
+  <li>Return to step 2.</li>
+</ol>
+
+<img width="800" src="%root%/content/images/2018/11/smc.png" full="%root%/content/images/2018/11/smc.png" caption="SMC spending more time expanding the samples in the previous generation that had the best scores." />
