@@ -53,6 +53,12 @@ th {
   font-weight: bold;
   background-color: #f7f7f7;
 }
+.highlighted th, th.highlighted {
+  background-color: #fff5af;
+}
+.highlighted td, td.highlighted {
+  background-color: #fffce0;
+}
 table {
   border-spacing: 0;
   border-collapse: collapse;

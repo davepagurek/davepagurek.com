@@ -2,7 +2,9 @@
 {
   "title": "Improving the procedural modelling workflow",
   "category": "blog",
-  "date": "2018-11-14",
+  "date": "2018-11-17",
+  "thumbnail": "%root%/content/images/2018/11/tree-render-thumbnail.jpg",
+  "og-image": "%root%/content/images/2018/7/example.png",
   "excerpt": "A discussion of the most tedious parts of something made to make modelling less tedious, and how they can be improved."
 }
 -->
@@ -11,11 +13,13 @@ There are a lot of things in art that are hard, but are *especially* hard in 3D.
 
 Say you wanted to make a forest landscape. If this were a painting, you probably wouldn't paint every leaf on every tree. Firstly, you don't have to worry about the ones you can't see. But even for the ones you can see, you're able to get away with using less detail in areas that aren't the focus. The patterns can be abstracted into dabs of paint that give the impression of leaves without the effort of clearly defining each one.
 
+<img src="%root%/content/images/2018/11/mc-trees-medium.jpg" full="%root%/content/images/2018/11/mc-trees.jpg" caption="Detail of some trees in a digital paintaing of mine, demonstrating my freedom to not add much detail." />
+
 3D doesn't afford this luxury. For better or for worse, everything in 3D graphics as we know it must be attached to some well-defined form. There's no way to dab a brush here and there just yet. Less detail could be used off in the distance, but in many cases, 3D is being used specifically so that a world can be inhabited, walked around, and explored, so there may not be a region that's "in the distance" all the time.
 
 You can try to save effort by modelling a tree and copy-and-pasting it around. Of course, the difficulty with this is that the regularity will look unnatural. You can rotate and distort them as you go to add some variation, and that may help, but it can only go so far. To get rid of that unwanted regularity, you'd want to apply the same process to components of each pasted tree, not just the whole thing, so that the overall model looks different. While this may be faster than modelling each tree from scratch, this still ends up being a lot of manual effort.
 
-It gets to a point where it becomes easier to describe the *procedure* with which models are created than to create the models by hand. This is what procedural modelling is: where you create a program of sorts that then creates models.
+It gets to a point where it becomes easier to describe the *procedure* with which models are created than to create the models by hand. This is what procedural modelling is: the creation of a program of sorts that then creates models. I've spent a fair amount of time recently trying to make this process better, so I'm going to explain some background and the techniques I used.
 
 ## Generating from grammars
 
@@ -120,7 +124,7 @@ Now, let's make a tree that branches into two each time. Instead of scaling and 
   <tr>
     <th>`BRANCH`</th><td>`lineTo(0, -50)` `translate(0, -50)` `circle(30)` (`SUB_BRANCHES` | &epsilon;)</td>
   </tr>
-  <tr>
+  <tr class="highlighted">
     <th>`SUB_BRANCHES`</th><td>`scale(0.5)` `[` `rotate(-30)` `BRANCH` `]` `[` `rotate(20)` `BRANCH` `]`</td>
   </tr>
 </table>
@@ -131,7 +135,7 @@ This is what happens when you generate trees using the stack of remembered orien
 
 This lets us express a lot of ideas, but it suffers from the problem mentioned earlier when discussing copy-and-pasting: it looks too regular. We can introduce random variation into our grammar by replacing concrete numbers with `random(a, b)`, which, when interpreted by the drawing program, will generate a random number between `a` and `b` inclusive.
 
-Here's our grammar again, with random variation added:
+Here's our grammar again, with random variation added in the highlighted rule definition:
 
 <table>
   <tr>
@@ -143,7 +147,7 @@ Here's our grammar again, with random variation added:
   <tr>
     <th>`SOME_BRANCHES`</th><td>`SCALED_BRANCH` (`SOME_BRANCHES` | &epsilon;)</td>
   </tr>
-  <tr>
+  <tr class="highlighted">
     <th>`SCALED_BRANCH`</th><td>`[` `scale(random(0.4, 0.8))` `rotate(random(-40, 40))` `BRANCH` `]`</td>
   </tr>
 </table>
@@ -177,7 +181,7 @@ How would you cap the number of chained clauses to, say, four? There's no magic 
 
 <table>
   <tr><th>`SENTENCE`</th><td>`CLAUSE` `COMPOUND`</td></tr>
-  <tr><th>`COMPOUND`</th><td>(`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;)</td></tr>
+  <tr class="highlighted"><th>`COMPOUND`</th><td>(`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;) (`and` `CLAUSE` | &epsilon;)</td></tr>
   <tr><th>`CLAUSE`</th><td>`NOUN` `VERB_PHRASE`</td></tr>
   <tr><th>`VERB_PHRASE`</th><td>`VERB` (`NOUN` | &epsilon;)</td></tr>
   <tr><th>`NOUN`</th><td>`abacus` | `babboon` | `cantaloupe` | ...</td></tr>
@@ -197,7 +201,7 @@ Especially when dealing with grammars, it can often be easier to specify whether
 We can assign a score to every picture representing how close its silhouette is to the target. It might look something like this, in pseudocode:
 
 <code>
-function score(image, target) {
+function score(image) {
   // First, fill all the shapes in the outputted image
   // to get its silhouette
   let filled = flood_fill_all_gaps(image)
@@ -230,7 +234,7 @@ When we define a grammar, we are also defining the set of all possible things it
   <li><strong>Every time `random(a, b)` is used.</strong> If this produces a random value from a continuous distribution, then technically there is a probability of 0 that a specific value is chosen (e.g. 0.5 rather than 0.4999... or 0.500...01.) In practice, as a substitute, we can look at the random number generator's <a href="https://en.wikipedia.org/wiki/Probability_density_function">probability density function (pdf)</a> as a measure of how likely a given value is compared to other values. The total area under a pdf curve from negative infinity to infinity is always 1, and is distributed across that domain according to how likely that region is to be generated. If `random(0, 1)` is uniformly distributed, the pdf of any value between 0 and 1 is 1, indicating that they are equally likely.</li>
 </ol>
 
-Even if we ignore the second case, our grammar requires making one choice for every branch present after the first one. There are eight branches off of the base one in the tree above, so the probability of generating the same structure of that tree is 0.5<sup>8</sup> = 0.00390625. If we make a generous approximation and assume `random()` generates one of ten values within a given range each time, because each branch makes two of these calls, we introduce a factor of (0.1 &times; 0.1)<sup>8</sup> = 1 &times; 10<sup>-16</sup>. Altogether, that's around 3.9 &times; 10<sup>-19</sup>. You will need a lot of random samples to generate a tree in this particular configuration.
+Starting with the first case, our grammar requires making one choice for every branch present after the first one. There are eight branches off of the base one in the particular tree shown earlier, so the probability of generating the same structure of that tree is 0.5<sup>8</sup> = 0.00390625. To look at the second case, if we make a generous approximation and assume `random()` generates one of ten values within a given range each time, then because each branch makes two of these calls, we introduce a factor of (0.1 &times; 0.1)<sup>8</sup> = 1 &times; 10<sup>-16</sup>. Altogether, that's around 3.9 &times; 10<sup>-19</sup>. You will need a lot of random samples to generate a tree in this particular configuration. This is all a contrived example, since we never have *one* exact tree we are hoping to produce, but the point here is that there are many possibilities in the grammar output.
 
 Luckily, there are ways to focus the search.
 
@@ -271,8 +275,8 @@ Since the source code for a program conforms to a grammar just like human langua
 And then you maybe have a line like this in your program:
 
 <table>
-  <tr><th>`something`</th><th rowspan="4">`=`</th><th>`something`</th><th>`+`</th><th>`1`</th></tr>
-  <tr><td rowspan="3">IDENTIFIER</td><td rowspan="2">IDENTIFIER</td><td rowspan="2">OPERATOR</td><td>NUMBER</td></tr>
+  <tr><th>`something`</th><th rowspan="4">`=`</th><th>`something`</th><th>`+`</th><th class="highlighted">`1`</th></tr>
+  <tr><td rowspan="3">IDENTIFIER</td><td rowspan="2">IDENTIFIER</td><td rowspan="2">OPERATOR</td><td class="highlighted">NUMBER</td></tr>
   <tr><td>EXPRESSION</td></tr>
   <tr><td colspan="3">EXPRESSION</td></tr>
   <tr><td colspan="5">ASSIGNMENT</td></tr>
@@ -281,9 +285,9 @@ And then you maybe have a line like this in your program:
 To generate a mutant, we want to replace some subtree of the breakdown above with a different option from the grammar. We can see that there is an `EXPRESSION` rule which is just a `NUMBER` with a `1` in it. We could replace it with a different `EXPRESSION` that is just as valid, such as `1 / 8`.
 
 <table>
-  <tr><th>`something`</th><th rowspan="5">`=`</th><th>`something`</th><th>`+`</th><th>`1`</th><th>`/`</th><th>`8`</th></tr>
-  <tr><td rowspan="4">IDENTIFIER</td><td rowspan="3">IDENTIFIER</td><td rowspan="3">OPERATOR</td><td rowspan="2">NUMBER</td><td rowspan="2">OPERATOR</td><td>NUMBER</td></tr>
-  <tr><td>EXPRESSION</td></tr>
+  <tr><th>`something`</th><th rowspan="5">`=`</th><th>`something`</th><th>`+`</th><th class="highlighted">`1`</th><th class="highlighted">`/`</th><th class="highlighted">`8`</th></tr>
+  <tr><td rowspan="4">IDENTIFIER</td><td rowspan="3">IDENTIFIER</td><td rowspan="3">OPERATOR</td><td rowspan="2" class="highlighted">NUMBER</td><td rowspan="2" class="highlighted">OPERATOR</td><td class="highlighted">NUMBER</td></tr>
+  <tr><td class="highlighted">EXPRESSION</td></tr>
   <tr><td colspan="3">EXPRESSION</td></tr>
   <tr><td colspan="5">EXPRESSION</td></tr>
   <tr><td colspan="7">ASSIGNMENT</td></tr>
@@ -291,7 +295,7 @@ To generate a mutant, we want to replace some subtree of the breakdown above wit
 
 The hope is that some test notices that things stop working the same way after making this mutation, and if it doesn't notice, we should write a test that uses this part of the source code.
 
-For MCMC sampling of our images, we do something similar. An image is actually the product of a decision tree we made as we broke down rules into more rules to generate the drawing instructions. We can make a new image by taking a subtree of the original image's drawing instructions grammar breakdown and replacing it with a different but also valid subtree. When picking a subtree to replace, we want to have the likelihood of a given subtree being replaced to be proportional to the likelihood of that subtree being generated in the first place so that we don't spend a disproportionate amount of time messing around in the little details of the extremities of a shape. We already talked about how likely a whole image is to be generated, and the likelihood of a subtree being generated is pretty much the same. The only difference is that we start looking at choices made at the beginning of the subtree rather than at the very start of the whole breakdown.
+For MCMC sampling of our images, we do something similar. An image is actually the product of a decision tree we made as we broke down rules into more rules to generate the drawing instructions. We can make a new image by taking a subtree of the original image's drawing instructions grammar breakdown and replacing it with a different but also valid subtree. When picking a subtree to replace, we want to have the likelihood of a given subtree being replaced to be proportional to the likelihood of that subtree being generated in the first place so that we don't spend a disproportionate amount of time messing around in the little details of the extremities of a shape. We already talked about how likely a whole image is to be generated, and the likelihood of a subtree being generated is pretty much the same. The only difference is that we start looking at choices made at the beginning of a *sub*tree rather than at the very top of the whole breakdown.
 
 <img width="900" src="%root%/content/images/2018/11/subtree-replacement.png" full="%root%/content/images/2018/11/subtree-replacement.png" caption="A mutation involves picking a subtree of drawing instructions generated by the grammar and replacing them with a different but also valid subtree." />
 
@@ -301,7 +305,9 @@ Unfortunately, MCMC sampling with a silhouette-matching score function is still 
 
 One issue is that it is not "cheap" to generate a final image for each sample in each iteration of the MCMC process. Because a piece of the shape is removed and recreated differently in each successive sample, the image can't be reused, so it gets thrown out and regenerated from scratch. If we were only adding to the previous sample, though, we could keep the old image and modify it, which saves valuable computation time.
 
-This is where Sequential Monte Carlo (SMC) sampling becomes useful. SMC sampling was created for making probabilistic inferences as incremental information comes in. In our case, rather than taking a complete shape and mutating it, we can use SMC to guide the search as each rule in the grammar is incrementally broken down into more rules. Rather than having one reference shape at a time, SMC holds multiple shapes in each iteration. They all start out as a top-level grammar rule waiting to be broken down. In each sampling iteration, every shape is broken down by one increment. The score of each shape is then calculated. If there were *n* shapes in this sampling iteration, *n* shapes are picked to be expanded for the next generation, where shapes with higher scores are more likely to be picked. This means that a very promising partially-generated shape from one iteration can appear multiple times in the next iteration, where each copy continues to be generated independently. This helps the algorithm spend more time exploring the various subtrees of higher-scoring shapes.
+This is where <a href="https://cocolab.stanford.edu/papers/RitchieEtAl2015-SIGGRAPH.pdf">Sequential Monte Carlo (SMC) sampling</a> becomes useful. SMC sampling was created for making probabilistic inferences as incremental information comes in. In our case, rather than taking a complete shape and mutating it, we can use SMC to guide the search as each rule in the grammar is incrementally broken down into more rules, where samples break down one piece in each iteration of the algorithm. When we calculate `score(sample)`, since the sample is only different from its "parent" due to the addition of one expanded grammar rule, we can instead calculate `score_from_parent + score(new piece)`, where `score_from_parent` has already been computed from the last round of sampling, so the only new computation is done for the single piece that has been added.
+
+Rather than having one reference shape at a time, SMC holds multiple shapes in each iteration. They all start out as a top-level grammar rule waiting to be broken down. In each sampling iteration, every shape is broken down by one increment. If there were *n* shapes in this sampling iteration, *n* shapes are picked to be expanded for the next generation, where shapes with higher scores are more likely to be picked. This means that a very promising partially-generated shape from one iteration can appear multiple times in the next iteration, where each copy continues to be generated independently. This helps the algorithm spend more time exploring the various subtrees of higher-scoring shapes.
 
 This is the algorithm, written out:
 
@@ -315,3 +321,102 @@ This is the algorithm, written out:
 </ol>
 
 <img width="800" src="%root%/content/images/2018/11/smc.png" full="%root%/content/images/2018/11/smc.png" caption="SMC spending more time expanding the samples in the previous generation that had the best scores." />
+
+## Better score functions
+
+So far, I've just been giving examples for 2D procedural generation. What does a score function look like in 3D? We could still use silhouette matching, but this has some downsides:
+
+<ul>
+  <li>Rendering a 3D scene into a 2D view is expensive, and we have to do it for many samples over the course of one search.</li>
+  <li>A silhouette is 2D, so we would only be specifying appearance from one angle, which can be interesting, but isn't super useful.</li>
+</ul>
+
+To address the second point, you can imagine extending the silhouette to 3D. An artist could provide a target 3D shape to fill. This comes with its own concerns:
+
+<ul>
+  <li>Computing 3D space utilization is also fairly expensive. It typically involves voxelizing the model and constructing 3D grids or octrees to record which voxel regions are occupied.</li>
+  <li>It's a lot easier to draw a target silhouette than to create a target 3D shape. If you have to model a target shape, it's not that much more effort to just create the final model by hand.</li>
+</ul>
+
+Both of these methods unfortunately still take seconds to run, so artists can't make changes and get realtime feedback.
+
+In an ideal scenario, here's what we would want out of our score function:
+<ul>
+  <li>It should be easy for an artist to specify. For example, they shouldn't have to create a detailed 3D model to use the score function.</li>
+  <li>It shouldn't overconstrain the search. We *want* some amount of variation in resulting models, otherwise we wouldn't be using procedural modelling.</li>
+  <li>It should work well in 3D.</li>
+  <li>The score for a sample should be able to be computed as an addition to the score for the sample's parent so that SOSMC works efficiently.</li>
+  <li>It should be computationally inexpensive so that the search can be run at interactive rates.</li>
+</ul>
+
+### Model skeletons
+
+Most of the computational inefficiencies in 3D come from dealing with complex geometry. Creating a bitmap image from a model to use in a silhouette comparison involves first applying perspective to every vertex, and then filling in each pixel between these vertices. Matching a target shape in 3D doesn't require perspective to be applied to each vertex, but then instead of filling in pixels, time has to be spent filling in voxels. It is helpful, then, to not look at geometry when making a score function.
+
+Models generated from procedural grammars tend to have some sort of underlying structure in the placement of pieces, regardless of the pieces themselves. In the context of our earlier 2D grammar, I'm talking about the heirarchy produced by saving and restoring paper positions that were made with `translate`, `rotate`, and `scale`. If, every time we change the orientation of the paper, we were to draw a line between the current pen position and the last pen position atop the paper, we would be drawing what looks like the skeleton of the shape. Here is what it looks like in 3D when you do this, connecting points with some diamonds instead of lines:
+
+<div class="row">
+  <div class="column uncentered">
+    <img width="400" src="%root%/content/images/2018/11/tree-no-bones.jpg" full="%root%/content/images/2018/11/tree-no-bones.jpg" caption="A 3D tree, made from simple geometry, like our 2D variant." />
+  </div>
+  <div class="column uncentered">
+    <img width="400" src="%root%/content/images/2018/11/tree-bones.jpg" full="%root%/content/images/2018/11/tree-bones.jpg" caption="The skeleton of the tree, visualized." />
+  </div>
+</div>
+
+The nice thing about working with these skeletons is that each "bone" in the skeleton is only defined by two points (or a point and a direction vector.) As long as the final geometry we attach aligns with the hierarchy, we can use a score function that operates on these bones. This isn't a huge assumption, as it takes extra wasted effort for an artist to create a heirarchy and then place geometry that isn't aligned with it. Most models follow this sort of heirarchy, even for models that aren't trees. For example, here is a cathedral, and even with a tangled mess of bones, it is clear that the shapes produced by the geometry and the skeleton are aligned.
+
+<div class="row">
+  <div class="column uncentered">
+    <img width="400" src="%root%/content/images/2018/11/cathedral-no-bones.jpg" full="%root%/content/images/2018/11/cathedral-no-bones.jpg" caption="A 3D cathedral, where imported 3D models are used as building blocks instead of primitive shapes." />
+  </div>
+  <div class="column uncentered">
+    <img width="400" src="%root%/content/images/2018/11/cathedral-bones.jpg" full="%root%/content/images/2018/11/cathedral-bones.jpg" caption="The skeleton of the cathedral, visualized." />
+  </div>
+</div>
+
+### Guiding curves
+
+One way to get a score for a model based only off of its skeleton is to compare the bones in the skeleton to guiding curves that an artist draws. For each new bone added when expanding grammar rules, the score is based off of two things:
+
+<ol>
+  <li>**Alignment with the guiding curves.** The direction of the bone is compared with the direction of the closest guiding curve at the closest point on the curve. Bones that are more precisely aligned get a higher score.</li>
+  <li>**Distance from the guiding curves.** Bones that are closer to a guiding curve get a higher score.</li>
+</ol>
+
+Together, these two factors encourage bones that stick close to the guides and go in the same direction (as opposed to oscillating around the curve.)
+
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2018/10/cost_function_diagram-medium.jpg" full="%root%/content/images/2018/10/cost_function_diagram.png" caption="The information the score function operates on when adding a new bone." />
+  </div>
+  <div class="column">
+    <img src="%root%/content/images/2018/10/vectorfield.png" full="%root%/content/images/2018/10/vectorfield.png" caption="The alignments for each point in space around some guides, coloured to represent the distance score for that location." />
+  </div>
+</div>
+
+But how easy is it to sketch curves in 3D? It turns out, it's not too difficult. When drawing, imagine that, in the center of the 3D scene, there is a glass wall facing the camera. When you draw a new curve, it gets drawn in 3D space as if it were on this glass wall. Edits to the curve similarly operate only on the plane of this wall. To make changes on a different plane, the camera can simply be rotated and repositioned. Here's what that process looks like:
+
+<img src="%root%/content/images/2018/11/curves.gif" full="%root%/content/images/2018/11/curves.gif" caption="Drawing and editing guiding curves." />
+
+You'll notice that, after drawing or editing a curve, the feedback is pretty immediate. This is something that isn't easily achieved when doing any silhouette or volume matching search.
+
+## What can you do with this?
+
+So far I've mostly shown trees built out of simple shapes. This technique starts becoming especially useful once one starts using more complicated models and grammars.
+
+Here are some models created with guiding curves, shown rendered nicely along with the guides used to produce the model. 3D models were imported and used as building blocks that the grammar can then position and drop into the scene. Models generated by the grammar were exported and rendered in Blender.
+
+<img src="%root%/content/images/2018/11/tree-large.jpg" full="%root%/content/images/2018/11/tree.jpg" caption="A procedural tree." />
+
+<img src="%root%/content/images/2018/11/cathedral-large.jpg" full="%root%/content/images/2018/11/cathedral.jpg" caption="A procedural cathedral." />
+
+## What's next?
+
+This work is largely a proof-of-concept. While I find it useful for my own tinkering and modelling purposes, experimenting with it has brought to light other parts of the procedural modelling workflow that could use work.
+
+There are enhancements to the guiding curves score function that would be valuable for artists. Applications requiring control of areas and volumes could receive better support. If it can be done while keeping computation time low, it would be useful to give curves finite, specifiable thickness over their lengths. It could provide a more intuitive way to specify regions that uniformly encourage growth. Another extension might include a target density to discourage too many bones from being added in the same region.
+
+While I've spent most of my time talking about ways to efficiently and intuitively search for models created by a grammar, creating the grammar in the first place is still an art requiring a fair amount of skill. When creating a grammar to use with guiding curves, there are still many abstract concepts that you need to keep in your head. Relative coordinate spaces have to be kept in mind when specifying where to place bones, as well as the distribution of bones that will be created when introducing random variation. It would be incredibly useful to spend time thinking about how to make an approachable interface for creating grammars. I would like to be able to define rules visually, seeing the range of space in which bones could potentially spawned, and combine rules with randomization more confidently.
+
+I hope that some of the ideas here can be helpful in producing computer-generated art in new and interesting ways.
