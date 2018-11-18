@@ -53,15 +53,22 @@ th {
   font-weight: bold;
   background-color: #f7f7f7;
 }
+.highlighted th, th.highlighted {
+  background-color: #fff5af;
+}
+.highlighted td, td.highlighted {
+  background-color: #fffce0;
+}
 table {
   border-spacing: 0;
   border-collapse: collapse;
-  display: block;
-  overflow-x: auto;
+  margin: 0 auto;
 }
 .table-container {
-  display: flex;
-  justify-content: center;
+  overflow-x: auto;
+}
+section.post > div.table-container {
+  padding: 0;
 }
 hr {
   background: none;
