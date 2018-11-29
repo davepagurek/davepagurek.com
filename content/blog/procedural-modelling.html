@@ -353,7 +353,7 @@ In an ideal scenario, here's what we would want out of our score function:
 
 Most of the computational inefficiencies in 3D come from dealing with complex geometry. Creating a bitmap image from a model to use in a silhouette comparison involves first applying perspective to every vertex, and then filling in each pixel between these vertices. Matching a target shape in 3D doesn't require perspective to be applied to each vertex, but then instead of filling in pixels, time has to be spent filling in voxels. It is helpful, then, to not look at geometry when making a score function.
 
-Models generated from procedural grammars tend to have some sort of underlying structure in the placement of pieces, regardless of the pieces themselves. In the context of our earlier 2D grammar, I'm talking about the heirarchy produced by saving and restoring paper positions that were made with `translate`, `rotate`, and `scale`. If, every time we change the orientation of the paper, we were to draw a line between the current pen position and the last pen position atop the paper, we would be drawing what looks like the skeleton of the shape. Here is what it looks like in 3D when you do this, connecting points with some diamonds instead of lines:
+Models generated from procedural grammars tend to have some sort of underlying structure in the placement of pieces, regardless of the pieces themselves. In the context of our earlier 2D grammar, I'm talking about the hierarchy produced by saving and restoring paper positions that were made with `translate`, `rotate`, and `scale`. If, every time we change the orientation of the paper, we were to draw a line between the current pen position and the last pen position atop the paper, we would be drawing what looks like the skeleton of the shape. Here is what it looks like in 3D when you do this, connecting points with some diamonds instead of lines:
 
 <div class="row">
   <div class="column uncentered">
@@ -364,7 +364,7 @@ Models generated from procedural grammars tend to have some sort of underlying s
   </div>
 </div>
 
-The nice thing about working with these skeletons is that each "bone" in the skeleton is only defined by two points (or a point and a direction vector.) As long as the final geometry we attach aligns with the hierarchy, we can use a score function that operates on these bones. This isn't a huge assumption, as it takes extra wasted effort for an artist to create a heirarchy and then place geometry that isn't aligned with it. Most models follow this sort of heirarchy, even for models that aren't trees. For example, here is a cathedral, and even with a tangled mess of bones, it is clear that the shapes produced by the geometry and the skeleton are aligned.
+The nice thing about working with these skeletons is that each "bone" in the skeleton is only defined by two points (or a point and a direction vector.) As long as the final geometry we attach aligns with the hierarchy, we can use a score function that operates on these bones. This isn't a huge assumption, as it takes extra wasted effort for an artist to create a hierarchy and then place geometry that isn't aligned with it. Most models follow this sort of hierarchy, even for models that aren't trees. For example, here is a cathedral, and even with a tangled mess of bones, it is clear that the shapes produced by the geometry and the skeleton are aligned.
 
 <div class="row">
   <div class="column uncentered">
