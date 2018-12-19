@@ -19,7 +19,8 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12 {
   /*font-family: 'Josefin Sans', sans-serif;*/
 }
 h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, p,
-nav, .content, pre, ul, ol, hr, section.post > div {
+nav, .content, pre, ul, ol, hr, section.post > .soundcloud,
+.img-container, .cp_embed_wrapper {
   box-sizing: border-box;
   width: 100%;
   max-width: 66rem;
@@ -40,7 +41,8 @@ h1 {
 p {
   font-size: 1.2em;
 }
-.post > p, .post > ul, .post > ol {
+.post > p, .post > ul, .post > ol,
+.post .column > p, .post .column > ul, .post .column > ol {
   line-height: 1.8em;
 }
 td, th {
@@ -99,25 +101,6 @@ h3 {
   padding-top: 0.7em;
   padding-bottom: 0.5em;
 }
-.row {
-  max-width: 63rem;
-  padding: 0;
-  display: flex;
-}
-.row {
-  flex-wrap: wrap;
-}
-.row.centered {
-  justify-content: center;
-}
-.row.spread {
-  justify-content: space-around;
-  align-items: center;
-  justify-self: stretch;
-  margin-right: 1.5rem;
-  margin-left: 1.5rem;
-  display: flex;
-}
 section, header, footer, .row, nav, iframe {
   display: flex;
   justify-content: center;
@@ -144,6 +127,23 @@ iframe.soundcloud {
   margin-left:0;
   margin-right:0;
 }
+.row {
+  max-width: 63rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.row.centered {
+  justify-content: center;
+}
+.row.spread {
+  justify-content: space-around;
+  align-items: center;
+  justify-self: stretch;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
+  display: flex;
+}
 .row.full {
   padding-left:3rem;
   padding-right:3rem;
@@ -160,6 +160,9 @@ iframe.soundcloud {
 }
 .column.uncentered {
   justify-content: flex-start;
+}
+.column.double {
+  flex: 2;
 }
 .column:last-child {
   padding-right: 0;

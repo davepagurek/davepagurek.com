@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.music-analysis-graph {
+  max-width: 100%;
+  height: auto;
+}
+
+.music-analysis-graph-container {
+  display: flex;
+  flex-direction: row;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+@media all and (max-width: 600px) {
+  .music-analysis-graph-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .music-analysis-graph-legend {
+    margin-top: 20px;
+    width: auto !important;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.music-analysis-graph-area {
+  transition: fill ease 0.3s;
+  stroke: #FFF;
+}
+.music-analysis-graph-area.selected {
+  fill: #000 !important;
+}
+
+.music-analysis-x-axis {
+  font-family: 'Roboto', sans-serif;
+  font-size: 10px;
+}
+
+.music-analysis-label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.music-analysis-graph-legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 240px;
+}
+
+.music-analysis-graph-legend-entry {
+  font-family: 'Roboto', sans-serif;
+  color: #000;
+  font-size: 12px;
+  transition: color ease 0.3s;
+}
+
+.music-analysis-graph-legend-entry.selected {
+  color: #000 !important;
+}
+
+.music-analysis-swatch {
+  transition: background-color ease 0.3s;
+  display: inline-block;
+  vertical-align: middle;
+  height: 10px;
+  width: 20px;
+  margin-right: 10px;
+}
+
+.music-analysis-graph-legend-entry.selected .music-analysis-swatch {
+  background-color: #000 !important;
+}

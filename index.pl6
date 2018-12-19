@@ -96,7 +96,7 @@ my $app = Cantilever.new(
     Cantilever::Page::CustomTag.new(
       matches-fn => -> $t { $t.type eq "table" },
       render-fn => -> $t, %options {
-        "<div class='table-container'><table>" ~
+        "<div class='table-container'><table id=\"{$t.formatted-attributes<id> || ''}\">" ~
         $t.children.map(*.to-html(%options)).join("") ~
         "</table></div>";
       }

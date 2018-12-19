@@ -1,0 +1,129 @@
+<!--
+{
+  "title": "A year and a half of music",
+  "category": "blog",
+  "date": "2018-12-19",
+  "excerpt": "As a Google Play Music subscriber, I get jealous of Spotify's year-in-review stats. I decided to remedy this by scraping my music listening data and doing some analysis myself."
+}
+-->
+
+I listen to a lot of music and I like to think about the music I listen to. As a Google Play Music subscriber, I get jealous of Spotify's year-in-review stats. I'm curious about which of the trends I notice in my music tastes get reflected in my music listening history, and if anything new and unexpected might come up. Unfortunately, Google doesn't try to surface any of this information the way Spotify does.
+
+So, naturally, I decided to take matters into my own hands by manually collecting and analyzing my music listening history.
+
+## Acquiring data
+
+Google, being Google, logs information from Google Play Music. You can see it on the <a href="https://myactivity.google.com/myactivity" target="_blank">My Activity</a> page in your Google account settings. I thought I would be able to download this information in bulk, since Google supposedly allows you to export all your user data, but it didn't appear to show up in the list of what would be contained in that data dump. As far as I could tell, it was only accessible from the My Activity page.
+
+Unfazed, I <a href="http://github.com/davepagurek/GPM-Stats">wrote a script</a> to collect the information directly from that page. I could have looked at the network requests made by the page, copied whatever tokens I needed, and then mimicked the requests from my terminal. That probably would have yielded nicer code. That isn't what I did, though. Instead, I have two JavaScript functions that I dump into the Chrome console when the My Activity page is open: one to keep scrolling the page down to the bottom until it infinite-scrolls down to a specified date, and then a second to turn the HTML tags showing each song play into a giant JSON file. It feels like a dirty hack. It *is* a dirty hack. But it gets the job done!
+
+I've used Google Play Music since the start of university, so I initially wanted to get *all* my music data. Knowing it would take a while for the script to keep scrolling down until 2014, I turned it on and then went out for dinner. When I got back, I was surprised to see that it actually completed the section between summer 2017 and fall 2014 really quickly. It turns out that this is because Google doesn't have logs of my song plays before summer 2017, and instead only has my search history within the music app from that period. I'm unsure if that's because Google changed some logging policy or if I changed a setting around then. In any case, I took what I could get, and what follows is a brief look into my music data since the summer of 2017.
+
+## Breakdown by artist
+
+Altogether, my dataset included 24,173 song plays from 1,717 artists. The first thing I did was make a list of the artists I listened to the most, and then graph their play counts over time. Out of the top 25 artists I listened to in the past year and a half, I graphed of how the proportion of song plays between them shifted.
+
+<div id="top25"> </div>
+
+I labelled some spots on the graph where I can attribute some visible changes to specific, memorable events.
+
+<ol id="top25events"> </ol>
+
+Although there are some interesting proportion changes in my top 25 artists, I still listened to them all rather consistently. As I moved to the next 25 artists by total play count, they start coming in bursts. The bursts typically correspond to an album release or some other event that brings the artist to the foreground, and then the play count tapers off.
+
+Due to the high variability, rather than graph the changing proportion for these next 25 artists out of 100%, I've just graphed play counts. I put artists whose play counts over time have the least statistical variance on the bottom of the graph to surface the particularly "bursty" artists on the top.
+
+<div id="next25"> </div>
+
+Some notable events in the graph:
+
+<ol id="next25events"> </ol>
+
+There are some other fun things that are visible but less obvious in this graph. I rediscovered Ben Folds this past October, and that is entirely because a friend brought up the album <em>Rockin' the Suburbs</em> at a Thanksgiving party, and I then consciously played more Ben Folds the next few times people came over. I also apparently rediscover Regina Spektor every winter. Although it's not specifically winter music, the honesty and intimacy in the singing style pairs well with being cozy indoors when it's dreary outside. I also started listening to Nine Inch Nails again after listening to <a href="http://songexploder.net/nine-inch-nails">an episode of Song Exploder</a> from December 2017 in which Trent Reznor broke down the production of a new NIN song.
+
+I was also curious if my artist choices changed between school and work terms. In my dataset, I have months from two school terms (fall 2017 and summer 2018) and two and a half work terms (half of summer 2017 at Google, winter 2018 at Cruise, and fall 2018 at Figma.) I made a table of the artists with the most song plays during months on coop and during months at school.
+
+<table id="coop"> </table>
+
+On the whole, nothing is too different in those two distributions. There is a large jump up for Laura Marling between coop and school, and I assume this is because, as mentioned earlier, I listened to a *lot* of Laura Marling while working on my computer graphics project. It is likely that BOY and Junip also jump up on school terms because their relatively similar styles of soft but biting folk got them added to my playlists to follow up Laura Marling albums.
+
+Seeing how similar my top artists were between school and coop, I thought that perhaps there might be some artists who I listen to less on the whole, but when I do, it is largely only in one setting or the other. I excluded artists with less than 3 song plays in either context, and then calculated the ratio of listens on coop divided by listens at school. I made tables of artists with the highest and lowest values.
+
+<div class="row">
+  <div class="column"><table id="mostcoop"> </table><p> </p></div>
+  <div class="column"><table id="mostschool"> </table><p> </p></div>
+</div>
+
+Most of these artists ended up topping these lists because I listened to them in a burst and then stopped. The table they ended up in corresponds to whether that burst was on a school or coop term. MGMT, for example, released a new album while I was working at Cruise. I actually listen to R.E.M. fairly regularly, but this past coop, I started methodically listening through their entire catalogue, leading to their presence on the top of the coop table.
+
+## Breakdown by genre
+
+Google Play Music only logs song titles and artists, but I wanted to see how my music taste corresponds to genre. I ended up using Spotify's public API to get a set of genre tags for every artist I listened to. There are a lot of details in these genre tags, but I was primarily interested in aggregation, so I hand-crafted some genres that looked like a representative set for the things I listened to. I then considered an artist in one of these genres if any of their Spotify genre tags include one of my genre terms as a substring. This means that a single artist can count for more than one genre. Wide-reaching, general genres like "rock" and "pop" are missing from my aggregate genre list because, it turns out, basically everything with a guitar gives itself a "rock" tag and anything using a synthesizer or drum machine somewhere calls itself some kind of "pop." They all clarify with subsequent, more specific tags, so my genres aim to pick from those.
+
+To verify for myself that my genre classification wasn't terrible, I made a table of the genres I used and a representative artist that gets classified as each genre under my methodology.
+
+<div class="table-container"><table id="topgenres"> </table></div>
+
+Feeling good about the classification, I made another time series graph showing the proportion of plays by genre.
+
+<div id="genres"> </div>
+
+I was actually surprised at how stable my genre distribution is, but there are a few notable little things in the graph:
+
+<ol id="genreEvents"> </ol>
+
+As an aside, I also wanted to highlight just how weird genre tags can be. Here are some fun ones that I found after sorting all the Spotify genre tags I collected by their length.
+
+<ul>
+  <li>"Deep Melodic Euro House" (Agoria)</li>
+  <li>"Intelligent Dance Music" (Tycho, Caribou)</li>
+  <li>"Australian Garage Punk" (Hockey Dad)</li>
+  <li>"Deep New Americana" (Wintersleep, Arkells)</li>
+  <li>"Halifax Indie" (Rich Aucoin)</li>
+</ul>
+
+## Some non-data-driven reflection
+
+Although it isn't particularly apparent in the data due to a lack of any data before last summer, the past year and a half saw the realization of a large broadening in my music tastes. I discovered or got acquainted with a few albums that acted as gateway drugs for me into their respective genres. I'll talk a bit about three of them.
+
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2018/12/Once_I_Was_an_Eagle.png" full="%root%/content/images/2018/12/Once_I_Was_an_Eagle.png" />
+  </div>
+  <div class="column double">
+    <h3><em>Once I Was an Eagle,</em> Laura Marling</h3>
+
+    <p>The thing that initially captured me about this album was how full a sound could be found in songs so thinly instrumented. Songs like <em>Saved These Words</em> show how the strumming pattern of the guitar alone can add drive and fury just as much as a typical drum kit might. The lyrics are regretful in a way that builds confidence and momentum instead of dampening it. It is an intimate album tinted by the perspective of moving somewhere new, which is a headspace I personally find myself in often.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2018/12/Amnesiac.jpg" full="%root%/content/images/2018/12/Amnesiac.jpg" />
+  </div>
+  <div class="column double">
+    <h3><em>Amnesiac,</em> Radiohead</h3>
+
+    <p>While I had listened to <em>Amnesiac</em> once or twice before last summer, by the end of the summer, I had given each Radiohead album individual attention, and came to the conclusion that <em>Amnesiac</em> is my favourite. I know this is an unpopular opinion, and I love <em>OK Computer</em> and <em>In Rainbows</em> as well, but there's something about the progression of this album that I find particularly striking. The rhythms are anxious yet contagious. Each song brings a unique instrumentation and feel to the album. It's also hard to top <em>Life In a Glasshouse</em> as the closing track to an album, featuring clarinets and horns that carry the song to its dramatic conclusion.</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2018/12/American_Dream.png" full="%root%/content/images/2018/12/American_Dream.png" />
+  </div>
+  <div class="column double">
+    <h3><em>American Dream,</em> LCD Soundsystem</h3>
+
+    <p>I didn't always like LCD Soundsystem as much as I now do, but around the time this came out in the dying days of the summer, something about the music clicked for me. This album features some of the most carefully crafted synthesizer textures I've heard, giving depth to the tracks with soaring climaxes and subtlety to the quiet, introspective tracks. The lyrics are zeitgeisty, exceedingly bitter, and classy. There are a wide variety of songs on this album and I skip none of them.</p>
+
+    <p>This album also got me listening to James Murphy's influences, leading me to Talking Heads, David Bowie, Eurythmics, and New Order, all of which are now staples of my musical diet.</p>
+  </div>
+</div>
+
+I continue to seek out new music, so feel free to send anything interesting my way. I hope the next year and a half and beyond will contain even more exciting, transformative musical experiences!
+
+<link rel="stylesheet" type="text/css" href="%root%/content/images/2018/12/graph.css" />
+<script type="text/javascript" charset="utf-8" src="%root%/content/images/2018/12/aggregated_data.js"></script>
+<script type="text/javascript" charset="utf-8" src="%root%/content/images/2018/12/genre_data.js"></script>
+<script type="text/javascript" src="%root%/content/images/2018/12/graph.js"></script>
