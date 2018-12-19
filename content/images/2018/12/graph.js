@@ -60,7 +60,7 @@ const events = {
     '9': 'I turned 22 and remembered that the song <em>22</em> exists, and then kept listening to more Taylor Swift.'
   },
   'Mitski': {
-    '13': 'I heard a lot about Mitski\'s <em>Be the Cowboy</em> as it was released and then proceded to listened to it a lot.'
+    '13': 'I heard a lot about Mitski\'s <em>Be the Cowboy</em> as it was released and then proceeded to listened to it a lot.'
   },
   'Superorganism': {
     '10': 'I clicked a YouTube recommendation for a Superorganism NPR Tiny Desk concert that I kept seeing and ended up listening to Superorganism\'s eponymous album a lot.'
