@@ -1,7 +1,9 @@
-<section id="header">
-    <div id="intro">
-      <div id="world"></div>
-      <div id="description">
+  <section id="header">
+    <div class="row">
+      <div class="column double">
+        <svg id="treeGrid"></svg>
+      </div>
+      <div class="column" id="description">
         <h2>Hi, I'm Dave Pagurek.</h2>
         <p>I'm a programmer and artist studying Software Engineering at the University of Waterloo.</p>
         <p>
@@ -85,4 +87,5 @@
       <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Listen on Soundcloud</a>
     </div>
   </section>
-  <script type="text/javascript" src="calder.js"></script>
+  <link rel="stylesheet" type="text/css" href="generation.css" />
+  <script type="text/javascript" src="generation.js"></script>
