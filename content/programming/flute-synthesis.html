@@ -1,0 +1,52 @@
+<!--
+{
+	"title": "Flute Synthesis",
+	"category": "programming",
+	"date": "2019-03-23",
+	"excerpt": "Analyzing recordings of the flute to create a synthesizer.",
+	"thumbnail": "%root%/content/images/2019/3/synth_with_vibrato-thumbnail.jpg",
+	"languages": [
+		"Python"
+	],
+	"buttons": [
+		{
+			"url": "https://github.com/davepagurek/flute-synthesis",
+			"text": "View Source on GitHub"
+		} 
+	]
+}
+-->
+
+This project analyzes real flute recordings to figure out how to create a flute synthesizer.
+
+## Listen
+
+<table>
+  <tr><th></th><th>Real</th><th>Synthesized</th></tr>
+  <tr><th>Single note</th><td><audio controls="true" src="%root%/content/images/2019/3/vibrato-flute.mp3" /></td><td><audio controls="true" src="%root%/content/images/2019/3/vibrato-synth.mp3" /></td></tr>
+  <tr><th>Duet</th><td><audio controls="true" src="%root%/content/images/2019/3/afar-flute-end.mp3" /></td><td><audio controls="true" src="%root%/content/images/2019/3/afar-synth-end.mp3" /></td></tr>
+</table>
+
+## Background
+
+The flute is essentially an open air column, whose resonant frequencies come in integer multiples proportional to half the length of the instrument. Closing holes is a way of increasing the effective length of the instrument and decreasing the fundamental resonant frequency.
+
+<img src="%root%/content/images/2019/3/openair-medium.jpg" full="%root%/content/images/2019/3/openair.png" caption="The resonant frequencies of an open air column." />
+
+## Additive harmonic synthesis
+
+I picked the harmonics out of recordings of the flute to determine how much each component contributes. There is a visible split between regular and overblown notes, which are notes where the effective length of the instrument would produce a note an octave lower, but the air speed prevents the fundamental from sounding, leaving only the second and higher harmonics.
+
+<img src="%root%/content/images/2019/3/overblown.png" full="%root%/content/images/2019/3/overblown.png" caption="Dot size represents the relative magnitude of a harmonic, with orange columns representing overblown notes." />
+
+## Subtractive noise component
+
+White noise is filtered using a resonant lowpass filter. This dampens the higher frequencies while leaving the low ones, while also increasing the amplitude around the cutoff frequency. This is an attempt to model the breathy sound of the flute, heard especially on the attack of a note, which is noisy, but resonates in the body of the instrument.
+
+<img src="%root%/content/images/2019/3/bode-medium.jpg" full="%root%/content/images/2019/3/bode.png" caption="Frequency response plots of various filters." />
+
+## Vibrato
+
+It is interesting that the "vibrato" in the flute is not technically vibrato in the traditional sense. Vibrato is defined as a modulation in pitch, but that is not what we see here. It makes sense that we would not see a change in pitch, since flute vibrato is done entirely with air flow, which does not change the length of the instrument and therefore does not bend the pitch. It also is not traditional tremolo, although this gets close. Tremolo is amplitude modulation, which is what we see, except that it only affects the upper harmonics. Upper harmonic tremolo is perhaps more accurately defined as *brightness* modulation since it primarily affects the timber of the sound.
+
+<img src="%root%/content/images/2019/3/vibrato-medium.jpg" full="%root%/content/images/2019/3/vibrato.png" caption="Note how the vibrato only affects the upper harmonics and not the fundamental frequency." />
