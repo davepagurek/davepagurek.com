@@ -41,6 +41,37 @@ h1 {
 p {
   font-size: 1.2em;
 }
+blockquote {
+  padding: 2.2rem 1.5rem;
+  border-left: 2px solid rgba(0,0,0,0.2);
+  background-color: rgba(0,0,0,0.1);
+  font-size: 1.2em;
+  position: relative;
+  overflow: hidden;
+}
+blockquote:before, blockquote:after {
+  display: block;
+  position: absolute;
+  font-size: 12rem;
+  color: rgba(0,0,0,0.1);
+}
+blockquote:before {
+  content: '\00201C';
+  top: -4rem;
+  left: -0.2rem;
+}
+blockquote:after {
+  content: '\00201D';
+  bottom: -8rem;
+  right: -0.2rem;
+}
+blockquote cite {
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 0.8em;
+  display: block;
+  font-style: italic;
+}
 .post > p, .post > ul, .post > ol,
 .post .column > p, .post .column > ul, .post .column > ol {
   line-height: 1.8em;
