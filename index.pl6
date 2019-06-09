@@ -34,7 +34,7 @@ my $app = Cantilever.new(
     $home-template.render($c);
   },
   archives => -> $c {
-    $c<title> = "Portfolio";
+    $c<title> = "Projects";
     $archives-template.render($c);
   },
   page => -> $p {
@@ -43,6 +43,14 @@ my $app = Cantilever.new(
   },
   category => -> $c {
     $c<title> = $c<category>.meta<name>;
+    $c<filter> = -> $p {
+      if $c<title> eq "Programming" {
+        $p.meta<details>;
+      } else {
+        True;
+      }
+    };
+    $c<small> = $c<category>.meta<small>;
     $category-template.render($c);
   },
   error => -> $e {
@@ -104,11 +112,23 @@ my $app = Cantilever.new(
   ]
 );
 
-$app.generate(copy => {
-  "content/images" => "content/images",
-  "icons" => "icons",
-  "style.css" => "style.css",
-  ".htaccess.export" => ".htaccess",
-  "./generation.js" => "generation.js",
-  "./generation.css" => "generation.css"
-}, regenerate-after => $regenerate-after);
+$app.generate(
+  copy => {
+    "content/images" => "content/images",
+    "icons" => "icons",
+    "style.css" => "style.css",
+    ".htaccess.export" => ".htaccess",
+    "./generation.js" => "generation.js",
+    "./generation.css" => "generation.css"
+  },
+  custom => {
+    "side-projects" => -> $c {
+      $c<title> = "Side Projects";
+      $c<category> = $c<content>.get-category(["programming"]);
+      $c<filter> = -> $p { !$p.meta<details>; };
+      $c<small> = True;
+      $category-template.render($c);
+    }
+  },
+  regenerate-after => $regenerate-after
+);

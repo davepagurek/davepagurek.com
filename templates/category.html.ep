@@ -1,19 +1,43 @@
 <section>
-  <h1><%= $params<category>.meta<name> %></h1>
+  <h1><%= $params<title> %></h1>
   <p class="categories">
-  <%=
-    $params<content>.all-cats.sort(*.meta<rank>).map(-> $p {
-      "<a href='{$p.link}' class='button'>{$p.meta<name>.gist}</a>"
-    }).join(' ')
+  <%
+    my @cats = $params<content>.all-cats.sort(*.meta<rank>)
+      .map(-> $p {
+        "<a href='{$p.link}' class='button'>{$p.meta<name>}</a>"
+      });
+    @cats.splice(1, 0, "<a href='{$params<root>}/side-projects' class='button'>Side Projects</a>");
   %>
+  <%= @cats.join(' '); %>
   <a href='<%= $params<root> %>/archives' class='button'>Everything</a>
   </p>
 </section>
-% for $params<category>.pages-by-date -> $year {
+% my @years = $params<category>.pages-by-date.map(-> $y {
+%   Pair.new($y.key, $y.value.grep($params<filter>));
+% }).grep(-> $y { $y.value.elems > 0; });
+% if $params<small> {
+% for @years -> $year {
+<section class='posts'>
+  <h3><%= $year.key %></h3>
+  <div class='smallposts_container'><div class='smallposts'>
+% for $year.value.list -> $post {
+    <article class='smallpost'>
+      <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
+      <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+    </article>
+% }
+% for 1..6 {
+    <article class='smallpost empty'></article>
+% }
+  </div></div>
+</section>
+% }
+% } else {
+% for @years -> $year {
 <section class='posts'>
   <h3><%= $year.key %></h3>
 % for $year.value.list -> $post {
-    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'>
+    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %>'>
 %   if $post.meta<thumbnail> {
         <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
 %   }
@@ -27,7 +51,7 @@
           <%= $post.meta<coauthors>[0]<name> %>.
 %   } elsif $post.meta<coauthors>.elems == 2 {
           <%= $post.meta<coauthors>.map(*<name>).join(' and ') %>.
-%   } else {		
+%   } else {
           <%= $post.meta<coauthors>[0..*-2].map(*<name>).join(', ') %>
           and <%= $post.meta<coauthors>[*-1]<name> %>.
 %   }
@@ -35,7 +59,10 @@
 % }
 
         <p class='date'>
-          <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
+          <span>
+            <%= $post.meta<published> ?? "{$post.meta<published>}, " !! "" %>
+            <%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %>
+          </span>
 %   if $post.meta<awards> {
 %     for $post.meta<awards>.list -> $award {
             <span class='award <%= $award<award> %>' title='<%= $award<description> %>'></span>
@@ -47,12 +74,6 @@
           <p><%= $post.meta<excerpt> %></p>
 %   if $post.meta<details> {
           <p><%= $post.meta<details> %></p>
-%   }
-
-%   if $post.meta<dank> {
-          <p class='dank'>
-            This project is functional but highly sarcastic.
-          </p>
 %   }
 
   <p class='links'>
@@ -69,4 +90,5 @@
     </article>
 % }
 </section>
+% }
 % }

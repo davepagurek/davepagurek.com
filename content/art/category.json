@@ -1,4 +1,5 @@
 {
 	"name": "Art",
-	"rank": 2
+	"rank": 2,
+  "small": true
 }

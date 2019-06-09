@@ -6,7 +6,7 @@ body {
   color: #111;
   /*font-family: 'Open Sans', sans-serif;*/
 }
-@media all and (max-width: 550px) {
+@media all and (max-width: 600px) {
   html {
     font-size: 0.9em;
   }
@@ -20,7 +20,7 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12 {
 }
 h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, p,
 nav, .content, pre, ul, ol, hr, section.post > .soundcloud,
-.img-container, .cp_embed_wrapper {
+.img-container, .cp_embed_wrapper, .smallposts_container {
   box-sizing: border-box;
   width: 100%;
   max-width: 66rem;
@@ -43,7 +43,7 @@ p {
 }
 blockquote {
   padding: 2.2rem 1.5rem;
-  border-left: 2px solid rgba(0,0,0,0.2);
+  border-left: 2px solid rgba(0,0,0,0.01);
   background-color: rgba(0,0,0,0.1);
   font-size: 1.2em;
   position: relative;
@@ -161,6 +161,9 @@ iframe.soundcloud {
   margin-left:0;
   margin-right:0;
 }
+iframe.instagram-media {
+  flex: none;
+}
 .row {
   max-width: 63rem;
   padding: 0;
@@ -270,7 +273,24 @@ article.post {
   width: 100%;
   padding: 1.2em 3rem 3em 3rem;
 }
-article.post a.thumbnail {
+.smallposts {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  margin-right: -2rem;
+}
+article.smallpost {
+  width: 12em;
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+}
+article.smallpost.empty {
+  height: 0;
+  margin-bottom: 0;
+}
+a.thumbnail {
   display: block;
   margin: 0;
   padding: 0;
@@ -279,13 +299,15 @@ article.post a.thumbnail {
   width: 12em;
   background-size: cover;
   background-position: center;
+}
+article.post a.thumbnail {
   margin-right: 1.5rem;
 }
 article.post .info {
   flex: 1;
   text-align: left;
 }
-article.post h3 {
+article.post h3, article.smallpost h3 {
   font-size: 1.2rem;
   padding-top: 0;
   padding-left: 0;
@@ -298,10 +320,6 @@ article.post p {
   padding-right: 0;
   padding-top: 0.2rem;
   padding-bottom: 0.6em;
-}
-article.post .dank {
-  color: #999;
-  font-style: italic;
 }
 article.post p.date {
   padding-top: 0;
@@ -336,14 +354,21 @@ article.post.detailed {
   }
 }
 
-@media all and (max-width: 500px) {
+@media all and (max-width: 700px) {
   .categories a.button {
     margin: 0;
+  }
+
+  .smallposts {
+    margin-right: -1.5rem;
+  }
+  article.smallpost {
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 section.post div.awards {
-  max-width: 800px;
   font-size: 1.2rem;
 }
 .award-row {

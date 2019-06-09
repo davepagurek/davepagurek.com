@@ -18,7 +18,7 @@
     <h2>Programming</h2>
     <p>I'm a programmer with an interest in computer graphics. Particularly, I'm interested in how tools affect the things we make, and how software can influence design thought.</p>
 % for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<details>)[0..^2].grep({$_}) -> $post {
-    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %> <%= $post.meta<dank> ?? "dank" !! "" %>'>
+    <article class='post <%= $post.meta<details> ?? "detailed" !! "" %>'>
 %   if $post.meta<thumbnail> {
         <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
 %   }
@@ -38,7 +38,10 @@
   </p>
 % }
         <p class='date'>
-          <span><%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %></span>
+          <span>
+            <%= $post.meta<published> ?? "{$post.meta<published>}, " !! "" %>
+            <%= strftime("%B %e, %Y", DateTime.new(date => $post.meta<date>)) %>
+          </span>
 %   if $post.meta<awards> {
 %     for $post.meta<awards>.list -> $award {
             <span class='award <%= $award<award> %>' title='<%= $award<description> %>'></span>
@@ -50,12 +53,6 @@
           <p><%= $post.meta<excerpt> %></p>
 %   if $post.meta<details> {
           <p><%= $post.meta<details> %></p>
-%   }
-
-%   if $post.meta<dank> {
-          <p class='dank'>
-            This project is functional but highly sarcastic.
-          </p>
 %   }
 
   <p class='links'>
@@ -72,7 +69,8 @@
     </article>
 % }
     <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/programming/">More programming projects</a>
+      <a class="button primary" href="https://www.davepagurek.com/programming/">Major programming projects</a>
+      <a class="button primary" href="https://www.davepagurek.com/side-projects/">Side projects</a>
     </div>
   </section>
   <section>
@@ -82,9 +80,9 @@
       <iframe class="soundcloud" width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276903834&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
     </div>
     <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/art/">View art</a>
-      <a class="button primary" href="https://www.davepagurek.com/film/">View animations</a>
-      <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Listen on Soundcloud</a>
+      <a class="button primary" href="https://www.davepagurek.com/art/">Art</a>
+      <a class="button primary" href="https://www.davepagurek.com/film/">Animations</a>
+      <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Soundcloud</a>
     </div>
   </section>
   <link rel="stylesheet" type="text/css" href="generation.css" />
