@@ -19,7 +19,7 @@ for qw<header footer home page category archives error> -> $page {
   }
 }
 
-my $local = %*ENV<ENV> eq "local";
+my $local = %*ENV<ENV> && %*ENV<ENV> eq "local";
 
 my $app = Cantilever.new(
   dev => True,
