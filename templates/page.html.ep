@@ -29,6 +29,10 @@
 
   <h1><%= $params<page>.meta<title> %></h1>
 
+% if $params<page>.meta<published> {
+  <h4><%= $params<page>.meta<published> %></h4>
+% }
+
 % if $params<page>.meta<coauthors> {
   <div class="content coauthors">
     Written in collaboration with
