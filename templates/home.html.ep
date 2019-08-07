@@ -5,7 +5,7 @@
       </div>
       <div class="column" id="description">
         <h2>Hi, I'm Dave Pagurek.</h2>
-        <p>I'm a programmer and artist studying Software Engineering at the University of Waterloo.</p>
+        <p>I'm a programmer and artist pursuing an MSc in CS at the University of British Columbia.</p>
         <p>
           <a class="button" href="resume" target="_blank">Resume</a>
           <a class="button" href="https://github.com/davepagurek">GitHub</a>
