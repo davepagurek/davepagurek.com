@@ -38,8 +38,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/tomorrow-night.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
-% } elsif $params<type> eq 'home' {
-  <link rel="stylesheet" type="text/css" href="calder.css" />
 % }
   <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js'></script>
 </head>
