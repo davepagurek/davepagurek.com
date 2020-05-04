@@ -1,0 +1,54 @@
+<!--
+{
+  "title": "Automatic Secondary Motion with Dynamic Kelvinlets",
+  "category": "programming",
+  "date": "2019-12-01",
+  "excerpt": "Given only primary motion skeletal animation, squash and stretch, overshoot, and jiggling are added automatically in real time.",
+  "coauthors": [
+    {"name": "Jasmeet Singh"}
+  ],
+  "details": "Dynamic Kelvinlets model the time-varying elastic deformations of objects in response to input forces. Pixar uses them to add an extra level of realism to animations by introducing a secondary motion. We implement a system to automatically apply Dynamic Kelvinlet deformation to achieve visually plausible secondary motion at real-time simulation rates.",
+  "art": "%root%/content/images/2020/5/jump.png",
+  "buttons": [
+      {
+          "url": "https://github.com/davepagurek/DynamicKelvinlets",
+          "text": "View Source on GitHub"
+      }
+  ],
+  "thumbnail": "%root%/content/images/2020/5/punch-medium.jpg",
+  "og-image": "%root%/content/images/2020/5/punch.png",
+  "languages": [
+    "C++",
+    "OpenFrameworks"
+  ]
+}
+-->
+
+Artists commonly use physics simulations to add extra detail and realism to animations. However, most physics simulations run slowly on standard hardware, potentially require a volumetric mesh, and are often hard to control. We set out to take as input simple skeletal animation and add squash and stretch, overshoot, and jiggling automatically in real time.
+
+<a href="https://graphics.pixar.com/library/DynaKelvinlets/paper.pdf"><em>Dynamic Kelvinlets</em> by James et al.</a> offer a potential solution: they model elastic deformations and are fast to compute. They compute the response to <em>regularized forces,</em> which are forces spread out over some area instead of being concentrated at a single point. They operate on an <em>infinite continuum,</em> which means that they don't care about the shape of your mesh; instead, they treat your mesh vertices like they are floating in an infinite block of Jello, and simply sends waves through the Jello. Pixar lets artists use these as tools in their animation toolbox by manually placing them in scenes.
+
+<h2>Kelvinlet generation scheme</h2>
+
+Our system automatically places these Dynamic Kelvinlets into the scene in real time based on the changes each frame. First, we apply the artist-made skeletal animation to come up with updated vertex positions. Then, we approximate velocity and acceleration of each vertex by comparing with the previous two frames. Using these accelerations, we place a Kelvinlet at that location. We compute an approximate mass at each vertex and give the Kelvinlet enough force to create the observed acceleration.
+
+<img src="%root%/content/images/2020/5/generationscheme.png" full="%root%/content/images/2020/5/generationscheme.png" caption="Creation of new Kelvinlets each frame based on vertex positions, velocities, and accelerations" />
+
+To keep the simulation real-time, we need to limit the number of active Kelvinlets. To do so, we iteratively merge nearby Kelvinlets into a single Kelvinlet that approximating their sum. We pick Kelvinlets to merge whose force vectors are roughly aligned, and whose radii are touching (where the radius is defined as the distance at which the force reaches 10% of the force at its center.) We pick the force and surface area spread of merged Kelvinlets such that
+
+<ul>
+  <li>the volume of the replacement Kelvinlet is the same as the volume of the sum of the originals, and</li>
+  <li>As the force of either original goes down to 0, the combined Kelvinlet converges to the other nonzero Kelvinlet.</li>
+</ul>
+
+<img src="%root%/content/images/2020/5/merge.gif" full="%root%/content/images/2020/5/merge.gif" caption="The merged Kelvinlet (blue) and the sum of the two input Kelvinlets (red)" />
+
+<h2>Results</h2>
+
+<img src="%root%/content/images/2020/5/pulse.gif" full="%root%/content/images/2020/5/pulse.gif" />
+
+<img src="%root%/content/images/2020/5/jump.gif" full="%root%/content/images/2020/5/jump.gif" />
+
+<img src="%root%/content/images/2020/5/punch.gif" full="%root%/content/images/2020/5/punch.gif" />
+
+<img src="%root%/content/images/2020/5/stomp.gif" full="%root%/content/images/2020/5/stomp.gif" />
