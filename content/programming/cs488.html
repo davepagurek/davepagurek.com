@@ -95,7 +95,7 @@ The <math>n</math> nearest neighbours search returns up to <math>n</math> photon
 
 Within meshes, triangles are partitioned into a <math>k</math>-d tree. For each depth of the tree, an axis-aligned splitting plane is picked to try to balance the tree. When computing a ray intersection with a mesh, instead of checking intersections with every triangle, it will instead check for intersections with the left and right children of the tree. [6] The intersection with the splitting plane is found, and then this intersection is checked against the bounding boxes of the children subtrees. The ray may intersect both children, in which case both children will have to be traversed. For cases where there is not an intersection with both children, the search space can be culled and a child may not need to be explored.
 
-The render time with and without using spacial partitioning was measured and plotted, using Blender's *Suzanne* model at varying levels of surface subdivision. The time shown is the user time reported by the `time` system utility. The `--no-tree` flag was used to do a render that traverses all triangles in a mesh instead of using the <math>k</math>-d tree.
+The render time with and without using spacial partitioning was measured and plotted, using Blender's <em>Suzanne</em> model at varying levels of surface subdivision. The time shown is the user time reported by the `time` system utility. The `--no-tree` flag was used to do a render that traverses all triangles in a mesh instead of using the <math>k</math>-d tree.
 
 <img src="%root%/content/images/2018/7/spacial_acceleration.png" full="%root%/content/images/2018/7/spacial_acceleration.png" />
 
