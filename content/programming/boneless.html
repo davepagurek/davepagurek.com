@@ -1,0 +1,82 @@
+<!--
+{
+  "title": "Locomotion of Boneless Creatures with Distributed Control",
+  "category": "programming",
+  "date": "2020-04-14",
+  "excerpt": "We are interested in exploring how plausible it is to control creatures whose bodies contain muscle and no bone.",
+  "coauthors": [
+    {"name": "Tim Straubinger"}
+  ],
+  "details": "Given various elastic and deformable body plans, we would like to see what gaits emerge based on body shape and body material properties. Through experimentation, we comment on the effectiveness of genetic optimization over policy gradient optimization, and the expressive capability of local controllers with limited views of the world compared to single, comprehensive controllers.",
+  "art": "%root%/content/images/2020/5/tetrapus-long.jpg",
+  "buttons": [
+      {
+          "url": "%root%/content/images/2020/5/BonelessReport.pdf",
+          "text": "View Technical Report"
+      },
+      {
+          "url": "https://github.com/davepagurek/boneless",
+          "text": "View Source on GitHub"
+      }
+  ],
+  "thumbnail": "%root%/content/images/2020/5/tetrapus-long-thumbnail.jpg",
+  "og-image": "%root%/content/images/2020/5/tetrapus-long.jpg",
+  "languages": [
+    "Python",
+    "PyTorch"
+  ]
+}
+-->
+
+We are interested in exploring whether we can achieve complex, organized behaviours using a distributed network of localized controllers that are tasked with collectively moving a soft body with no rigid skeleton. Given various elastic and deformable body plans, we would like to see what gaits emerge based on body shape and body material properties. Through experimentation, we comment on the effectiveness of genetic optimization over policy gradient optimization, and the expressive capability of local controllers with limited views of the world compared to single, comprehensive controllers.
+
+<h2>Optimization methods</h2>
+We optimized policies using a genetic algorithm (GA) and using Proximal Policy Optimization (PPO).
+
+<h3>Genetic optimization</h3>
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/tetrapus-springy.gif" full="%root%/content/images/2020/5/tetrapus-springy.gif" caption="Tetrapus with high springiness" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/tetrapus-mushy.gif" full="%root%/content/images/2020/5/tetrapus-mushy.gif" caption="Tetrapus with low springiness" />
+  </div>
+</div>
+
+<h3>Proximal Policy Optimization</h3>
+<img src="%root%/content/images/2020/5/ppo.gif" full="%root%/content/images/2020/5/ppo.gif" caption="PPO creates stochastic policies, which are not as effective as those found using GA." />
+
+<h2>Control schemes</h2>
+
+We wanted to compare how policy effectiveness changes when you go from a single controller with full state knowledge to a set of distributed controllers, with only local state knowledge and the ability to pass information to neighbouring controllers.
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/skinnyworm-global.gif" full="%root%/content/images/2020/5/skinnyworm-global.gif" caption="Worm with global controller" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/skinnyworm-communication.gif" full="%root%/content/images/2020/5/skinnyworm-communication.gif" caption="Worm with local, communicating controllers" />
+  </div>
+</div>
+
+We also tested the use of local controllers without communication to see how well a policy can operate while blind to the state of the rest of the creature.
+
+<img src="%root%/content/images/2020/5/skinnyworm-nocomm.gif" full="%root%/content/images/2020/5/skinnyworm-nocomm.gif" caption="Worm with local controllers, but no communication" />
+
+<h2>Extras</h2>
+
+Some alternate body plans and non-optimal policies from the genetic algorithm population.
+
+<img src="%root%/content/images/2020/5/horse.gif" full="%root%/content/images/2020/5/horse.gif" caption="A horse body plan, optimized with GA" />
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/tetrapus-fall.gif" full="%root%/content/images/2020/5/tetrapus-fall.gif" caption="Tetrapus somersaulting instead of walking" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2020/5/fatworm-somersault.gif" full="%root%/content/images/2020/5/fatworm-somersault.gif" caption="Worm somersaulting instead of walking" />
+  </div>
+</div>
+
+<img src="%root%/content/images/2020/5/textured.gif" full="%root%/content/images/2020/5/textured.gif" caption="When they play your song at the club" />
