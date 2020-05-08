@@ -1,0 +1,47 @@
+<!--
+{
+  "title": "Collage Brush",
+  "category": "programming",
+  "date": "2020-03-26",
+  "excerpt": "A small tool to for cutting an image into pieces of similar texture and then drawing a collage with them.",
+  "thumbnail": "%root%/content/images/2020/5/collage-thumbnail.jpg",
+  "youtube": "LBFO2zaQG4k",
+  "languages": [
+    "Javascript", "p5.js"
+  ],
+  "buttons": [
+    {
+      "url": "https://codepen.io/davepvm/full/RwPqmaw",
+      "text": "Live demo"
+    }
+  ]
+}
+-->
+
+A small tool to for cutting an image into pieces of similar texture and then drawing a collage with them.
+
+<h2>Cutting the image</h2>
+
+First, the input image is divided into a grid. The goal is to then create up to <em>n</em> distinct buckets that grid cells can be divided into, representing different collage brushes. Here's how that is created:
+
+<ol>
+  <li>Convert every pixel from <em>RGB</em> color into <em>Lab</em> color</li>
+  <li>Pick <em>n</em> random grid cells to form the initial buckets</li>
+  <li>Repeat until there are no changes:
+    <ol>
+      <li>Calculate a Gaussian distribution of <em>L</em>, <em>a</em>, and <em>b</em> for all pixels in all grid cells in each bucket</li>
+      <li>Calculate the Gaussian <em>Lab</em> distributions for each grid cell</li>
+      <li>Remove all grid cells from their previous buckets</li>
+      <li>Place each grid cell in the bucket that their distribution is closest to</li>
+      <li>Remove empty buckets</li>
+    </ol>
+  </li>
+</ol>
+
+Afterwards, each bucket should represent a distinct shade that can be selected as if from a color picker.
+
+<h2>Drawing with collage brushes</h2>
+
+A user then picks a shade and clicks and drags over the image. This places a reference to that shade at the user's mouse location.
+
+To render an image, for each shade reference on the canvas, place a random grid cell from that shade's bucket.
