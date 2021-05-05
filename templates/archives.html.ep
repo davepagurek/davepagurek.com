@@ -28,10 +28,10 @@
 %   next unless $post;
     <article class='post <%= $post.meta<details> ?? "detailed" !! "" %>'>
 %   if $post.meta<thumbnail> {
-        <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
+        <a  href='<%= $post.meta<external> || $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>
 %   }
       <div class='info'>
-        <h3><a href='<%= $post.link %>'><%= $post.meta<title> %></a></h3>
+        <h3><a href='<%= $post.meta<external> || $post.link %>'><%= $post.meta<title> %></a></h3>
 
 % if $post.meta<coauthors> {
         <p class="coauthors">

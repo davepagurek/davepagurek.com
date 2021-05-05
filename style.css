@@ -485,32 +485,32 @@ iframe.youtube {
   min-height:600px;
   max-height:600px;
 }
-iframe.youtube.embed {
+iframe.youtube.embed, video {
   width:100%;
   max-width: 900px;
   display:block;
   margin:0 auto;
 }
 @media all and (max-width: 1300px) {
-  iframe.youtube {
+  iframe.youtube, video {
     min-height:500px;
     max-height:500px;
   }
 }
 @media all and (max-width:700px) {
-  iframe.youtube {
+  iframe.youtube, video {
     min-height:350px;
     max-height:350px;
   }
 }
 @media all and (max-width:500px) {
-  iframe.youtube {
+  iframe.youtube, video {
     min-height:220px;
     max-height:220px;
   }
 }
 @media all and (max-width:280px) {
-  iframe.youtube {
+  iframe.youtube, video {
     max-height:180px;
     min-height:180px;
   }

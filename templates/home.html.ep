@@ -5,7 +5,7 @@
       </div>
       <div class="column" id="description">
         <h2>Hi, I'm Dave Pagurek.</h2>
-        <p>I'm a programmer and artist pursuing an MSc in CS at the University of British Columbia.</p>
+        <p>I'm a programmer and artist, previously at UBC for an MSc and UWaterloo for a BSE.</p>
         <p>
           <a class="button" href="resume" target="_blank">Resume</a>
           <a class="button" href="https://github.com/davepagurek">GitHub</a>
@@ -75,14 +75,12 @@
   </section>
   <section>
     <h2>Arts and Design</h2>
-    <p>In my spare time, I <a href="https://www.davepagurek.com/art">draw</a>, make <a href="https://www.davepagurek.com/film">animations</a>, and write music. I make a lot of <a href="http://soundcloud.com/dont-cross-me">sarcastic cover songs</a> as well as serious music like the track below.</p>
-    <div class="row full">
-      <iframe class="soundcloud" width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/276903834&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
-    </div>
+    <p>In my spare time, I <a href="https://www.davepagurek.com/art">draw</a>, make <a href="https://www.davepagurek.com/film">animations</a>, and write music. I make a lot of <a href="http://soundcloud.com/dont-cross-me">sarcastic cover songs</a> as well as <a href="https://www.davepagurek.com/music">serious music</a>.</p>
+    <iframe class="youtube" src="//www.youtube.com/embed/Lx92QWPvUa0?rel=0" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>
     <div class="row">
       <a class="button primary" href="https://www.davepagurek.com/art/">Art</a>
       <a class="button primary" href="https://www.davepagurek.com/film/">Animations</a>
-      <a class="button primary" href="http://www.soundcloud.com/davidpvm/">Soundcloud</a>
+      <a class="button primary" href="https://www.davepagurek.com/music/">Music</a>
     </div>
   </section>
   <link rel="stylesheet" type="text/css" href="generation.css" />
