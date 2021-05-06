@@ -187,6 +187,9 @@ iframe.instagram-media {
   box-sizing: border-box;
   width:100%;
 }
+.row.expanded {
+  padding: 3rem;
+}
 .column {
   display: flex;
   flex-direction: column;
@@ -734,9 +737,11 @@ nav a.toggle {
   padding: 1rem;
 }
 #header svg {
-  width: 100%;
-  max-width: 100%;
+  width: calc(100% + 3rem);
+  max-width: calc(100% + 3rem);
   height: auto;
+  margin-left: -3rem;
+  margin-bottom: -3rem;
 }
 #description {
   text-align: center;
@@ -753,6 +758,21 @@ nav a.toggle {
   #description, #header svg {
     max-width: 55rem;
     margin: 0 auto;
+  }
+}
+.column.bottomleft {
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  40%, 60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1;
   }
 }
 

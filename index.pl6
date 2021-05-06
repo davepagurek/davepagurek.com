@@ -118,8 +118,7 @@ $app.generate(
     "icons" => "icons",
     "style.css" => "style.css",
     ".htaccess.export" => ".htaccess",
-    "./generation.js" => "generation.js",
-    "./generation.css" => "generation.css"
+    "./bundle.js" => "bundle.js",
   },
   custom => {
     "side-projects" => -> $c {
