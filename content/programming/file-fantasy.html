@@ -1,0 +1,63 @@
+<!--
+{
+  "title": "File Fantasy",
+  "category": "programming",
+  "date": "2020-07-20",
+  "excerpt": "Version control implemented entirely through obscure file naming",
+  "thumbnail": "%root%/content/images/2021/05/ff-woke-thumbnail.png",
+  "languages": [
+    "Javascript"
+  ],
+  "buttons": [
+    {
+      "url": "https://github.com/davepagurek/file-fantasy",
+      "text": "View Source on GitHub"
+    }
+  ],
+  "dank": true
+}
+-->
+
+
+Version control for HUMANS. Make sense of all the copies of copies of files on your desktop!
+
+## Installation
+
+```
+npm install -g @davepagurek/file-fantasy
+```
+
+## Usage
+
+`commit` a file to make a backup of it.
+
+```
+$ ff commit something.txt
+something.txt was copied to something_Copy(2).txt
+```
+
+`branch` a file to make a separate version of it. No need to come up with a branch name, we do that for you!
+
+```
+$ ff branch something.txt
+file: something.txt | newish file: spmfthiog.txt
+something.txt was copied to spmfthiog.txt
+```
+
+`merge` a source branch into a destination branch (and shove the contents of both together.)
+
+```
+$ ff merge spmfthiog.txt something_Copy\(2\).txt
+🤯 Merged to create: something_Copy(3)-spmfthiog.txt
+```
+
+Create a `log` of all the complex version history so you can understand where all those files came from.
+
+<div class="row">
+  <div class="column">
+    <img src="%root%/content/images/2021/05/ff-broke.png" full="%root%/content/images/2021/05/ff-broke.png" caption="Broke" />
+  </div>
+  <div class="column">
+    <img src="%root%/content/images/2021/05/ff-woke.png" full="%root%/content/images/2021/05/ff-woke.png" caption="Woke" />
+  </div>
+</div>
