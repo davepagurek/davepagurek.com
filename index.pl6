@@ -115,6 +115,7 @@ my $app = Cantilever.new(
 $app.generate(
   copy => {
     "content/images" => "content/images",
+    "scripts" => "scripts",
     "icons" => "icons",
     "style.css" => "style.css",
     ".htaccess.export" => ".htaccess",

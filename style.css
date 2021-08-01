@@ -164,6 +164,12 @@ iframe.soundcloud {
 iframe.instagram-media {
   flex: none;
 }
+iframe.sketch {
+  border: 0;
+}
+iframe.sketch.hidden {
+  visibility: hidden;
+}
 .row {
   max-width: 63rem;
   padding: 0;
@@ -480,40 +486,40 @@ div.img p {
   color: #999;
 }
 
-section > iframe.youtube {
+section > iframe.youtube, section > iframe.sketch {
   max-width: 66rem;
 }
-iframe.youtube {
+iframe.youtube, iframe.sketch {
   width:100%;
   min-height:600px;
   max-height:600px;
 }
-iframe.youtube.embed, video {
+iframe.youtube.embed, iframe.sketch, video {
   width:100%;
   max-width: 900px;
   display:block;
   margin:0 auto;
 }
 @media all and (max-width: 1300px) {
-  iframe.youtube, video {
+  iframe.youtube, iframe.sketch, video {
     min-height:500px;
     max-height:500px;
   }
 }
 @media all and (max-width:700px) {
-  iframe.youtube, video {
+  iframe.youtube, iframe.sketch, video {
     min-height:350px;
     max-height:350px;
   }
 }
 @media all and (max-width:500px) {
-  iframe.youtube, video {
+  iframe.youtube, iframe.sketch, video {
     min-height:220px;
     max-height:220px;
   }
 }
 @media all and (max-width:280px) {
-  iframe.youtube, video {
+  iframe.youtube, iframe.sketch, video {
     max-height:180px;
     min-height:180px;
   }

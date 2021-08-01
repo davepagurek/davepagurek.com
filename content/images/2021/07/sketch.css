@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #FFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+canvas {
+  display: block;
+  touch-action: none;
+}
