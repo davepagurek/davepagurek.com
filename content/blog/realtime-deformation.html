@@ -105,7 +105,7 @@ I'm vetoing writing derivatives by hand not because calculating derivatives is a
 
 Computing the derivative of a function with respect to some variable is a fairly straightforward recursive algorithm. It's one that you probably learned in high school. Every basic operation has a predefined derivative. For example, <math>\\frac{\\partial}{\\partial x} \\sin(x) = \\cos(x)</math>. If an operation is being applied to some more complicated function <math>u</math>, then we use the recursive <em>chain rule</em>, where we multiply the derivative of a sine operation by the derivative of whatever <math>u</math> happens to be: <math>\\frac{\\partial}{\\partial x} \\sin(u) = \\cos(u) \\frac{\\partial u}{\\partial x}</math>. You just keep working your way deeper, from the outermost operation inward, until you can't break down <math>u</math> any further.
 
-Modeling this in an object-oriented way, every operation will be an object that is knows how to compute its own derivative. Its parameters may themselves be operations with derivatives. An expression like `0.1 * (sin(10*x + 20))^2` would translate into an object hierarchy like this:
+Modeling this in an object-oriented way, every operation will be an object that knows how to compute its own derivative. Its parameters may themselves be operations with derivatives. An expression like `0.1 * (sin(10*x + 20))^2` would translate into an object hierarchy like this:
 
 <img src="%root%/content/images/2021/07/syntax-tree.svg" full="%root%/content/images/2021/07/syntax-tree.svg" caption="A syntax tree breakdown of `0.1 * (sin(10*x + 20))^2`" />
 
@@ -155,7 +155,7 @@ Of course, writing your code by constructing objects representing every operatio
 <a href="https://github.com/davepagurek/glsl-autodiff">The library I created</a> is available on NPM as `@davepagurek/glsl-autodiff`. It's also what's powering the "proper normals" examples on this page! It lets you write some expressions and then take the derivative of those expressions with respect to your input variables. Here's a snippet of what it looks like to use the final library:
 
 <code lang="javascript">
-import { gen } from `@davepagurek/glsl-autodiff';
+import { gen } from '@davepagurek/glsl-autodiff';
 
 const vert = `
   void main(void) {
