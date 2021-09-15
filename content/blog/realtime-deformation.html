@@ -238,7 +238,7 @@ outPosition.z += offset;
 // The normal is the cross product of two surface tangents, which are
 // the changes in z given a unit change in our two surface directions
 vec3 tangentX = vec3(1., 0., doffset_by_dx);
-vec3 tangentY = vec3(0., 1., doffset_by_dx);
+vec3 tangentY = vec3(0., 1., doffset_by_dy);
 vec3 normal = normalize(cross(tangentX, tangentY));
 </code>
 
