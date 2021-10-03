@@ -1,0 +1,239 @@
+<!--
+{
+  "title": "Depth of field in p5.js",
+  "category": "blog",
+  "date": "2021-10-03",
+  "thumbnail": "%root%/content/images/2021/10/origin-of-symmetry.jpg",
+  "og-image": "%root%/content/images/2021/10/origin-of-symmetry.jpg",
+  "excerpt": "Let's add some blur to p5 WebGL mode!"
+}
+-->
+
+I find a lot of generative art has a flattened, graphic design-inspired style. There are cultural reasons for this (generative art using code has its roots in conceptual art and minimalism) and technical reasons (there is a significantly higher learning curve and barrier to entry when programming for photorealism.) Lots of amazing work is made in this style! That said, a great way to inspire new ideas is to try to do the opposite of what you are used to doing. For that reason, I wanted to try to take a step towards something a bit more <a href="https://www.youtube.com/watch?v=ZbByKUDJlbI">cinematic</a> and add some depth of field blur to my 3D scenes.
+
+If we're going to program this effect, we should start off with an understanding of what exactly it is we're making. The term "depth of field" is a term from cameras, and it refers to how much wiggle room you have when positioning an object when you want it to appear sharp in a photo. Position it too close or too far from the camera and it will start to blur and go out of focus. So why does that happen?
+
+## Two sentences about the actual optics and then we'll move on I swear
+
+The lens of a camera bends light to try to focus it onto the film in the camera. When all the light that originated from a single point on an object ends up focused to a single point on the film, then that point appears sharp in the image; otherwise, the light from that point gets spread out and the result is a blurry image.
+
+<video autoplay muted loop>
+  <source src="%root%/content/images/2021/10/blur-demo.mp4" type="video/mp4" />
+</video>
+
+## Why does that make an image look fuzzy though?
+
+Why does an image look fuzzy when the light gets spread out? It's one of those things that feels intuitive, but maybe that's just because we're so used to seeing it.
+
+To simulate the effect of a bunch of photons spreading out, let's see what happens when we duplicate an image a bunch of times, all slightly transparent. Drag the sliders to see how it looks with more or less copies of an image (the more copies, the closer we get to "real life" with billions of photons) and to see how it looks when spread out various amounts.
+
+<iframe class="sketch" style="max-width: 500px !important; min-height: 200px !important" src="%root%/content/images/2021/10/blur_explainer"></iframe>
+
+Basically: with enough samples, all with random offsets, we converge on a smooth blur! This will be a guiding principle for how we implement our own blur.
+
+## A simple model for how focal blur works
+
+So, we know how to uniformly blur a whole image. A photo isn't all blurred uniformly, though; some things in the image are in focus and others aren't. Instead, we need to treat every fragment of every object in the image as a separate object, and blur them different amounts. Every fragment that we render will be blurred, and the question is just how much.
+
+The camera has a target focal distance. If we are rendering a fragment that is exactly that distance away, its colour will be spread out over a radius of zero and it will be perfectly in focus.
+
+The camera also has a blur rate. As a fragment's distance from the focal target increases, its blur radius increases by the blur rate.
+
+## Let's make an algorithm!
+
+Imagine our image is an array of pixels, where each one has a color, a position on the screen, and also a depth.
+
+<code lang="typescript">
+type Pixel = {
+  // Position in the screen
+  x: number
+  y: number
+
+  // 3D depth of the object that this pixel came from
+  depth: number
+
+  // The color of the pixel
+  r: number
+  g: number
+  b: number
+}
+</code>
+
+Then, to produce a blurred image, we can just calculate the blur radius of each pixel and draw it blurred it by that amount. We also need to draw the farthest pixels first so that their blurs don't accidentally overlap with pixels that are closer to the camera.
+
+<code lang="typescript">
+function drawBlurred(
+  pixels: Pixel[],
+  targetDistance: number,
+  blurRate: number
+) {
+  // Draw farther pixels first by sorting by depth, descending
+  pixels.sort((a, b) => b.depth - a.depth)
+
+  noStroke()
+  for (cont pixel of pixels) {
+    fill(pixel.r, pixel.g, pixel.b)
+    const blurRadius = abs(pixel.depth - targetDistance) * blurRate
+    drawingContext.filter = `blur(${blurRadius}px)`
+    rect(pixel.x, pixel.y, 1, 1)
+  }
+}
+</code>
+
+This would work, but blurring one pixel at a time like this is slow, and we don't automatically know the depth of each pixel.
+
+We could render one object at a time with this method instead of one pixel at a time, and that works decently. In fact, that's what I used for this sketch, playing off of the album art for <a href="https://en.wikipedia.org/wiki/Origin_of_Symmetry">Muse's <em>Origin of Symmetry:</em></a>
+
+<video autoplay muted loop>
+  <source src="%root%/content/images/2021/10/origin-of-symmetry.mp4" type="video/mp4" />
+</video>
+
+However, this uniformly blurs each object, so it can't handle single objects being partially in focus and partially out of focus. It would be great if we could get true per-pixel blur.
+
+## WebGL to the rescue!
+
+If we're rendering a 3D scene via WebGL, it actually <em>does</em> have the depth information stored! It isn't immediately accessible to us, but it's used internally in the rendering pipeline.
+
+If you were drawing a scene in a 2D canvas, you manage depth by drawing the farthest objects first. This way, closer objects have the ability to draw overtop of the previously drawn farther objects. This is called the <a href="https://en.wikipedia.org/wiki/Painter%27s_algorithm">painter's algorithm</a> and we just did this earlier when we sorted pixels by their depth.
+
+WebGL works a little differently, however. You can draw things in any order you want and it will still still show closer objects in front (well, unless you <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/disable">tell it not to.</a>) It does this by recording the depth of every pixel in a <strong>depth buffer</strong>, which is like a monochrome image the same size as the main canvas. Instead of interpreting the pixel values in the depth buffer as colours, you read them as depth.
+
+<img src="%root%/content/images/2021/10/depth.png" full="%root%/content/images/2021/10/depth.png" caption="The brightness of the depth buffer linearly maps to the distance from the camera, where full white and full black are determined by the far and near planes in the perspective matrix." />
+
+When drawing a new object in WebGL, for each pixel on the screen that an object occupies, WebGL checks in the depth buffer to see whether the last thing drawn on that pixel is closer to the camera than the current object. If so, it will not update the colour of that pixel, since the object being drawn should be occluded by the already drawn pixel. Otherwise, WebGL will update the pixel colour and store a new depth value in the depth buffer.
+
+## Reading the depth buffer
+
+Usually, the depth buffer is just something internal. Thankfully, WebGL gives us a way to draw to a <em>texture</em> instead of directly to the canvas. If we draw to a texture first, then we can read that texture from a shader later on as if it were just a regular image!
+
+In WebGL, a render target is called a <em>framebuffer.</em> We can create a new one like so:
+
+<code lang="javascript">
+const colorTexture = gl.createTexture()
+gl.bindTexture(gl.TEXTURE_2D, colorTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+
+const depthTexture = gl.createTexture()
+gl.bindTexture(gl.TEXTURE_2D, depthTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)
+
+const framebuffer = gl.createFramebuffer()
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0)
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0)
+</code>
+
+Now, if we want to render to our textures, we just bind the framebuffer we made before drawing:
+
+<code lang="javascript">
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+</code>
+
+And then if we want to draw to the main canvas, we bind `null`, which sets the render target back to the default canvas:
+
+<code lang="javascript">
+gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+</code>
+
+We can pass the depth (or, similarly, colour) textures into a shader now:
+
+<code lang="javascript">
+gl.activeTexture(gl.TEXTURE0)
+gl.bindTexture(gl.TEXTURE_2D, depthTexture)
+</code>
+
+## The blur algorithm, in a shader this time
+
+So, in a shader we have access to the depth values now! But the other limitation of a shader is that we are writing a program that computes the colour of just one pixel at a time. In our previous algorithm, we mapped each pixel on the original image to possibly multiple pixels on the blurred image. Now, we need to write a program that does the reverse: it must take as input a pixel location in the blurred image, and then fetch possibly many pixel colours from the original image in order to produce a final colour.
+
+Our strategy is going to be to look at as many nearby pixels as we can, and detect whether (1) we are close enough to it that its blur would touch the current pixel, and (2) whether that blur would go in front or behind of the current pixel.
+
+<img src="%root%/content/images/2021/10/pixelblur.png" full="%root%/content/images/2021/10/pixelblur.png" caption="We need to sample nearby pixels, see how far its blur reaches, and see if that brings it in front or behind of us." />
+
+Our algorithm for each pixel will now look like this:
+<ol>
+  <li>Find the z value at the target pixel</li>
+  <li>Calculate the target pixel's blur radius given that z</li>
+  <li>Sample nearby pixels within the maximum blur radius</li>
+  <li>For each nearby pixel:
+    <ol type="a">
+      <li>Get the sample's z value</li>
+      <li>Get the sample's blur radius from its z</li>
+      <li>To blur this pixel's colour with nearby colours that are behind it: if the sample is <strong>farther back</strong> than the target pixel add the sample's colour to the mix if it's within <strong>the target pixel's blur radius</strong></li>
+      <li>To make sure blur from nearby pixels in front of us are still visible on top: if the sample is <strong>closer</strong> than the target pixel, add the sample's colour to the mix if it's within <strong>the sample pixel's blur radius</strong></li>
+    </ol>
+  </li>
+</ol>
+
+For efficiency reasons, we might want to avoid looping over <em>every</em> nearby pixel, so we can randomly sample nearby pixels. To get the smoothest output from our limited samples, we can non-uniformly sample nearby pixels so that we get more samples in the areas that will reduce noise the most.
+
+## Now how do we shoehorn that into the p5 pipeline?
+
+Normally, p5 manages its own WebGL textures. This would get hairy if you have to manage it on your own, so this is one of the best features of p5!
+
+WebGL is kind of like a communication protocol between your CPU and your GPU. The CPU is where your javascript lives and runs, and the GPU is responsible for rendering the content of your canvas element. There are things on the CPU that you will want to send to the GPU in order to render your canvas. You might have images and other canvases that you would like to composite together in your render, so those need to get sent from the CPU to the GPU.
+
+Because of this, p5 makes the assumption that every texture you use on the GPU comes from a data source on the CPU. Every image you use in your WebGL sketch is given an accompanying WebGL texture by p5 (wrapped up nicely in the `p5.Texture` class), and p5 sends new image data from the CPU to the GPU to put into that texture every time the image updates.
+
+<img src="%root%/content/images/2021/10/gpu-updates.png" full="%root%/content/images/2021/10/gpu-updates.png" caption="p5 assumes every WebGL texture comes from some data source on the CPU." />
+
+(Aside: when you draw a `p5.Graphics` to a WebGL canvas, it <a href="https://github.com/processing/p5.js/blob/v1.4.0/src/webgl/p5.Texture.js#L201-L204">sends data every frame</a>: p5 isn't able to detect when a canvas changes, so it has to play it safe and update the canvas every frame just in case something has. This can be a performance bottleneck. If you have canvases that don't change, consider using `const img = yourGraphic.get()` to create a static `p5.Image` from your graphic, so p5 won't need to keep re-sending the same data to the GPU every frame.)
+
+The trouble with our framebuffer textures is that they don't have content on the CPU with them! They get content when you render to them via WebGL, which is already on the GPU. If we want to call `myShader.setUniform()` and pass in a framebuffer texture as if it's any other image, we need to patch support for this into p5.
+
+I've chosen to do this by creating a subclass of `p5.Texture` that replaces p5's default behaviour of updating WebGL texture data from the CPU with a function that does nothing:
+
+```javascript
+class RawTextureWrapper extends p5.Texture {
+  // Override the default update behaviour and do nothing
+  update() {
+    return false
+  }
+
+  // Other setup omitted for brevity
+}
+```
+
+Then, we manually pair an instance of this class with our framebuffer textures so that p5 will use our patched version instead of an upatched `p5.Texture` instance:
+
+```javascript
+const depthP5Texture = new RawTextureWrapper(_renderer, depthTexture)
+_renderer.textures.push(depthP5Texture)
+```
+
+Now we can render to our framebuffer, then pass the depth texture into a normal `p5.Shader` as a texture!
+
+```javascript
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+// Draw our 3D scene to the framebuffer here
+gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+
+shader(myShader)
+myShader.setUniform('depth', depthTexture)
+rect(0, 0, width, height)
+```
+
+## Results
+
+Here's an animation of an infinitely descending ladder, with some focal blur applied using this shader.
+
+<video autoplay muted loop>
+  <source src="%root%/content/images/2021/10/descent-compressed.mp4" type="video/mp4" />
+</video>
+
+I'm pretty happy with how this one turned out! Created for the theme of "the void" for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly created coding challenge, I wanted to create something reminiscent of the experience of playing games like <a href="https://en.wikipedia.org/wiki/Amnesia:_The_Dark_Descent">Amnesia</a>. I think the blurry vision helped sell the effect.
+
+You can inspect the source code and view it live <a href="https://editor.p5js.org/davepagurek/sketches/cmcqbj1II">in the p5 editor.</a>
+
+## Future work
+
+Now that it's working for blur, there's more I want to do with this p5 framebuffer implementation!
+
+<ul>
+  <li><strong>Ambient occlusion:</strong> you can also approximate <a href="https://en.wikipedia.org/wiki/Ambient_occlusion">shadows due to indirect lighting</a> if you have access to a depth buffer! These sorts of shadows are another great way of grounding objects in a scene and making it feel more cohesive.</li>
+  <li><strong>Faster multi-pass rendering:</strong> often I use multiple `p5.Graphics` canvases in p5 to be able to draw to multiple "layers" separately and then composite them together at the end. Sometimes the performance bottleneck is the time spent sending the canvas data from the CPU to the GPU. If I'm using WebGL canvases anyway, I could replace the multiple `p5.Graphics` canvases with multiple framebuffers on the same canvas, eliminating the need to send anything back-and-forth between CPU and GPU. Eventually I might turn the `Framebuffer` class <a href="https://editor.p5js.org/davepagurek/sketches/cmcqbj1II">I have in the ladder descent sketch</a> into a proper general-purpose p5 framebuffer library.</li>
+</ul>
+
+Stay tuned for those!
+
+<script type="text/javascript" src="%root%/scripts/manage_sketches.js"></script>

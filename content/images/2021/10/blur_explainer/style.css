@@ -1,0 +1,37 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FFF;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+canvas {
+  display: block;
+}
+
+#container {
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+#controls {
+  marginLeft: 20px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.control label {
+  display: block;
+  width: 75px;
+  text-align: right;
+  margin-right: 10px;
+}
