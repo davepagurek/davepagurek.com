@@ -1,0 +1,19 @@
+<!--
+{
+  "title": "Fracture",
+  "category": "programming",
+  "date": "2021-07-10",
+  "excerpt": "Generative exploding cubes",
+  "thumbnail": "%root%/content/images/2021/12/fracture.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. We were given the theme "cut" and this is what I came up with!
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1417858/embed/" width="400" height="400"></iframe>
+
+If you cut a convex shape along a plane, you get two convex shapes. Therefore, if you start with a convex shape as input (and a cube is one such shape), one can keep recursively the results of previous cuts. Using this approach, I cut a cube a number of times, make the pieces explode outwards, and then slurp back into itself to reform the cube.

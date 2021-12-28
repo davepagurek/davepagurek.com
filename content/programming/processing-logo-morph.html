@@ -1,0 +1,65 @@
+<!--
+{
+  "title": "Processing Logo Morph",
+  "category": "programming",
+  "date": "2021-07-19",
+  "excerpt": "For the 20th anniversary of Processing, a sketch that plays with the new Processing logo",
+  "thumbnail": "%root%/content/images/2021/12/processing-morph.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. Since this week coincided with the 20th anniversary of Processing, the challenge was to play with the new Processing logo. This is what I came up with!
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1247454/embed/" width="400" height="400"></iframe>
+
+My idea was to take the three curves that make up the Processing logo and then morph them into a few other illustrations.
+
+## Mapping one curve onto another curve
+
+A large part of my MSc was spent thinking about parameterizing curves, which, put simply, means mapping each point along curves to a number. If you have two parameterized curves, you can map a point on one curve to a point on the other curve by finding the point that has the same number.
+
+Although there are lots of possible ways of assigning these numbers, a simple and useful one is to use the fraction of the distance along the curve. This means one end of the curve is given 0, the other end is given 1, and everything in between smoothly transitions from 0 to 1 proportional to its distance along the curve. This is a convenient parameterization because you can easily apply it to any path in an SVG file using `path.getTotalLength()` and `path.getPointAtLength(someLength)` in the Javascript API.
+
+So now I can morph between two curves by calling a function like this, where passing in 0 gives me the first curve, passing in 1 gives me the second, and anything in between gives me a curve partially morphed between the two:
+
+```js
+function morphCurves(curve1, curve2, mix) {
+  const curves = [curve1, curve2]
+  const curveLengths = curves.map((c) => c.getTotalLength())
+  const numPoints = Math.ceil(Math.max(...curveLengths))
+  const inputPoints = curves.map((c, cIdx) => {
+    const samples = []
+    for (let i = 0; i < numPoints; i++) {
+      const fraction = i / (numPoints - 1)
+      sample.push(c.getPointAtLength(fraction * curveLengths[cIdx]))
+    }
+  })
+
+  // Linearly interpolate between the input points
+  const morphedPoints = []
+  for (let i = 0; i < numPoints; i++) {
+    const p1 = inputPoints[0][i]
+    const p2 = inputPoints[0][i]
+    morphedPoints.push({
+      x: p1.x * (1 - mix) + p2.x * mix,
+      y: p1.y * (1 - mix) + p2.y * mix
+    })
+  }
+
+  beginShape()
+  for (const { x, y } of morphedPoints) {
+    vertex(x, y)
+  }
+  endShape()
+}
+```
+
+## Performance
+
+The above would work, but unfortunately there's some noticeable lag when calling `getPointAtLength` so many times each frame. So I also implemented my own Bézier path class that has the same `getTotalLength` and `getPointAtLength` APIs, but does so in a more efficient way.
+
+The trouble with Bézier segments is that one can easily get a point at a position in *parameter space* (between 0 and 1), but this is not the same as distance. Depending on where one places control points, 0.5 in parameter space can be much closer to one endpoint than another. To deal with this, when I first construct instances of the class, I find a set of parameter values resulting in points at evenly spaced distances, and then use these to index into the curve and quickly narrow down the search space when looking for points at lengths.

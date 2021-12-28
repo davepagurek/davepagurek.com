@@ -1,0 +1,50 @@
+<!--
+{
+  "title": "Star Maps",
+  "category": "programming",
+  "date": "2021-07-24",
+  "excerpt": "Generative star maps, with constellations and their names",
+  "thumbnail": "%root%/content/images/2021/12/star-map.png",
+	"art": "%root%/content/images/2021/12/full-star-map.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was maps, so I made some generative star maps.
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1417886/embed/" width="400" height="400"></iframe>
+
+## The grid background
+
+The grid background works by choosing a random 3D orientation for a sphere. Then, imagine drawing longitude and latitude lines on the rotated sphere. For each point on those lines on the surface of the sphere, I calculate the normal of the surface at that point. That normal is sent through the formula I would normally use when doing sphere mapped reflections to map a surface normal to a 2D coordinate on a texture, which I'm using here to *draw* a texture as opposed to reading it like usual.
+
+## Constellations
+
+Constellations are created by growing a tree of stars, which themselves are points sampled from a Gaussian distribution.
+
+## Constellation names
+
+This part is pretty simple. I got a list of common English nouns and adjectives, and draw from them randomly. Possibly the simplest part is the most entertaining!
+
+## Label layout
+
+If I were smart, I would have generated distinct regions of the map using something like Voronoi cells, and then found constellations within each cell so that they wouldn't overlap on the map. This would make placing labels easier.
+
+However, I did not do that. Instead, I ended up with this complicated optimization problem:
+
+- Labels should be as close as possible to the thing they're labelling
+- Labels shouldn't overlap (too much) with that thing
+- Labels shouldn't be too close to the things other labels correspond to
+- Labels absolutely cannot overlap
+- Labels absolutely cannot go off the edge of the map
+
+I first tried using a linear programming solver without too much success, and eventually implemented a genetic optimization algorithm. It uses the Metropolis-Hastings algorithm for Markov Chain Monte Carlo sampling of the mutation space.
+
+At a high level though, here is the big idea:
+- Randomly shift around the labels and keep the changes that look promising
+- Ensure hard constraints are met after each iteration
+
+...and this ended up working out pretty well!
