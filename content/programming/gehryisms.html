@@ -1,0 +1,27 @@
+<!--
+{
+  "title": "Gehryisms",
+  "category": "programming",
+  "date": "2021-09-01",
+  "excerpt": "Swept curve forms, inspired by Frank Gehry",
+  "thumbnail": "%root%/content/images/2021/12/gehryisms.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was architecture, and I was in the middle of reading a biography of Frank Gehry at the time, resulting in this Gehry-inspired sketch.
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418577/embed/" width="400" height="400"></iframe>
+
+## Generative curves
+
+In computational geometry, the sorts of shapes used in Frank Gehry's buildings are called *swept surfaces*. These are shapes made from taking a line or curve and sweeping it around in 3D space as if it were a paint roller. That is how each of the 3D ribbons in this sketch are made: starting with a line, and sweeping it around in 3D to form loops.
+
+## Rendering
+
+To give an abstract metal look, I've implemented a sphere mapped reflection shader. This looks at the normal on the surface of shapes and maps its 3D angle to a point on a 2D texture (called a *sphere map*, since it takes a texture that would fully cover the inside of a sphere and maps it onto a rectangular image.)
+
+This is a very common way of doing reflections in WebGL. It's not completely accurate, since it does not have the ability to reflect other objects in the scene, and it cannot take into account the position of objects (it instead assumes objects are so small compared to the environment around them that their variances in position are negligible.) However, it is fast, and the reflections are convincing for many cases.

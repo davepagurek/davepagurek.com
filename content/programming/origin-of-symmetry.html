@@ -1,0 +1,62 @@
+<!--
+{
+  "title": "Origin of Symmetry",
+  "category": "programming",
+  "date": "2021-09-23",
+  "excerpt": "A 3D version of the art from a Muse album",
+  "thumbnail": "%root%/content/images/2021/12/origin-of-symmetry.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was right angles, and I took this opportunity to recreate the tuning fork landscape from the album art for Muse's *Origin of Symmetry.*
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418652/embed/" width="400" height="400"></iframe>
+
+## Depth of Field
+
+The technically interesting part of this sketch is the depth of field blur. A 2D canvas can <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter">apply a blur filter</a> reasonably quickly, but how can one extend this to a 3D scene?
+
+If one makes the main canvas of the sketch 2D but keeps an offscreen WebGL canvas, then each object in the scene can be rendered to the WebGL canvas individually, then drawn to the 2D main canvas with the appropriate amount of blur. This comes with a few caveats:
+
+- It's still a tad slow, since if there are *n* objects in the scene, you have to blur the full canvas size *n* times
+- Each object must be blurred uniformly, even if some parts of the object are closer to the camera than others
+- Since objects are being drawn one whole object at a time, there is no way for a part of Object A to be in front of Object B while another part is *behind* Object B; either the whole object is in front or the whole object is behind
+- You have to manually figure out the order to draw the objects in, since we are now compositing on a 2D canvas, which does not do depth testing
+
+In practice, since the tuning forks don't have crazy interlocking shapes, this method works out decently, so long as I keep the canvas size small for performance reasons.
+
+## Manual depth sorting
+
+Part of the compromise of my blur method is that I had to manually sort the objects by depth so that objects in front can be drawn after objects in the back. So how does one do that?
+
+If you can calculate a z position for each object, from the perspective of the camera, then sorting them by depth is relatively easy:
+
+```js
+// Most negative z (farthest away) gets sorted to the start of the list
+objects.sort((a, b) => a.cameraZ - b.cameraZ)
+```
+
+So then the question becomes, how does one calculate that z value? Well, p5's WebGL mode creates a matrix behind the scenes that represents the transformation applied by all the `translate`, `rotate`, and `scale` calls that have been made so far. Multiplying a point by that matrix is analogous to calling a function on that point that returns a new point which has all of those transformations applied. So, we can create that matrix ourselves!
+
+When constructing a matrix, take a look at <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMMatrix">the list of matrix methods on MDN</a>. For each p5 transformation you make, there will be an equivalent `DOMMatrix` method. The `self`-suffixed methods modify the matrix in place.
+
+Also, <strong>big warning! `DOMMatrix` methods use degrees instead of radians!!!</strong>
+
+Here is what this all looks like for my sketch:
+
+```js
+const transform = new DOMMatrix()
+
+// In this sketch, the camera simply rotates in place. Apply whatever
+// transformations you would be applying in your scene here.
+transform.rotateAxisAngleSelf(0, 1, 0, sceneRotation / PI * 180)
+
+for (const obj of objects) {
+  const transformed = new DOMPoint(obj.x, obj.y, obj.z).matrixTransform(transform)
+  obj.cameraZ = transformed.z
+}
+```

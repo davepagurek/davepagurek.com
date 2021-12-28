@@ -1,0 +1,30 @@
+<!--
+{
+  "title": "Rough Forest: Generative Album Art",
+  "category": "programming",
+  "date": "2021-11-19",
+  "excerpt": "Generative art for an album, with accompanying generative titles",
+  "thumbnail": "%root%/content/images/2021/12/rough-forest-min.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ],
+  "art": "%root%/content/images/2021/12/rough-forest.jpg"
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was album art. I was a good way through recording some music anyway, so I took the opportunity to finish the EP, make some generative art for it, and also generative titles for the tracklist and title.
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418699/embed/" width="400" height="400"></iframe>
+
+## Album art
+
+I created a shader that takes in a mesh with vertex colours, and then, instead of smoothly interpolating the alpha of the colours and blending with that, it instead uses the alpha channel to control the roughness. It ends up creating a somewhat chalky look. The forest that I've created is made up entirely of rectangles with gradients in the alpha channel, drawn in this rough manner.
+
+## Generative titles
+
+The entirety of the book *The Wizard of Oz* is available on Project Gutenberg, so I've made this sketch load it in and create a simple Markov model of the words. This means that I've calculated the probabilities of each word following each other word from the source text, allowing me to use those probabilities to generate new strings of words. I have a few words I don't want it to start or end on, but other than that, I just let the Markov chains do their thing!
+
+## Music
+
+You can <a href="https://davepagurek.bandcamp.com/album/she-answered-the-trees">listen to the (non-generative) music for this album on Bandcamp</a>, where I've cherry-picked some good outputs for the "final" versions of the titles.

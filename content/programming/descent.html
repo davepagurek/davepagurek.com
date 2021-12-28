@@ -1,0 +1,30 @@
+<!--
+{
+  "title": "Descent",
+  "category": "programming",
+  "date": "2021-09-27",
+  "excerpt": "Descending an infinite ladder, with some nice focal blur.",
+  "thumbnail": "%root%/content/images/2021/12/descent.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was "void," so I created a creepy loop inspired by horror games like *Amnesia: The Dark Descent.*
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418669/embed/" width="400" height="400"></iframe>
+
+## Depth of Field Blur
+
+In <a href="%root%/programming/origin-of-symmetry">a previous sketch</a>, I used a method of blurring that only allowed objects to have uniform amounts of blur. For this sketch, I wanted a ladder to stretch up to infinity, so this constraint would not do.
+
+Instead, I spent a lot of time working on a one-pass blur shader that operates on the whole canvas at once, reading depth information directly from the WebGL depth buffer. This is not something that easily fits into p5's WebGL pipeline, so I had to hack support into p5 for rendering to a framebuffer where I can get access to the depth buffer. If you are interested in the details of getting framebuffers working in p5 and the blur algorithm involved, <a href="%root%/blog/depth-of-field/">I made a writeup of the process.</a>
+
+The final sketch renders in two passes:
+
+<ol>
+  <li>Draw the un-blurred image to a framebuffer (the ladder is made of cylinders, and there is a big white sphere at the top instead of doing actual lighting)</li>
+  <li>Draw a blurred image to the main framebuffer using a shader which controls the amount of blur at each pixel by reading the depth from the previous framebuffer</li>
+</ol>

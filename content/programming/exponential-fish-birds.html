@@ -1,0 +1,71 @@
+<!--
+{
+  "title": "Exponentially Tiled Fish and Birds",
+  "category": "programming",
+  "date": "2021-11-05",
+  "excerpt": "A spiral-tiled reimagining of Escher's Sky and Water I",
+  "thumbnail": "%root%/content/images/2021/12/exponential-fish-birds.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was non-rectangular tiling. Back in the fall of 2019, Craig Kaplan, a Waterloo graphics professor I worked with in my fourth year of undergrad, wrote <a href="https://isohedral.ca/escher-like-spiral-tilings/">a really interesting article on the math behind M. C. Escher's spiral tilings.</a> I had always wanted to implement some of the ideas from his blog post, but never found the time. This week's theme seemed like the perfect opportunity!
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418695/embed/" width="400" height="400"></iframe>
+
+This works in two parts:
+<ol>
+  <li>Draw a flat x-and-y-tiled image of birds morphing into fish</li>
+  <li>Use a shader to turn that image into an infinite tunnel (it interprets y as an angle and x as a radius)</li>
+</ol>
+
+## Drawing morphing shapes
+
+Morphing one shape into another is something I had <a href="%root%/programming/processing-logo-morph">explored in a previous sketch</a>, and this sketch uses largely the same approach.
+
+I created four drawings in Figma: a fish and a bird, and then an in-between keyframe for each. I've exported all of these drawings as SVGs and have stored their path drawing commands in variables in the sketch's source code. Then, I sample a number of points evenly spaced along the perimeters of these shapes. To draw the shape, I simply draw a polygon with lines connecting the sample points. To morph between two shapes, instead of using just one shape's sample points, I use a weighted average of two shapes' points based on where in the morph animation I am. Like in my previous sketch, the code looks something like this:
+
+```js
+function morphCurves(curve1, curve2, mix) {
+  const curves = [curve1, curve2]
+  const curveLengths = curves.map((c) => c.getTotalLength())
+  const numPoints = Math.ceil(Math.max(...curveLengths))
+  const inputPoints = curves.map((c, cIdx) => {
+    const samples = []
+    for (let i = 0; i < numPoints; i++) {
+      const fraction = i / (numPoints - 1)
+      sample.push(c.getPointAtLength(fraction * curveLengths[cIdx]))
+    }
+  })
+
+  // Linearly interpolate between the input points
+  const morphedPoints = []
+  for (let i = 0; i < numPoints; i++) {
+    const p1 = inputPoints[0][i]
+    const p2 = inputPoints[0][i]
+    morphedPoints.push({
+      x: p1.x * (1 - mix) + p2.x * mix,
+      y: p1.y * (1 - mix) + p2.y * mix
+    })
+  }
+
+  beginShape()
+  for (const { x, y } of morphedPoints) {
+    vertex(x, y)
+  }
+  endShape()
+}
+```
+
+Using this, I draw birds and fish in a simple 2D grid, without any spiralling into the center going on.
+
+## Spiral tiling
+
+I strongly encourage reading <a href="https://isohedral.ca/escher-like-spiral-tilings/">Craig Kaplan's post on this</a> for a more detailed walkthrough, but the gist of it is, one can use a shader to re-interpret the (x, y) coordinates of my tiled image as (r, &theta;) polar coordinates. Technically, instead of (r, &theta), which uses a linear radius, I am using an exponential radius by interpreting the coordinates as (ln(r), &theta;).
+
+To use a shader to do this, it means I draw a rectangle, and for each coordinate in that rectangle, go through the reverse transformation to find the pixel in the original image to sample. For a pixel (a, b), this means looking up coordinates (e<sup>a</sup> cos(b), e<sup>a</sup> sin(b)). This creates a vanishing point in the center of the image.
+
+To create a spiral, the input image can be rotated, just as long as it's seamless at its top and bottom. This can be done by just picking good rotation/scale values that make things line up. This makes it so that a simple translation in the original image ends up looking like movement along a spiral in the final image.

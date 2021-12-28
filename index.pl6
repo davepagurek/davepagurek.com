@@ -21,10 +21,11 @@ for qw<header footer home page category archives error> -> $page {
 
 my $local = %*ENV<ENV> && %*ENV<ENV> eq "local";
 
+my $export-dir = $local ?? "/sites" !! "/var/www/html";
 my $app = Cantilever.new(
   dev => True,
   port => 80,
-  export-dir => $local ?? "/sites" !! "/var/www/html",
+  export-dir => $export-dir,
   root => $local ?? "http://localhost" !!  "https://www.davepagurek.com",
   mimefile => '/etc/mime.types'.IO.e ?? '/etc/mime.types' !! '/etc/apache2/mime.types', # For OSX
   ignore => [ / 'templates' ['/' .*] $ / ],
@@ -112,15 +113,53 @@ my $app = Cantilever.new(
   ]
 );
 
+my %copy-paths := {
+  "scripts" => "scripts",
+  "icons" => "icons",
+  "style.css" => "style.css",
+  ".htaccess.export" => ".htaccess",
+  "./bundle.js" => "bundle.js",
+};
+if $local {
+  my @entries = "./content/images".IO;
+  while @entries {
+    my $folder = @entries.pop;
+    my $exported-folder = $folder.Str.subst("./", $export-dir ~ "/").IO;
+
+    # Create exported folder if it doesn't exist
+    unless $exported-folder.e {
+      say "Creating {$exported-folder.Str}";
+      $exported-folder.mkdir;
+    }
+
+    # Remove old files that have been deleted
+    for $exported-folder.dir -> $path {
+      my $orig = $path.Str.subst($export-dir ~ "/", "./").IO;
+      unless $orig.e {
+        say "Removing {$path.Str}";
+        $orig.unlink;
+      }
+    }
+
+    # Copy all new or updated files
+    for $folder.dir -> $path {
+      if ($path.d) {
+        @entries.push($path);
+      } else {
+        my $exported = $path.Str.subst("./", $export-dir ~ "/").IO;
+        if !$exported.e || $exported.modified < $path.modified {
+          say "Copying {$path.Str}";
+          $path.copy($exported);
+        }
+      }
+    }
+  }
+} else {
+  %copy-paths{"content/images"} = "content/images";
+}
+
 $app.generate(
-  copy => {
-    "content/images" => "content/images",
-    "scripts" => "scripts",
-    "icons" => "icons",
-    "style.css" => "style.css",
-    ".htaccess.export" => ".htaccess",
-    "./bundle.js" => "bundle.js",
-  },
+  copy => %copy-paths,
   custom => {
     "side-projects" => -> $c {
       $c<title> = "Side Projects";

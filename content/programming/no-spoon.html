@@ -1,0 +1,27 @@
+<!--
+{
+  "title": "There is no spoon",
+  "category": "programming",
+  "date": "2021-09-14",
+  "excerpt": "A tribute to the upcoming Matrix movie",
+  "thumbnail": "%root%/content/images/2021/12/no-spoon.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was Matrix, given that a trailer for The Matrix: Ressurections recently dropped. Here is my tribute to The Matrix!
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418646/embed/" width="400" height="400"></iframe>
+
+## Rendering
+
+Like a few other <a href="%root%/programming/gehryisms">recent sketches</a>, this sketch uses sphere mapping for reflections. In a fragment shader, this maps the normal at each point on a surface to a point on a 2D image, which will be used for the reflected content.
+
+## Deforming a 3D object and keeping normals intact
+
+In August, I embarked on a surprisingly long and involved journey towards deformation of models while keeping normals intact. If you are interested in the juicy details, <a href="%root%/blog/realtime-deformation/">I wrote a long post about why this is necessary and the math and software engineering required to work around it.</a> The result of that work is a library, <a href="https://github.com/davepagurek/glsl-autodiff">glsl-autodiff</a>, which lets me write deformation code in a shader and not break the <a href="%root%/programming/gehryisms">reflection fragment shader I've been using.</a>
+
+So, using that libarry, I wrote some code to bend a spoon that I whipped up in Blender!

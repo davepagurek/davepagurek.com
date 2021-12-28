@@ -1,0 +1,35 @@
+<!--
+{
+  "title": "2001: A Space Odyssey",
+  "category": "programming",
+  "date": "2021-10-29",
+  "excerpt": "The intro to the classic movie, recreated in a shader",
+  "thumbnail": "%root%/content/images/2021/12/2001.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ],
+  "buttons": [
+    {
+      "url": "https://openprocessing.org/sketch/1418685",
+      "text": "View on OpenProcessing"
+    }
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was movie title sequences, so I decided to recreate the titles for the Kubric classic *2001: A Space Odyssey* in a shader.
+
+<video autoplay controls muted loop>
+  <source src="%root%/content/images/2021/12/2001-compressed.mp4" type="video/mp4" />
+</video>
+
+Audio, if you unmute, is by Kevin McLeod, released under CC Attribution 3.0 <a href="https://en.wikipedia.org/wiki/File:Richard_Strauss_-_Also_Sprach_Zarathustra.ogg">on Wikipedia.</a>
+
+There's nothing groundbreaking in this shader, but it combines a few things:
+
+- A linear gradient function, which is used (along with hand-picked colour stops) to create the glare around the sun
+- Per-pixel noise, used to create stars and the land for the planet
+- An approximation of Lambertian diffuse shading to create the shading for the planet
+- Simple additive light around the edge of the planet (based on the distance to the edge) to simulate atmosphere
+
