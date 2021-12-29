@@ -1,0 +1,32 @@
+<!--
+{
+  "title": "The Golem of Prague",
+  "category": "programming",
+  "date": "2021-11-23",
+  "excerpt": "A generative cover for the classic Golem tale",
+  "thumbnail": "%root%/content/images/2021/12/golem1-thumb-min.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ],
+  "art": "%root%/content/images/2021/12/golem1.png"
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was book covers. I just finished reading the novel *The Golem and the Jinni* by Helene Wecker so, with golem stories on my mind, I made a generative cover for the classic Golem tale.
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1418732/embed/" width="400" height="400"></iframe>
+
+## Smudge shader
+
+In the story, a man made of clay is brought to life by inscribing the letters &#1488;&#1502;&#1514; (meaning "truth") into it. After it gets out of control, it can be killed by erasing the first letter so that the text instead spells &#1502;&#1514; (meaning "death.") So, at the top of my cover, I've got that first letter smudged out.
+
+The smudge shader takes in two images as inputs:
+<ol>
+  <li>An unsmudged image</li>
+  <li>An image where each pixel value actually reprents an offset vector instead of a colour, indicating that the colour shown in the final image should be smudged over from that offsetted location</li>
+</ol>
+
+The shader combines these two inputs, producing an output whose colours come from the colour of the original image at the offsetted location specified by the offset input.
+
+It also adds some noise to the offset proportional to the distance, giving the smudge a rougher texture.

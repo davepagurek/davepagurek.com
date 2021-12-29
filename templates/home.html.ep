@@ -63,7 +63,7 @@
   <section>
     <h2>Programming</h2>
     <p>I'm a programmer with an interest in computer graphics. Particularly, I'm interested in how tools affect the things we make, and how software can influence design thought.</p>
-% for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<featured>)[0..^2].grep({$_}) -> $post {
+% for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<featured>)[0..^3].grep({$_}) -> $post {
     <article class='post <%= $post.meta<details> ?? "detailed" !! "" %>'>
 %   if $post.meta<thumbnail> {
         <a  href='<%= $post.link %>' class='thumbnail' style='background-image:url("<%= $post.meta<thumbnail> %>")'></a>

@@ -1,0 +1,35 @@
+<!--
+{
+  "title": "Glitchy Birds",
+  "category": "programming",
+  "date": "2021-12-15",
+  "excerpt": "Some bird drawings, Frankensteined together into glitchy creations",
+  "thumbnail": "%root%/content/images/2021/12/glitchy-bird.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was glitchy animals. Since his discord is called the Birb's Nest and everyone has a good appreciation for birds, making some flitchy birds seemed fitting.
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1419377/embed/" width="400" height="400"></iframe>
+
+## Glitchy drawings
+
+This sketch consists of four source images, drawn in Figma with the pencil tool. Each one has been exported to an SVG containing a single `<path>` element.
+
+The shape of a `<path>` is determined by its `d` attribute, which contains a string of drawing commands like `M x y` to move to position `x, y` or `C x1 y1 x2 y2 x y` to curve to `x, y` using the two specified control points. My idea was to take these paths as lists of these drawing commands. To make the drawings glitch out, I replace random segments of the lists with drawing commands from random parts of other drawings' lists, mutating the "DNA" of the drawing.
+
+In order to get more interesting visual outputs, I also converted absolute locations to relative locations. In SVGs, uppercase letter commands usually mean moving to absolute coordinates (`M x y` will move the pen to `x, y` regardless of where the pen was before) and lowercase letters mean relative coordinates (`m dx dy` means the pen will move to its previous position plus `dx, dy`.) Without this, the general outline of each drawing is preserved, so the result doesn't look as chaotic as I'd like. With relative coordinates, the drawing is able to drift out of place.
+
+I additionally induce some wobble to the lines, increasing in magnitude as one drags up the slider to add more mutations. This is done by adding noise offsets to all points and control points in the drawing commands as I draw them.
+
+## Glitch transitions
+
+After drawing the glitched birds to a 2D canvas, I pass it through a WebGL canvas with a glitch shader to add a more satisfying transition between images.
+
+The transition works by dividing the image up into evenly sized grid cells. Each cell is given a unique offset vector, which is used to shift the image over a bit, producing a shattered glass sort of effect between cells. I then do this again with different cell sizes so that the end result has cells of various rectangle shapes instead of all squares.
+
+Finally, I draw the red, green, and blue colour channels with slight offsets to add slight rainbow distortion to the colours.
