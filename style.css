@@ -215,10 +215,17 @@ iframe.sketch.hidden {
 }
 @media all and (max-width: 1000px) {
   .row {
-    display: block;
+    flex-direction: column;
   }
   .column {
     padding-right: 0;
+    flex: 0;
+  }
+  .column.first {
+    order: 1;
+  }
+  .column.second {
+    order: 2;
   }
 }
 .button {
