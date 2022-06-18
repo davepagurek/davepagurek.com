@@ -1,0 +1,21 @@
+<!--
+{
+  "title": "Genuary 6: Rapha&euml;l de Courville",
+  "category": "programming",
+  "date": "2022-01-06",
+  "excerpt": "My attempt at making a gem in @sableRaph's style",
+  "thumbnail": "%root%/content/images/2022/01/genuary6.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 6: "Trade styles with a friend."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1423058/embed/" width="600" height="600"></iframe>
+
+<a href="https://twitter.com/sableRaph" target="_blank">Rapha&euml;l de Courville</a> hosts a weekly creative coding challenge, a weekly catalogue of creative coding news, a creative coding Discord community, and he also makes his own code art. Recently he's been making some gemstones, so for this prompt, I tried making some similar gemstones.
+
+This involves creating a 2D moving pattern, and then using it as a texture for each face of the gemstone, with each face having a different texture offset. Raph noticed when developing his original art that using a 2D canvas as a texture for WebGL shapes can be slow in some browsers. For this sketch, I used my <a href="https://github.com/davepagurek/p5.Framebuffer/" target="_blank">p5.Framebuffer</a> library to use a WebGL framebuffer instead of a separate 2D canvas. This way, there is only one WebGL context, and no data needs to be passed to the GPU each frame, as it already has the texture in the same GPU context.

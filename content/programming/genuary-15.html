@@ -1,0 +1,19 @@
+<!--
+{
+  "title": "Genuary 15: Sand",
+  "category": "programming",
+  "date": "2022-01-15",
+  "excerpt": "Some generative sand dunes",
+  "thumbnail": "%root%/content/images/2022/01/genuary15.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 15: "Sand."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1432259/embed/" width="600" height="600"></iframe>
+
+This works by generating a 3D B&eacute;zier path representing the top of the dunes. Each point is extended out to either side following an easing curve down to a height of 0. The surface is meshed and saved to a p5.Geometry for efficiency.

@@ -1,0 +1,22 @@
+<!--
+{
+  "title": "Genuary 23: Abstract vegetation",
+  "category": "programming",
+  "date": "2022-01-23",
+  "excerpt": "An experimental plant leaf shader",
+  "thumbnail": "%root%/content/images/2022/01/genuary23.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js",
+    "GLSL"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 23: "Abstract vegetation."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1451111/embed/" width="600" height="600"></iframe>
+
+I wanted to see if I could recreate the look of backlit plant leaves, where light directly backlighting a leaf produces a vibrant lime green, and the colour gets progressively darker and bluer the more leaves the light has to pass through. The subsurface scattering also blurs the silhouette of leaves blocking the light.
+
+To accomplish this, I render each leaf in sequence so that it can see the content below it. It samples a number of pixels in the area under the leaf to blur the content below it. It looks at how much red light has passed through, and uses that amount to control how deep a green to render.

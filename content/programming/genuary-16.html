@@ -1,0 +1,22 @@
+<!--
+{
+  "title": "Genuary 16: Dripping Paint",
+  "category": "programming",
+  "date": "2022-01-16",
+  "excerpt": "Gradients from a simple fluid simulation of wet paint",
+  "thumbnail": "%root%/content/images/2022/01/genuary16.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js",
+    "GLSL"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 16: "Color gradients gone wrong."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1440491/embed/" width="600" height="600"></iframe>
+
+I'm quite happy with how this one turned out. As you wiggle your mouse around the canvas, it drips paint onto the canvas, which slowly dissolves its colours into the surrounding paint.
+
+This uses shader feedback: each frame, it samples colours from the previous frame, but with a little bit of distortion to get the colours to spread around.

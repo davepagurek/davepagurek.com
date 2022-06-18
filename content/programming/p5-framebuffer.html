@@ -1,0 +1,110 @@
+<!--
+{
+  "title": "p5.Framebuffer",
+  "category": "programming",
+  "date": "2021-08-13",
+  "excerpt": "A library for efficiently drawing to a texture in p5 WebGL mode.",
+  "details": "This gives you access to Framebuffers, which are WebGL-only and similar to a p5.Graphics, but faster, and includes depth information.",
+  "buttons": [
+    {
+      "url": "https://www.npmjs.com/package/@davepagurek/p5.framebuffer",
+      "text": "View Package on NPM"
+    },
+    {
+      "url": "https://github.com/davepagurek/p5.Framebuffer",
+      "text": "View Source on GitHub"
+    }
+  ],
+  "thumbnail": "%root%/content/images/2022/06/knotty-trains-thumb.jpg",
+  "og-image": "%root%/content/images/2022/06/knotty-trains.jpg",
+  "art": "%root%/content/images/2022/06/knotty-trains.jpg",
+  "featured": true,
+  "languages": [
+    "Javscript",
+    "p5.js"
+  ]
+}
+-->
+
+
+A library for efficiently drawing to a texture in p5 WebGL mode.
+
+A Framebuffer is kind of like a `p5.Graphics`: it lets you draw to a canvas, and then treat that canvas like an image. A Framebuffer, on the other hand:
+<ul>
+  <li>is **faster**: it shares the same WebGL context as the rest of the sketch, so it doesn't need to copy extra data to the GPU each frame</li>
+  <li>has **more information**: you can access the WebGL depth buffer as a texture, letting you do things like write focal blur shaders</li>
+  <li>is **WebGL only**: this will not work in 2D mode! `p5.Graphics` should be fine for that.</li>
+</ul>
+
+Read more about the motivation for this and how focal blur shaders work in <a href="%root%/blog/depth-of-field/">this blog post on the subject.</a>
+
+## Get the library
+
+Add the library to your source code, *after* loading p5 but *before* loading your own code:
+
+### Via CDN
+```html
+<script src="https://cdn.jsdelivr.net/npm/@davepagurek/p5.framebuffer@0.0.1/p5.Framebuffer.min.js"></script>
+```
+
+### Self-hosted
+<a href="https://github.com/davepagurek/p5.Framebuffer/releases/">Download the minified or unminified source code from the releases tab on GitHub</a>, then add it to your HTML:
+
+```html
+<script type="text/javascript" src="p5.Framebuffer.min.js"></script>
+```
+
+
+## Usage
+
+Create a Framebuffer in `setup` and use it in `draw`:
+
+```js
+let fbo
+
+function setup() {
+  createCanvas(400, 400, WEBGL)
+  fbo = createFramebuffer()
+}
+
+function draw() {
+  // Draw a box to the Framebuffer
+  fbo.draw(() => {
+    clear()
+    push()
+    noStroke()
+    fill(255, 0, 0)
+    rotateX(frameCount * 0.01)
+    rotateY(frameCount * 0.01)
+    box(50)
+    pop()
+  })
+
+  // Do something with fbo.color or dbo.depth
+  texture(fbo.depth)
+  plane(width, height)
+}
+```
+
+Notes:
+<ul>
+  <li>`draw()` uses the same p5 context as the rest of your sketch! Make sure to wrap your callback code in a `push()` and `pop()` to ensure your settings don't leak out into your non-Framebuffer code.</li>
+  <li>When you `resizeCanvas`, the Framebuffer will automatically resize accordingly. You probably will want to clear it and redraw to it if you had a texture cached.</li>
+</ul>
+
+## Examples
+
+<ul>
+<li><a href="https://openprocessing.org/sketch/1590159">Train Knots</a>
+  <ul><li>Uses the depth buffer in a focal blur shader</li></ul>
+</li>
+<li><a href="https://openprocessing.org/sketch/1460113">Modern Vampires of the City</a>
+  <ul><li>Uses the depth buffer to create a fog effect</li></ul>
+</li>
+<li><a href="https://openprocessing.org/sketch/1418669">Descent</a>
+  <ul><li>Uses the depth buffer in a focal blur shader</li></ul>
+</li>
+</ul>
+
+More coming soon!
+

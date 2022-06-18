@@ -1,0 +1,48 @@
+<!--
+{
+  "title": "Twinge",
+  "category": "programming",
+  "date": "2022-04-22",
+  "excerpt": "Replace every face in a group of faces with your face",
+  "thumbnail": "%root%/content/images/2022/06/after.jpg",
+  "coauthors": [{ "name": "Maddy Leadbetter" }],
+  "languages": [
+    "Javascript",
+    "p5.js",
+    "GLSL"
+  ],
+  "buttons": [
+      {
+        "url": "https://maddyleadbetter.github.io/Twinge",
+        "text": "Live demo"
+      },
+      {
+          "url": "https://github.com/maddyleadbetter/Twinge",
+          "text": "View Source on GitHub"
+      }
+  ]
+}
+-->
+
+This is our project for Terriblehack (2+2)/22/'22. Have a great pic for your dating profile but there's too many other people in it? Never have to answer the question "Which one is you?" again!
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2022/06/before.jpg" full="%root%/content/images/2022/06/before.jpg" caption="Before" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2022/06/after.jpg" full="%root%/content/images/2022/06/after.jpg" caption="After" />
+  </div>
+</div>
+
+## Demo
+
+<a href="https://maddyleadbetter.github.io/Twinge">Open it live and try it with your own image!</a>
+
+You can watch our demo (ours is first!) along with all the others below:
+
+https://www.youtube.com/watch?v=EB8pu108Gu4
+
+## How it works
+
+We use the <a href="https://ml5js.org/">ml5.js</a> library to detect face poses in the image. After letting the user pick which one to replace the others with, we use WebGL to draw that face on top of the other faces. We make meshes from the face pose detections and use the source face as a texture map.

@@ -1,0 +1,23 @@
+<!--
+{
+  "title": "Genuary 14: Impossible",
+  "category": "programming",
+  "date": "2022-01-14",
+  "excerpt": "Something you could never make: impossible geometry",
+  "thumbnail": "%root%/content/images/2022/01/genuary14.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 14: "Something you’d never make."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1431835/embed/" width="600" height="600"></iframe>
+
+I chose to interpret this theme as something one could never manufacture (because the geometry is impossible.)
+
+Although this looks 3D, and indeed it is rendered in WebGL, it works by plotting the points in 2D. Instead of having all the surface normals point outwards like one would normally find on a planar shape, I manually set the normals to what I think they should be at the edge of each face. This lets me use 3D lighting and have it look somewhat like a real 3D shape. WebGL interpolates the normals along the faces, allowing them to bend along a supposedly flat surface.
+
+There is unfortunately a visible seam that gets created along the diagonal of each face. This is because the faces are made of two triangles each. Even though the normals along the diagonal are the same for both triangles, you see a seam because neither face has full knowledge of all four corners of the quad. Interpolation for one triangle <a href="https://unchainedgeometry.com/blog-1.html" target="_blank">works as if the triangle is part of a parallelogram</a> when it may actually be part of a trapezoid. To fix this, I'd need to write a custom shader and a bunch of math, and unfortunately I am too lazy for that right now.

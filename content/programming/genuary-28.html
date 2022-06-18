@@ -1,0 +1,21 @@
+<!--
+{
+  "title": "Genuary 28: Self portrait",
+  "category": "programming",
+  "date": "2022-01-28",
+  "excerpt": "I wiggle like this in real life",
+  "thumbnail": "%root%/content/images/2022/01/genuary28.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 28: "Self portrait."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1452264/embed/" width="600" height="600"></iframe>
+
+This is maybe my favourite sketch from Genuary.
+
+The technique is one I've used a few times before. I morph between two drawings, where there's an equivalent stroke in the second drawing for each stroke in the first drawing. To do the morph, I calculate a number of points along regular intervals of each stroke. By sampling the same number of points on both strokes, I can generate an in-between stroke by linearly interpolating each sample point, and then drawing a line connecting all the interpolated points. Add some easing, and offset the transition of different strokes, and you get a pretty compelling animation!
