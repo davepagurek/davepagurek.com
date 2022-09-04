@@ -35,7 +35,7 @@ Thankfully, applying the same operation to every pixel is what GPUs are built fo
 
 ## Surely there's a blend mode for this
 
-The tinted image is currently created by loading the image into a 2D canvas, updating the pixels, and then drawing the result. If we want to use the GPU, we could make a WebGL context and use a shader, but that feels like a pretty heavy solution. The `p5.Image` class already has an internal 2D canvas, used mostly for accessing and updating its `pixels` array, and 2D canvases already come with some different options for blending colors! In JavaScript, these are defined by the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">`globalCompositeOperation`</a>, but it is known more commonly as the <a href="https://en.wikipedia.org/wiki/Blend_modes" target="_blank">blend mode.</a>
+The tinted image is currently created by loading the image into a 2D canvas, updating the pixels, and then drawing the result. If we want to use the GPU, we could make a WebGL context and use a shader, but that feels like a pretty heavy solution. 2D canvases already come with some different options for blending colors! In JavaScript, these are defined by the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">`globalCompositeOperation`</a>, but it is known more commonly as the <a href="https://en.wikipedia.org/wiki/Blend_modes" target="_blank">blend mode.</a>
 
 <img src="%root%/content/images/2022/09/blendmodes.png" full="%root%/content/images/2022/09/blendmodes.png" caption="Blending a solid color onto an image using some common blend mode options" />
 
