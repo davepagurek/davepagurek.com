@@ -105,7 +105,7 @@ If this is true, then maybe I need to make the white image have the target opaci
 
 That's better! The fully transparent part remains transparent! But unfortunately, the semi-transparent section is not quite right. It seems like it's gotten whiter as it gets semi-transparent.
 
-My previous hypothesis was slightly off. It seems that what `multiply` does is even weirder: it first <strong>mixes the source image onto an opaque white background</strong>, and then replaces the opacity. In pseudocode:
+My previous hypothesis was slightly off. It seems that what `multiply` does is even weirder: it first <strong>mixes the destination image onto an opaque white background</strong>, and then replaces the opacity. In pseudocode:
 
 ```js
 function multiply(r, g, b, a) {
