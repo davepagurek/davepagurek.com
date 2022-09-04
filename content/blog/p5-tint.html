@@ -1,0 +1,267 @@
+<!--
+{
+  "title": "Speeding up tint() in p5.js",
+  "category": "blog",
+  "date": "2022-09-03",
+  "thumbnail": "%root%/content/images/2022/09/tint-thumb.jpg",
+  "og-image": "%root%/content/images/2022/09/aaaaaahh.jpg",
+  "excerpt": "A problem I thought would be easier, but it turns out the browser is a little odd."
+}
+-->
+
+Recently, some of my code was merged into the <a href="https://github.com/processing/p5.js" target="_blank">p5.js source</a> to speed up the `tint()` method. There was <a href="https://github.com/processing/p5.js/issues/3610" target="_blank">an issue open</a> about it causing sketches to drop frames, and indeed, it's pretty easy to reproduce the issue. I decided to look into it and see what I could do.
+
+<img src="%root%/content/images/2022/09/tint.png" full="%root%/content/images/2022/09/tint.png" caption="An example of tinting, using a test image found in the p5 repo" />
+
+## The problem
+
+The `tint()` method is simple: When you call `tint(r, g, b, a)` and then draw an image, the color you specify gets multiplied with the colors of the image. It's basically doing this, in pseudocode:
+
+```js
+function tint(r, g, b, a) {
+  for (pixel of pixels) {
+    pixel.r = pixel.r * (r / 255)
+    pixel.g = pixel.g * (g / 255)
+    pixel.b = pixel.b * (b / 255)
+    pixel.a = pixel.a * (a / 255)
+  }
+}
+```
+
+It turns out, this is implemented by looping through all the pixels of the image, and multiplying each channel of each pixel. This is understandably pretty slow when there are a lot of pixels.
+
+Thankfully, applying the same operation to every pixel is what GPUs are built for! Let's see what we can do to hardware accelerate this method.
+
+
+## Surely there's a blend mode for this
+
+The tinted image is currently created by loading the image into a 2D canvas, updating the pixels, and then drawing the result. If we want to use the GPU, we could make a WebGL context and use a shader, but that feels like a pretty heavy solution. The `p5.Image` class already has an internal 2D canvas, used mostly for accessing and updating its `pixels` array, and 2D canvases already come with some different options for blending colors! In JavaScript, these are defined by the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">`globalCompositeOperation`</a>, but it is known more commonly as the <a href="https://en.wikipedia.org/wiki/Blend_modes" target="_blank">blend mode.</a>
+
+<img src="%root%/content/images/2022/09/blendmodes.png" full="%root%/content/images/2022/09/blendmodes.png" caption="Blending a solid color onto an image using some common blend mode options" />
+
+The operation done by `tint()` is just a multiplication of each channel of the source color with each of the destination, and conveniently, there is a blend mode called `multiply` for just that! Blend modes are hardware accelerated on most machines these days, so we don't need to write our own shader to get a speedup.
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat.jpg" />
+  <div class="color" data-color="#72ede1">
+  </div>
+  <div class="output" data-src=".img" data-dst=".color" data-mode="multiply">
+  </div>
+</div>
+
+Awesome, we're done! Let's try it with an image that has transparency too, just as a sanity check. I've cut some holes in the cat image from the p5 source repo.
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <div class="color" data-color="#72ede1">
+  </div>
+  <div class="output" data-src=".img" data-dst=".color" data-mode="multiply">
+  </div>
+</div>
+
+## Oh no
+
+It <em>almost</em> works.
+
+If I were to tint it white with `tint(255, 255, 255, 255)`, that should be equivalent to multiplying the red, green, blue, and alpha channels by 1. Opacity is defined by the alpha channel, so when you multiply that by 1, nothing should change, right?
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <div class="color" data-color="#FFF">
+  </div>
+  <div class="output" data-src=".img" data-dst=".color" data-mode="multiply">
+  </div>
+</div>
+
+Unfortunately, when we draw a white rectangle on top with the `multiply` blend mode, it seems to overwrite the alpha channel and make it opaque.
+
+I thought that maybe, instead of multiplying the alpha channels, <strong>it was simply <em>replacing</em> the alpha channel</strong> of the destination with the alpha channel of the source. I was, after all, blending a fully opaque white rectangle on top of the image. Could this be the pseudocode of what the `multiply` blend mode does?
+
+```js
+function multiply(r, g, b, a) {
+  for (pixel of pixels) {
+    pixel.r = pixel.r * (r / 255)
+    pixel.g = pixel.g * (g / 255)
+    pixel.b = pixel.b * (b / 255)
+
+    // Replace the alpha instead of multiplying it
+    pixel.a = a / 255
+  }
+}
+```
+
+If this is true, then maybe I need to make the white image have the target opacity before blending it. Let's try that out! There's a blend mode called `destination-in` which uses the existing colors on the destination canvas, but replaces the opacity with the opacity of the layer being blended. We can first apply that to our tint color, and then multiply the result with the main image.
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img2" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <div class="color" data-color="#FFF">
+  </div>
+  <div class="color-with-alpha" data-src=".color" data-dst=".img" data-mode="destination-in">
+  </div>
+  <div class="output" data-src=".img2" data-dst=".color-with-alpha" data-mode="multiply">
+  </div>
+</div>
+
+That's better! The fully transparent part remains transparent! But unfortunately, the semi-transparent section is not quite right. It seems like it's gotten whiter as it gets semi-transparent.
+
+My previous hypothesis was slightly off. It seems that what `multiply` does is even weirder: it first <strong>mixes the source image onto an opaque white background</strong>, and then replaces the opacity. In pseudocode:
+
+```js
+function multiply(r, g, b, a) {
+  for (pixel of pixels) {
+    const opacity = pixel.a / 255
+
+    // Mix the colors with white based on how opaque they are
+    pixel.r = mix(255, pixel.r, opacity) * (r / 255)
+    pixel.g = mix(255, pixel.g, opacity) * (g / 255)
+    pixel.b = mix(255, pixel.b, opacity) * (b / 255)
+
+    // Replace the alpha instead of multiplying it
+    pixel.a = a / 255
+  }
+}
+```
+
+So this means, if we want to avoid our semi-transparent colors getting mixed with white, we have to make them fully opaque before multiplying.
+
+## Accommodating `multiply`'s weird demands
+
+It turns out, lots of blend modes destroy the alpha channel when you use them! Maybe we can use that to our advantage if we're trying to reconstruct a fully-opaque image and blend the original image with itself. Looking through the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">list of blend modes on MDN</a>, two stand out:
+
+<div class="row"><blockquote>
+  <p><strong>color</strong>: Preserves the <em>luma</em> of the bottom layer, while adopting the hue and chroma of the top layer.</p>
+  <p><strong>luminosity</strong>: Preserves the <em>hue and chroma</em> of the bottom layer, while adopting the luma of the top layer.</p>
+</blockquote></div>
+
+An image is represented in memory as red, green, and blue values, but these blend modes convert the image to hue, chroma, and luminosity. It sounds like `color` sets two of these three properties, hue and chroma, and luminosity sets the third. So If we blend once with each of these modes, will we turn the semi-transparent parts fully opaque?
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img2" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img3" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <div class="luminosity" data-src=".img" data-dst=".img2" data-mode="luminosity">
+  </div>
+  <div class="output" data-src=".luminosity" data-dst=".img3" data-mode="color">
+  </div>
+</div>
+
+The answer is yes!\*
+
+&nbsp;
+
+&nbsp;
+
+\*With the caveat that we've lost a little bit of data in the process. Internally, canvases don't store color data as `[r, g, b, a]`, they actually store it in <strong>premultiplied alpha</strong> format, which is `[r*(a/255), g*(a/255), b*(a/255), a]`. This is to make it slightly more efficient to mix colours for the default `source-over` blend mode. When you query color information, it divides again before showing you. However, because it's storing each value as an <em>integer</em> from 0-255 after you multiply by alpha, when you divide to get back, the result might not be the same. Imagine you are storing the value `231` with opacity `0.3`:
+
+- Internally, the browser stores `int(231 * 0.3)`, which is 69
+- When we read back the color, we get `int(69 / 0.3)`, which is 230, not 231!
+
+That warning aside, it's close enough to be functional!
+
+## Assembling Frankenstein's monster
+
+Now that we can reconstruct a fully opaque version, we can finally multiply it with a color and re-apply the alpha to get a tinted image!
+
+<div class="pipeline">
+  <img class="img" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img2" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img3" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <img class="img4" src="%root%/content/images/2022/09/cat-with-hole.png" />
+  <div class="color" data-color="#72ede1">
+  </div>
+  <div class="luminosity" data-src=".img" data-dst=".img2" data-mode="luminosity">
+  </div>
+  <div class="opaque" data-src=".luminosity" data-dst=".img3" data-mode="color">
+  </div>
+  <div class="tinted" data-src=".opaque" data-dst=".color" data-mode="multiply">
+  </div>
+  <div class="output" data-src=".tinted" data-dst=".img4" data-mode="destination-in">
+  </div>
+</div>
+
+It's ugly, but it works!
+
+<img src="%root%/content/images/2022/09/aaaaaahh.jpg" full="%root%/content/images/2022/09/aaaaaahh.jpg" caption="aaAAAAAaahhhHHH!!!" />
+
+## That's a lot
+
+This took 4 passes of blending in order to tint properly. It only took one pass if we didn't have any opacity! It's still faster than iterating through `pixels` on the CPU, but it's 4x as slow as I was hoping. It would be great if we could use the one-pass version if we knew ahead of time that we have no transparency. Unfortunately, the p5 `tint` API has no way of knowing this without looping over all the pixels, which is what we were initially trying to avoid. But maybe there are other cases we can still speed up!
+
+One more common use of `tint` is to tint with semi-transparent white to fade out an image. For example:
+
+<div class="row full">
+  <div class="column uncentered double">
+    <code lang="javascript">function draw() {
+  background(255)
+  push()
+  const alpha = map(
+    cos((millis() % 2000) / 2000),
+    -1, 1,
+    0, 255
+  )
+  tint(255, alpha)
+  image(cat, 0, 0)
+  pop()
+}</code>
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2022/09/fade.gif" full="%root%/content/images/2022/09/fade.gif" caption="I bet you thought you were done looking at this cat. So did I. Think again." />
+  </div>
+</div>
+
+Thankfully, although `tint` knows nothing about the contents of the image, it can easily check the tint color to see if it's partially transparent white!
+
+If this is the case, then we can use <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha" target="_blank">the canvas `globalAlpha` property</a> to quickly and efficiently draw an image with a given opacity:
+
+```js
+if (this._tint[0] < 255 || this._tint[1] < 255 || this._tint[2] < 255) {
+  // An actual tint color has been applied. Put all the code for the big
+  // four-pass render here.
+} else {
+  // Wow! So fast!
+  ctx.globalAlpha = this._tint[3] / 255;
+  ctx.drawImage(img.canvas, 0, 0);
+}
+```
+
+Now you can use `tint` to fade just opacity without any performance issues!
+
+## So should you still use this?
+
+This will be landing in the next version of p5 (at the time of writing we're at 1.4.2, so presumably this will be in 1.4.3.) But do I recommend that you actually use `tint`?
+
+The answer, like the answer to many things, is <em>it depends.</em>
+
+### Start with it!
+
+You should 100% use it for all your tinting needs at first. Part of p5's whole philosophy is to be easy to learn, and new programmers should not be worrying themselves with squeezing the most performance possible out of their sketches. In my opinion, <strong>it is perfectly fine to trade performance for less developer time</strong>, especially when learning. The goal of this `tint` update is to make it a tool 90% of people can use without having to think about it.
+
+### Use something else if you really need to
+
+You should only start thinking about it if you're doing so much each frame that you're dropping frames, you've <a href="https://developer.chrome.com/docs/devtools/evaluate-performance/" target="_blank">profiled your code</a>, and you've identified `tint` as being the main bottleneck. Only then would I suggest one of the following alternatives:
+
+<ul>
+<li><strong>Are you drawing the image much smaller than its source size?</strong> When you use `tint`, it tints the full source image even if you draw it really small. Consider calling `yourImage.resize(w, h)` to make it smaller first.</li>
+<li><strong>Do your image and tint color never change?</strong> If so, you can cache the tinted image by:
+  <ul>
+    <li>Creating a temporary graphic with `tmpGraphic = createGraphics(img.width, img.height)`</li>
+    <li>Drawing your image tinted to that graphic</li>
+    <li>Storing the result to a `p5.Image` with `tintedImg = tmpGraphic.get()`</li>
+    <li>Removing the temporary graphic with `tmpGraphic.remove()`</li>
+    <li>Drawing `tintedImg` like a normal image from now on</li>
+  </ul>
+</li>
+<li><strong>Can you switch to WebGL mode?</strong> If you can, then you can write your own shader that takes in an image and a tint color as uniforms and does the multiplication itself.</li>
+</ul>
+
+## Do you want to get involved too?
+
+p5 has a really friendly community! I encourage you to join in. Some options on how to do that:
+
+- Notice a bug or see a niche for a new feature? You can file an issue in GitHub! As an example, <a href="https://github.com/processing/p5.js/issues/3610" target="_blank">here's the tint() performance issue</a> that prompted all this work.
+- Want to try solving a bug or implementing a feature from a GitHub issue? You can comment on an issue asking to take on that task, and then create a pull request with code changes! <a href="https://github.com/processing/p5.js/pull/5471" target="_blank">Here's the PR for the tint changes</a> to see what that all looks like.
+- Want to talk through things first with me or another p5 developer? <a href="https://discord.gg/SHQ8dH25r9" target="_blank">Join the p5 discord</a> where there are loads of friendly people more than willing to help you with your code or with contributing to p5!
+
+<script type="text/javascript" src="%root%/content/images/2022/09/drawPipelines.js"></script>
+

@@ -210,6 +210,9 @@ iframe.sketch.hidden {
 .column.double {
   flex: 2;
 }
+.column.shrink {
+  flex: 0;
+}
 .column:last-child {
   padding-right: 0;
 }
