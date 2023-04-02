@@ -1,0 +1,22 @@
+<!--
+{
+  "title": "3D Text",
+  "category": "programming",
+  "date": "2022-07-19",
+  "excerpt": "An experiment with extruding text into 3D models",
+  "thumbnail": "%root%/content/images/2022/06/3d-text.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js",
+    "GLSL"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was "ASCII."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1616318/embed/" width="700" height="700"></iframe>
+
+A while ago I tried doing something in OpenFrameworks where I built a model out of extruded text. Knowing I wanted to do some more things like this in the future, I tried recreating the same text extrusion algorithm in p5. It involved copy-and-pasting the existing `textToPoints` code and making some slight modifications to be able to actually discern which points are on which contour, but it works!
+
+This also uses <a href="https://github.com/davepagurek/p5.Framebuffer/">p5.Framebuffer</a> to create a feedback texture using floating point colors, allowing for a smoother fade out to white without the visual bugs you get when using integer colors for this.

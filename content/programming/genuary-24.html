@@ -15,6 +15,6 @@
 
 This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 24: "Create your own pseudo-random number generator and visually check the results."
 
-<iframe class="sketch" src="https://openprocessing.org/sketch/1451510/embed/" width="600" height="600"></iframe>
+<iframe class="sketch" src="https://openprocessing.org/sketch/1451510/embed/" width="700" height="700"></iframe>
 
 I tried to make something approximating p5's `noise()` rather than `random()`. To do this, I wanted to stack a bunch of sine waves together in a way that would appear `noise()`-like. It uses octaves of noise, similar to `noise`, meaning that for each sine wave it stacks, it decreases the amplitude and increases the frequency. I use a bunch of primes to multiply the frequencies by in hopes that they won't constructively or destructively interfere too much or repeat in too small an interval.

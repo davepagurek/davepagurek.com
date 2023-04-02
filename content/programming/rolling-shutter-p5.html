@@ -1,0 +1,20 @@
+<!--
+{
+  "title": "P5 Rolling Shutter",
+  "category": "programming",
+  "date": "2022-12-13",
+  "excerpt": "A web remake of an older sketch to make your video all wiggly",
+  "thumbnail": "%root%/content/images/2022/06/rolling-shutter.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js",
+    "GLSL"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was "that sketch you never got around to finishing."
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/1773564/embed/" width="700" height="700"></iframe>
+
+This uses slit scanning to time-offset each row of pixels on the screen. <a href="%root%/programming/rolling-shutter">I made an earlier version of this in openFrameworks</a>, but it isn't as sharable as a web-based sketch, and there are noticeable discontinuities between rows from differnt frames. To adapt this one for web, I'm using 120-something framebuffers instead of p5.Graphics for performance, and using a shader to blend between rows.
