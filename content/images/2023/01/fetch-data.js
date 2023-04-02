@@ -338,7 +338,7 @@ const getData = () => {
   "title": "${s.title}",
   "category": "programming",
   "date": "2023-01-${pn}",
-  "excerpt": "${s.subtitle}",
+  "excerpt": "${s.subtitle.replace(/"/g, "\\\"")}",
   "thumbnail": "%root%/content/images/2023/01/genuary${n}.jpg",
   "languages": [
     "Javascript",
@@ -347,7 +347,7 @@ const getData = () => {
 }
 -->
 
-This a sketch for Genuary, day 7: "${s.prompt}."
+This a sketch for Genuary, day ${n}: "${s.prompt}."
 
 <iframe class="sketch" src="https://openprocessing.org/sketch/${s.id}/embed/" width="700" height="700"></iframe>
 

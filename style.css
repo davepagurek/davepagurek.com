@@ -499,10 +499,15 @@ div.img p {
 section > iframe.youtube, section > iframe.sketch {
   max-width: 66rem;
 }
-iframe.youtube, iframe.sketch {
+iframe.youtube {
   width:100%;
   min-height:600px;
   max-height:600px;
+}
+iframe.sketch {
+  width:100%;
+  min-height:600px;
+  max-height:700px;
 }
 iframe.youtube.embed, iframe.sketch, video {
   width:100%;
@@ -511,7 +516,11 @@ iframe.youtube.embed, iframe.sketch, video {
   margin:0 auto;
 }
 @media all and (max-width: 1300px) {
-  iframe.youtube, iframe.sketch, video {
+  iframe.sketch {
+    min-height:500px;
+    max-height:700px;
+  }
+  iframe.youtube, video {
     min-height:500px;
     max-height:500px;
   }
