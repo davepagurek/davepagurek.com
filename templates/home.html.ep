@@ -62,7 +62,7 @@
   </section>
   <section>
     <h2>Programming</h2>
-    <p>I'm a programmer with an interest in computer graphics. Particularly, I'm interested in how tools affect the things we make, and how software can influence design thought.</p>
+    <p>I'm a programmer with an interest in computer graphics. I spend my time working on <a href="https://www.usebutter.com/landing" target="_blank">animation software</a>, developing <a href="https://p5js.org/" target="_blank">p5.js</a>, and working with the creative coding community to make better tools.</p>
 % for $params<content>.sub-cats<programming>.all-pages.grep(*.meta<featured>)[0..^3].grep({$_}) -> $post {
     <article class='post <%= $post.meta<details> ?? "detailed" !! "" %>'>
 %   if $post.meta<thumbnail> {
