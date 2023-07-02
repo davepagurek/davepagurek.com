@@ -51,7 +51,7 @@
       </div>
       <div class="column" id="description">
         <h2>Hi, I'm Dave Pagurek.</h2>
-        <p>I'm a programmer and artist, previously at UBC for my MSc and UWaterloo for Software Engineering.</p>
+        <p>I work on tools for computer graphics, currently <a href="https://p5js.org/" target="_blank">WebGL mode in p5.js</a>, and <a href="https://www.usebutter.com/landing" target="_blank">motion graphics software.</a> Previously at UBC and UWaterloo.</p>
         <p>
           <a class="button" href="resume" target="_blank">Resume</a>
           <a class="button" href="https://github.com/davepagurek">GitHub</a>
