@@ -1,0 +1,61 @@
+<!--
+{
+  "title": "A Jalgorithm for Japplying Jeans to Jobjects",
+  "category": "programming",
+  "date": "2023-04-01",
+  "excerpt": "A super serious use of differentiable rendering.",
+  "details": "For years, society has been plagued by the lack of a conclusive answer to the question of how arbitrary things would wear jeans, if they wore jeans. This paper proposes a jalgorithm to determine the mathematically optimal configuration of pants on a silhouette, leveraging recent insights in the fields of computer vision and differentiable rendering.",
+  "published": "Proceedings of SIGBOVIK",
+  "art": "%root%/content/images/2023/07/teaser.png",
+  "buttons": [
+    {
+      "url": "%root%/content/images/2023/07/jalgorithm.pdf",
+      "text": "Read the Paper"
+    },
+    {
+      "url": "https://github.com/davepagurek/jalgorithm",
+      "text": "View Source on GitHub"
+    }
+  ],
+  "thumbnail": "%root%/content/images/2023/07/dog/iter_99.png",
+  "og-image": "%root%/content/images/2023/07/dog/iter_99.png",
+  "featured": true,
+  "languages": [
+    "Python",
+    "Torch",
+    "diffvg"
+  ]
+}
+-->
+
+https://www.youtube.com/watch?v=bckzY4ATmb0
+
+For years, society has been plagued by the lack of a conclusive answer to the question of how arbitrary things would wear jeans, if they wore jeans. This paper proposes a jalgorithm to determine the mathematically optimal configuration of pants on a silhouette, leveraging recent insights in the fields of computer vision and differentiable rendering.
+
+This is based off of the <a href="https://github.com/BachiLi/diffvg">diffvg differential vector graphics renderer</a>. It uses a customized loss function to optimize the vertices of pants, based on the following rules:
+
+<ol>
+<li>**Duality of man:** Pants should bisect the silhouette of the wearer through its center, covering half its area.</li>
+<li>**No-stretch jeans:** Pants, when applied to the wearer in rest position, should not be so deformed that they no longer resemble prototypical jeans.</li>
+<li>**(Topologically) torn jean avoidance:** Limbs should only go through the open ends of pants, and similarly, closed ends of pants should not intersect limbs.</li>
+<li>**Dress code compliance:** Pants should be on the body of the wearer, not off of it.</li>
+</ol>
+
+You really shouldn't look at the code for this as I wrote it at 1am really quickly and hackily, but if you really want to, it's in `apps/pants.py` on GitHub.
+
+## Results
+
+<div class="row">
+<div class="column uncentered">
+<img src="%root%/content/images/2023/07/human.gif" full="%root%/content/images/2023/07/human.gif" caption="Human" />
+</div>
+<div class="column uncentered">
+<img src="%root%/content/images/2023/07/vitruvian.gif" full="%root%/content/images/2023/07/vitruvian.gif" caption="Ideal human" />
+</div>
+<div class="column uncentered">
+<img src="%root%/content/images/2023/07/dog.gif" full="%root%/content/images/2023/07/dog.gif" caption="Dog" />
+</div>
+<div class="column uncentered">
+<img src="%root%/content/images/2023/07/horse.gif" full="%root%/content/images/2023/07/horse.gif" caption="Horse?" />
+</div>
+</div>
