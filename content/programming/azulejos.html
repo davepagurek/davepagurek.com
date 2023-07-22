@@ -1,0 +1,19 @@
+<!--
+{
+  "title": "Aperiodic Azulejos",
+  "category": "programming",
+  "date": "2023-03-24",
+  "excerpt": "A visualization of the aperiodic monotile, with an Azulejos theme",
+  "thumbnail": "%root%/content/images/2023/07/aperiodic-azulejos.jpg",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was "azulejos." Earlier this week, David Smith, Joseph Samuel Myers, Craig S. Kaplan, and Chaim Goodman-Strauss published a preprint of a paper about an aperiodic monotile, and Craig <a href="https://github.com/isohedral/hatviz">open-sourced some p5 code for drawing and tiling the monotile.</a> I tried combining the tile with the azulejos aesthetic for the week.
+
+<iframe class="sketch" allow="camera;microphone" src="https://openprocessing.org/sketch/1878795/embed/" width="700" height="700"></iframe>
+
+This uses Framebuffers to cache the sub-tiles that make up the larger super-tiles, and also to make the feedback effect in the background.

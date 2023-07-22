@@ -15,6 +15,6 @@
 
 This is a sketch for <a href="https://genuary.art/">Genuary 2022</a>, which provides a creative coding prompt for each day of January. This is day 8: "Single curve only."
 
-<iframe class="sketch" src="https://openprocessing.org/sketch/1428649/embed/" width="700" height="700"></iframe>
+<iframe class="sketch" allow="camera;microphone" src="https://openprocessing.org/sketch/1428649/embed/" width="700" height="700"></iframe>
 
 This dynamically generates a long, windy 3D B&eacute;zier curve. I give it thickness by sweeping a circle along the curve, mesh the shape, and save it to a `P5.Geometry` for efficiency. It's rendered with depth-of-field blur powered by a shader and the depth map of a <a href="https://github.com/davepagurek/p5.Framebuffer/">p5.Framebuffer</a>.

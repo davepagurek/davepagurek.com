@@ -1,0 +1,191 @@
+<!--
+{
+  "title": "Business Card Code",
+  "category": "programming",
+  "date": "2023-06-07",
+  "excerpt": "A sketch that generates a business card, with code that fits on a business card.",
+  "thumbnail": "%root%/content/images/2023/07/business-card.png",
+  "languages": [
+    "Javascript",
+    "p5.js"
+  ]
+}
+-->
+
+This is an entry for <a href="https://twitter.com/sableRaph">@sableRaph</a>'s weekly creative coding challenge. The theme for this week was "cards." I've always wanted to make a business card like the <a href="https://fabiensanglard.net/rayTracing_back_of_business_card/">business card raytracer</a> where the code to generate the card fits on the card itself.
+
+This is the code:
+
+```js
+W=175;H=100;F=255;n=[11492,0,-1150,3410,-1062,602,-318,83,134,-74,260,176,-111,
+-115,-244,-84,94,111,-115,-7,-18,44,49,41,-78,-15,43,-10,-46,0,-57,22,30,-10,-67,
+25,1,2,-4,16,-22,-1,-13,-6,-17,4,-27,2,-9,1,-30,6,-12,11,-6,-3,-23,0,-13,1,-11,
+-2,-27,-3,7896,0,-1119,-10,-312,-969,-392,-691,-324,371,-87,287,38,-110,55,-67,
+-88,101,76,-29,-45,-23,-33,11,8,16,6,9,9,16,-29,-37,65,70,-42,-68,39,34,-25,-5,
+23,8,5,-3,5,8,11,1,10,6,7,-15,2,21,16,-14,0,9,10,-5,8,7,6,-4];m=[9013,0,-391,340,
+-75,-53,-83,-169,98,-96,-81,62,22,-27,23,-10,-13,0,24,11,3,-20,2,7,15,-7,1,0,14,
+0,10,-1,1094,0,-115,-636,172,-317,-66,-151,-28,60,19,57,57,-27,12,5,44,18,-10,
+-37,27,4,8,5,16,-1,17,0,17,-3,21,-4];d=document;e=d.createElement('canvas');d
+.body.appendChild(e);e.width=W;e.height=H;c=e.getContext('2d');with(Math){a=(a,c
+)=>{l=a.length/2;x = a.slice(0,l);y = a.slice(l);f=(t,v)=>{b=v[0]/l;for(s=2;s<l;s
++=2){b+=2/l*hypot(v[s], v[s+1])*cos(PI/l*s*t-atan2(v[s+1],v[s]))};return b};g=[];
+for(i=0;i<c;i++){t=(i/c*0.67+0.3)*l;g.push([f(t, x),f(t, y)])};return g};h=a(n,70
+);j=a(m,35);k=([a,b],[c,d])=>[a-c,b-d];q=([a,b],k)=>[a*k,b*k];r=([a,b],[c,d])=>a*
+c+b*d;u=(v,p)=>{d=r(k(p,v[0]),k(p,v[0]));for(s=1;s<v.length;s++){e=k(v[s-1],v[s])
+;w=k(p,v[s]);b=k(w,q(e,min(max(r(w,e)/r(e,e),0),1)));d=min(d,r(b,b))};return sqrt
+(d)};m=new ImageData(W,H);z=m.data;i=0;a=[[F,172,129],[F,146,139],[254,195,166],[
+239,233,174],[205,234,192]];for(y=0;y<H;y++)for(x=0;x<W;x++){P=[x*2,y*2];d=min(u(h,
+P),u(j,P));[R,G,B]=d<3?[F,F,F]:a[~~(d/10)%5];z[i++]=R;z[i++]=G;z[i++]=B;z[i++]=F};c
+.putImageData(m,0,0)}
+// davepagurek.com
+```
+
+The result looks like this:
+
+<img src="%root%/content/images/2023/07/business-card.png" full="%root%/content/images/2023/07/business-card.png" />
+
+You can see it <a href="https://openprocessing.org/sketch/1950130">live on OpenProcessing.</a>
+
+Here's an expanded, commented version of the code to see what it's actually doing. It uses a Fourier decomposition of the text to encode it as numbers, samples the Fourier curves into line segments, and then (very slowly on the CPU) renders a signed distance field of those segments:
+
+```js
+// Some constants for width/height. Originally I was going to do
+// 350x200, but doing an sdf without a shader is slow so I'm using
+// half the side lengths and embracing the pixely look.
+W=175;
+H=100;
+
+// The number 255 is used enough that it saves characters to assign it
+// to a single-letter variable and reuse that.
+F=255;
+
+// The next two arrays contain the Fourier coefficients of curves that draw,
+// respectively, the cursive "Dave" and the cursive "p5." They're represented
+// as imaginary numbers, so coefficients are read in twos: real and imaginary
+// parts. Each array is also actually two arrays concatenated: the
+// coefficients for the x axis and then the coefficients for the y axis.
+n=[11492,0,-1150,3410,-1062,602,-318,83,134,-74,260,176,-111,
+-115,-244,-84,94,111,-115,-7,-18,44,49,41,-78,-15,43,-10,-46,0,-57,22,30,-10,-67,
+25,1,2,-4,16,-22,-1,-13,-6,-17,4,-27,2,-9,1,-30,6,-12,11,-6,-3,-23,0,-13,1,-11,
+-2,-27,-3,7896,0,-1119,-10,-312,-969,-392,-691,-324,371,-87,287,38,-110,55,-67,
+-88,101,76,-29,-45,-23,-33,11,8,16,6,9,9,16,-29,-37,65,70,-42,-68,39,34,-25,-5,
+23,8,5,-3,5,8,11,1,10,6,7,-15,2,21,16,-14,0,9,10,-5,8,7,6,-4];
+m=[9013,0,-391,340,
+-75,-53,-83,-169,98,-96,-81,62,22,-27,23,-10,-13,0,24,11,3,-20,2,7,15,-7,1,0,14,
+0,10,-1,1094,0,-115,-636,172,-317,-66,-151,-28,60,19,57,57,-27,12,5,44,18,-10,
+-37,27,4,8,5,16,-1,17,0,17,-3,21,-4];
+
+// Make a canvas element and get its context
+d = document;
+e = d.createElement("canvas");
+d.body.appendChild(e);
+e.width = W;
+e.height = H;
+c = e.getContext("2d");
+
+// MDN says never to use "with" because it puts every property of the object
+// into the global scope and that can cause all sorts of unexpected errors,
+// but it saves me from typing `Math.` over and over so you can't stop me
+with (Math) {
+  // A function to sample `c` points from the curve defined by coefficients `a`
+  a = (a, c) => {
+    l = a.length / 2;
+    // The arrays have the two 1D curves for the x and the y axes concatenated
+    // together, so we split them apart here
+    x = a.slice(0, l);
+    y = a.slice(l);
+    // This function evaluates all the stacked cosines from the Fourier data
+    // `v` at time `t` along the curve
+    f = (t, v) => {
+      b = v[0] / l;
+      for (s = 2; s < l; s += 2) {
+        b +=
+          (2 / l) *
+          hypot(v[s], v[s + 1]) * // Magnitude of the imaginary number
+          cos((PI / l) * s * t - atan2(v[s + 1], v[s])); // Angle
+      }
+      return b;
+    };
+    // Loop `c` times to generate points
+    g = [];
+    for (i = 0; i < c; i++) {
+      // `l` is the period of the whole shape. These Fourier curves are
+      // periodic, so they represent closed curves. I don't want my words
+      // to loop back on themselves though, so instead of picking a distance
+      // `t` that goes between 0 and 1, I go from 0.3 to 0.97 to cut off
+      // the bit of the curve that loops back on itself.
+      t = ((i / c) * 0.67 + 0.3) * l;
+      g.push([f(t, x), f(t, y)]);
+    }
+    return g;
+  };
+  
+  // Get sample points for the "Dave" curve
+  h = a(n, 70);
+  // Get sample points for the "p5" curve
+  j = a(m, 35);
+  
+  // Function to subtract a vector from another
+  k = ([a, b], [c, d]) => [a - c, b - d];
+  // Function to scale a vector by a constant `k`
+  q = ([a, b], k) => [a * k, b * k];
+  // Function to get the dot product of two vectors
+  r = ([a, b], [c, d]) => a * c + b * d;
+  // Function to get the shortest distance from a
+  // point `p` to a polyline `v`
+  u = (v, p) => {
+    d = r(k(p, v[0]), k(p, v[0]));
+    for (s = 1; s < v.length; s++) {
+      // This is the vector between a pair of polyline points
+      e = k(v[s - 1], v[s]);
+      // This is the vector between one side of the line segment
+      // and the view point `p`
+      w = k(p, v[s]);
+      // If you draw a line from `p` to the line segment that goes
+      // perpendicular to the line, dot(w,e)/dot(e,e) is the (signed)
+      // fraction of the line segment at which there's an intersection.
+      // Clamping it to 0,1 means it stops at the endpoints of the
+      // segment, and then doing the dot product with that * `e` and `w`
+      // gives the squared distance to that closest point on the segment
+      b = k(w, q(e, min(max(r(w, e) / r(e, e), 0), 1)));
+      // Take the minimum distance for all segments
+      d = min(d, r(b, b));
+    }
+    return sqrt(d);
+  };
+  // We're going to write pixels of an ImageData directly instead of
+  // relying on canvas commands
+  m = new ImageData(W, H);
+  // This is the array we have to put pixel data in
+  z = m.data;
+  // Index in the array we're writing to
+  i = 0;
+  // A color palette
+  a = [
+    [F, 172, 129],
+    [F, 146, 139],
+    [254, 195, 166],
+    [239, 233, 174],
+    [205, 234, 192],
+  ];
+  // Loop over each pixel
+  for (y = 0; y < H; y++)
+    for (x = 0; x < W; x++) {
+      // Get the distance to the text at this pixel. The *2 is because
+      // I was initially doing this at a higher resolution.
+      P = [x * 2, y * 2];
+      d = min(u(h, P), u(j, P));
+      // If the distance is <3px, color white. Otherwise, cycle through
+      // the palette colors every 10px away we go. The ~~ is a shorter
+      // form of floor().
+      [R, G, B] = d < 3 ? [F, F, F] : a[~~(d / 10) % 5];
+      // Write the values into the array
+      z[i++] = R;
+      z[i++] = G;
+      z[i++] = B;
+      z[i++] = F;
+    }
+  c.putImageData(m, 0, 0);
+}
+// davepagurek.com
+```

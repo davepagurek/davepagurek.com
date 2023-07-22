@@ -27,7 +27,7 @@ Why does an image look fuzzy when the light gets spread out? It's one of those t
 
 To simulate the effect of a bunch of photons spreading out, let's see what happens when we duplicate an image a bunch of times, all slightly transparent. Drag the sliders to see how it looks with more or less copies of an image (the more copies, the closer we get to "real life" with billions of photons) and to see how it looks when spread out various amounts.
 
-<iframe class="sketch" style="max-width: 500px !important; min-height: 200px !important" src="%root%/content/images/2021/10/blur_explainer"></iframe>
+<iframe class="sketch" allow="camera;microphone" style="max-width: 500px !important; min-height: 200px !important" src="%root%/content/images/2021/10/blur_explainer"></iframe>
 
 Basically: with enough samples, all with random offsets, we converge on a smooth blur! This will be a guiding principle for how we implement our own blur.
 
