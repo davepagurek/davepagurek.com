@@ -10,6 +10,7 @@ my $page-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/
 my $category-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/category.html.ep".IO.slurp ~ $footer);
 my $archives-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/archives.html.ep".IO.slurp ~ $footer);
 my $error-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/error.html.ep".IO.slurp ~ $footer);
+my $links-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/links.html.ep".IO.slurp ~ $footer);
 
 my $regenerate-after = 0;
 for qw<header footer home page category archives error> -> $page {
@@ -167,6 +168,11 @@ $app.generate(
       $c<filter> = -> $p { !$p.meta<details>; };
       $c<small> = True;
       $category-template.render($c);
+    },
+    "links" => -> $c {
+      $c<title> = "Links";
+      $c<type> = "links";
+      $links-template.render($c);
     }
   },
   regenerate-after => $regenerate-after

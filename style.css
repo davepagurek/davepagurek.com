@@ -720,7 +720,7 @@ nav a.toggle {
     transition: all 0.3s cubic-bezier(0,1.5,0.5,1);
   }
   nav.open {
-    height: 20rem;
+    height: 25rem;
   }
   nav a.toggle {
     background-color: rgba(88, 140, 140, 0);

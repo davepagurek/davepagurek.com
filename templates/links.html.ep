@@ -1,0 +1,19 @@
+  <section>
+    <h1>Links</h1>
+    <p>I spend a lot of my time working with great people in a thriving online community of creative coders, graphics developers, educators, and more. A lot of them have great stuff online! Here's a selection to peruse.</p>
+
+    <p>
+      <a href="https://discord.gg/S8c7qcjw2b">The Birbs Nest</a> is a discord server run by Rapha&euml;l de Courville for creative coders. It is a lovely, motivating community that regularly makes sketches for a weekly prompt. It keeps me creative and learning, and you can join too!
+      <br />
+      <a href="https://discord.gg/S8c7qcjw2b"><img src="<%= $params<root> %>/content/images/icons/birb_button_88x31.gif" /></a>
+    </p>
+    <p>
+      <a href="https://saripagurek.com/">Sari Pagurek</a> is an artist, a computer science student, and also my sister! We occasionally collaborate on things, and she also makes some great stuff on her own.
+    </p>
+    <p>
+      <a href="https://gusbus.space/">Gus Becker</a> is a researcher whose diverse interests also extend to art and creative coding.
+    </p>
+    <p>
+      <a href="http://kinopio.jordanne.ca/">Jordanne Chan</a> is an educator, creative coder, and indie web advocate who helps me run <a href="https://creativecodetoronto.github.io/">Creative Code Toronto</a>.
+    </p>
+  </section>
