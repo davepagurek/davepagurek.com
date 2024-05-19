@@ -1,0 +1,241 @@
+<!--
+{
+  "title": "Vertex Shader Domain Warping with Automatic Differentiation",
+  "category": "programming",
+  "date": "2024-05-14",
+  "excerpt": "I worked out some math to be able to apply arbitrary warps to 3D meshes in a shader and still get correct lighting and reflections.",
+  "details": "Domain warping is a technique commonly used in creative coding to distort graphics and add visual interest to a work. The approach has the potential to be used in 3D art as mesh vertices can be efficiently warped using a vertex shader in a WebGL pipeline. However, 3D models packaged for the web typically come with baked-in normal vectors, and these need to be updated when vertex positions change for lighting calculations to work. This is typically done via finite differences, which requires parameter tuning to achieve optimal visual fidelity. We present a method for 3D domain warping that works with automatic differentiation, allowing exact normals to be used without any tuning while still benefiting from hardware acceleration.",
+  "buttons": [
+    {
+      "url": "%root%/content/images/2024/05/Vertex_Shader_Domain_Warping.pdf",
+      "text": "Read the Paper"
+    },
+    {
+      "url": "https://arxiv.org/abs/2405.07124",
+      "text": "View on arxiv.org"
+    },
+    {
+      "url": "https://github.com/davepagurek/p5.warp",
+      "text": "View Source on GitHub"
+    }
+  ],
+  "thumbnail": "%root%/content/images/2024/05/warped-bunny.jpg",
+  "og-image": "%root%/content/images/2024/05/warped-bunny.jpg",
+  "featured": true,
+  "art": "%root%/content/images/2024/05/warping-teaser.jpg",
+  "languages": [
+    "GLSL",
+    "p5.js"
+  ]
+}
+-->
+
+A few years ago, I <a href="%root%/blog/realtime-deformation">wrote a blog post</a> about how to warp 3D objects in a shader and still have correct normals. It got the job done for me at the time, but the algorithm I used then wasn't quite as simple as I thought it could be, and it had a few degenerate points where it broke down. In the time since writing that, I've seen a few people talk about the problem like it couldn't be solved, so I figured maybe it was time to write up the final equations and publish it in a more referenceable package.
+
+## Background: domain warping
+
+Creative coding is an art form that uses the computer and source code as an expressive medium. To be able to work quickly and iteratively, the techniques that get a strong foothold in the community are the ones where there are easily tweakable parameters that lead to a wide variety of outputs.
+
+One such technique is <em>domain warping</em>, used often in 2D and some 3D contexts. Let's say you have a function `offset(point)` that defines an offset to apply to any point in space. This would be a function that takes in a vector and outputs another vector. To produce a warped point with that offset function, you would use:
+
+```js
+function warp(point) {
+  return point.add(offset(point))
+}
+```
+
+Now, any function that would normally work on a point in space, you could instead supply with `warp(point)` to produce a domain-warped version. This can be as simple as just drawing a shape to the screen: instead of drawing points, lines, or curves, you could warp all of them with first, and then draw the results.
+
+Domain warping creates a framework that invites exploration, as any offset function can be used, producing <a href="https://twitter.com/mattdesl/status/1047094498562625536">varied</a>, <a href="https://artynft.io/interviews/greweb/">interesting</a> <a href="https://twitter.com/bendotk/status/1455232555561754626">results</a> from combinations of simple mathematical building blocks.
+
+## The problem: applying warps to 3D meshes
+
+The traditional realtime 3D graphics pipeline involves creating shapes out of triangle meshes and passing them through two phases of a rendering pipeline: first, every vertex is processed in parallel to position the 3D vertices on the 2D screen, and then every pixel on the screen is processed in parallel to pick final colours given the output from the previous phase.
+
+That first phase sounds like a great spot to introduce domain warping! Since we're already running on every vertex, we can apply the warp function before returning the result, and we get a very fast implementation of the warp. The trouble is that the vertex position isn't the only information being processed. We also pass in a <em>normal,</em> which is a vector pointing directly out of the surface of the shape. This is what you see visualized when you use `normalMaterial()` in p5.js.
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/sphere.jpg" full="%root%/content/images/2024/05/sphere.png" caption="(a) Input" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/sphere-distort.jpg" full="%root%/content/images/2024/05/sphere-distort.png" caption="(b) Warp without adjusting normals" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/sphere-distort-frag.jpg" full="%root%/content/images/2024/05/sphere-distort-frag.png" caption="(c) Warp with screen-space derivatives" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/sphere-distort-normal.jpg" full="%root%/content/images/2024/05/sphere-distort-normal.png" caption="(d) Warp affecting vertices and normals" />
+  </div>
+</div>
+
+The trouble is, when you move the vertex positions around, the normals need to change in order to remain perpendicular to the warped surface. In the figure above, (b) is what you would get by just changing vertex positions, but (d) is how it should actually look. You might consider recreating the normals entirely in screen space in the fragment shader by using `normalize(cross(dFdx(position), dFdy(position)))`, but that produces the image in (c) due to the fact that positions are only linearly interpolated across faces.
+
+So, what can we do to get the result we want?
+
+## Fixing it with some math
+
+We'll tackle the problem in three steps:
+
+<ol>
+<li>Express derivatives of the warp function given a local tangent and bitangent, which we then use to generate a warped normal. Importantly, the structure of the derivative formula depends only on the warp function and accepts <em>any</em> local parameterization, enabling one warp shader to work on all meshes.</li>
+<li>Provide a formula for a surface tangent and bitangent given only the surface normal, allowing inputs to Step 1 to be generated in a vertex shader with limited knowledge of the mesh.</li>
+<li>Use automatic differentiation to statically generate a shader with the derivatives required for Step 1.</li>
+</ol>
+
+### 1. Updated normals
+
+Let's say you have two different vectors <math>\\hat{u}</math> and <math>\\hat{v}</math> that are tangent to the surface of your original mesh, <math>M</math>, at some point <math>\\vec{p}</math>. The original normal is just <math>\\hat{n} = \\hat{u} \\times \\hat{v}</math>. On the warped mesh, one can approximate <math>\\hat{n}'</math> by finding the result of the warp function (we'll call it <math>w</math>) on points near <math>\\vec{p}</math>, shifted slightly along a linear approximation of the surface by a small value <math>h</math>:
+
+<p align="center"><math>n' \\approx \\operatorname{normalize}\\left(\\frac{w(\\vec{p} + h\\hat{u}) - w(\\vec{p})}{h} \\times \\frac{w(\\vec{p} + h\\hat{v}) - w(\\vec{p})}{h}\\right)</math></p>
+
+If you're writing a one-off shader, you can stop here and skip to step 2. You'll have to trial-and-error a good value for <math>h</math>, but that's pretty feasible for a single shader. <a href="https://iquilezles.org/articles/normalsSDF/">Inigo Quilez has some tips on that.</a> I'm interested in making something that generalizes better, so we're going to continue on without approximations. Taking the limit as <math>h \\rightarrow 0</math>, this is equivalent to taking directional derivatives:
+
+<p align="center"><math>n' = \\operatorname{normalize}\\left(\\frac{\\partial w(\\vec{p})}{\\partial \\hat{u}} \\times \\frac{\\partial w(\\vec{p})}{\\partial\\hat{v}}\\right)</math></p>
+
+We can break this down further: we know our warp function just takes the original point and adds an offset. If we call that offset function <math>f</math>, that means <math>w(\\vec{x}) = \\vec{x} + f(\\vec{x})</math>:
+
+<p align="center"><math>n' = \\operatorname{normalize}\\left(\\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial \\hat{u}} \\times \\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial\\hat{v}}\\right)</math></p>
+
+Since, by definition, <math>\\hat{u}</math> and <math>\\hat{v}</math> are tangent to the surface at <math>\\vec{p}</math>, the directional derivative of <math>\\vec{p}</math> in the direction of <math>\\hat{u}</math> or <math>\\hat{v}</math> will be <math>\\hat{u}</math> or <math>\\hat{v}</math> itself, respectively:
+
+<p align="center"><math>\\hat{n}' = \\operatorname{normalize}\\left(\\left(\\hat{u} + \\frac{\\partial f(\\vec{p})}{\\partial \\hat{u}}\\right) \\times \\left(\\hat{v} + \\frac{\\partial f(\\vec{p})}{\\partial\\hat{v}}\\right)\\right)</math></p>
+
+Since <math>f</math> is defined in terms of Cartesian coordinates and not the coordinate space defined by <math>\\hat{u}</math> and <math>\\hat{v}</math>, we reframe the above expression to be in terms of the Jacobian of the offset, <math>J=\\left[\\frac{\\partial f(\\vec{p'})}{\\partial x}~\\frac{\\partial f(\\vec{p'})}{\\partial y}~\\frac{\\partial f(\\vec{p'})}{\\partial z}\\right]</math>:
+
+<p align="center"><math>\\hat{n}' = \\operatorname{normalize}\\left(\\left(\\hat{u} + J\\hat{u}\\right) \\times \\left(\\hat{v} + J\\hat{v}\\right)\\right)</math></p>
+
+To define <math>J</math>, we calculate all the partial first-order derivatives of <math>f</math>. Turns out, computers are great at doing derivatives, so you won't have to do them by hand, but we'll get back to that later. Importantly, this is independent of the choice of tangent vectors: whichever ones we pick, the formula for <math>J</math> does not change, so we do not need to run automatic differentiation at runtime. It is sufficient to run it once at compile time, and our runtime choice of tangent vectors only adds a matrix multiplication with <math>J</math>.
+
+### 2. Picking tangent vectors
+
+Without knowledge of the rest of the mesh vertices and their connectivity, we can make assumptions about the local surface around <math>\\vec{p}</math>. The normal <math>\\hat{n}</math> implies that there is a surface plane <math>S</math> passing through <math>\\vec{p}</math> and normal to <math>\\hat{n}</math>. We can parameterize this plane into a tangent <math>\\hat{u}</math> and bitangent <math>\\hat{v}</math> by finding any vector <math>\\hat{w}</math> not equal to <math>\\pm\\hat{n}</math>, taking the cross product between it and <math>\\hat{n}</math> to get one vector parallel to <math>S</math>, and then taking the cross product between that and <math>\\hat{n}</math> to get another, different vector parallel to <math>S</math>:
+
+<p align="center"><math>\\begin{aligned}
+    \\hat{w} &= \\begin{cases}
+        [0~~1~~0]^T,&\\hat{n} = [\\pm1~~0~~0]^T\\\\
+        [1~~0~~0]^T&\\text{otherwise}
+    \\end{cases}\\\\
+    \\hat{v} &= \\operatorname{normalize}(\\hat{v} \\times \\hat{n})\\\\
+    \\hat{u} &= \\hat{v} \\times \\hat{n}
+\\end{aligned}</math></p>
+
+### 3. Automatic differentiation
+
+The key part that makes this system nice to work with is that it lets you write just a warp function, and the derivatives used for the Jacobian earlier get automatically written for you by the system. An example warp using this system looks like this:
+
+```js
+const twist = createWarp(
+  function({ glsl, millis, position }) {
+    function rotateX(pos, angle) {
+      const sa = glsl.sin(angle);
+      const ca = glsl.cos(angle);
+      return glsl.vec3(
+        pos.x(),
+        pos.y().mult(ca).sub(pos.z().mult(sa)),
+        pos.y().mult(sa).add(pos.z().mult(ca))
+      );
+    };
+    
+    const rotated = rotateX(
+      position,
+      position.x()
+        .mult(0.02)
+        .mult(millis.div(1000).sin())
+    );
+    return rotated.sub(position);
+  }
+);
+```
+
+It's made for JavaScript where we don't have operator overloading, so it uses an object-and-method notation similar to `p5.Vector` methods. You define your offset function, and then the system returns a shader for you that will apply it to both positions and normals.
+
+The underlying autodiff system is implemented in my <a href="https://github.com/davepagurek/glsl-autodiff">glsl-autodiff</a> library, and then this is used in the <a href="https://github.com/davepagurek/p5.warp">p5.warp</a> library to do the math described in steps 2 and 3.
+
+Given the offset function <math>f([x~~y~~z]^T) = [0.5\\sin(0.005t + 2y)~~0~~0]^T</math>, it would be used to produce the following GLSL:
+
+```glsl
+vec3 offset = vec3(
+  sin(time * 0.005 + position.y * 2.0)
+    * 0.5,
+  0.0,
+  0.0
+);
+vec3 d_offset_by_d_y = vec3(
+  0.5 * cos(
+    time * 0.005 + position.y * 2.0
+  )) * (0.0 + (2.0 * 1.0)),
+  0.0,
+  0.0
+);
+mat3 jacobian = mat3(
+  vec3(0.0),
+  d_offset_by_d_y,
+  vec3(0.0)
+);
+```
+
+This then gets spliced into a standard vertex shader for you:
+
+```glsl
+void main() {
+  // Start from attributes
+  vec3 position = aPosition;
+  vec3 normal = aNormal;
+
+  // Splice in auto-generated code.
+  ${outputOffsetAndJacobian()}
+  
+  position += offset;
+  vec3 w = (normal.y == 0. && normal.z == 0.)
+    ? vec3(0., 1., 0.)
+    : vec3(1., 0., 0.);
+  vec3 v = normalize(cross(w, normal));
+  vec3 u = cross(v, normal);
+  normal = normalize(cross(
+    u + jacobian * u,
+    v + jacobian * v
+  ));
+
+  // Apply camera transforms and output
+  gl_Position = uP * uVM * vec4(position, 1.);
+  
+  // Pass on to fragment shader
+  vNormal = uN * normal;
+}
+```
+
+## Results
+
+One of the first sketches I made with this was a bendy, warped airplane:
+
+<iframe class="sketch" allow="camera;microphone" style="max-width: 600px !important; min-height: 600px !important" src="%root%/content/images/2021/07/airplane.html"></iframe>
+
+This also works with other uniform data that you might want to pass into the shader, such as the mouse coordinate, leading to this treatment of the <a href="http://usebutter.com">Butter</a> logo:
+
+<iframe class="sketch" allow="camera;microphone" style="max-width: 600px !important; min-height: 600px !important" src="%root%/content/images/2024/05/butter-interactive/"></iframe>
+
+I've also used the library in <a href="https://openprocessing.org/sketch/1418646">a</a> <a href="https://openprocessing.org/sketch/1919457">number</a> <a href="https://openprocessing.org/sketch/2228774">of</a> <a href="https://openprocessing.org/sketch/1983565">other</a> <a href="https://openprocessing.org/sketch/2221282">sketches</a> to get fast warps without losing lighting. A common technique for me is to add some subtle wiggles to meshes to break up their rigidity and add some whimsy.
+
+### Limitations
+
+The most immediate limitation of this technique is that it can only move around existing vertices and can't create new ones. Given two points <math>\\vec{p}</math> and <math>\\vec{q}</math> connected by a straight edge on a mesh <math>M</math>, the ideal form of the domain warped mesh has <math>\\vec{p'}=w(\\vec{p})</math> and <math>\\vec{q'}=w(\\vec{q})</math> connected by a curve <math>C(t) = w(t\\vec{p} + (1-t)\\vec{q}),~t\\in[0,1]</math>. Since the outputted mesh in WebGL will still connect <math>\\vec{p'}</math> and <math>\\vec{q'}</math> with the straight line segment <math>L(t) = tw(\\vec{p}) + (1-t)w(\\vec{q})</math>, the visual quality of a deformed mesh depends highly on the distance between the ideal curve <math>C(t)</math> and its approximation <math>L(t)</math>. OpenGL has tessellation shaders, so if you're interested in porting this to desktop and adding automatic subdivision, let me know!
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/cube.jpg" full="%root%/content/images/2024/05/cube.png" caption="(a) Input" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/cube-twist.jpg" full="%root%/content/images/2024/05/cube-twist.png" caption="(b) Warped, 20 edges/side" />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/05/cube-lowpoly-twist.jpg" full="%root%/content/images/2024/05/cube-lowpoly-twist.png" caption="(c) Warped, one edge/side" />
+  </div>
+</div>
+
+## Future work
+
+This is a problem aimed mostly at the standard mesh-based WebGL pipeline. Already, you don't need any of this if you're <a href="https://iquilezles.org/articles/normalsSDF/">raymarching signed distance fields in a fragment shader.</a> It's entirely possible that in a few years, we'll be using custom pipelines implemented via WebGPU compute shaders which have their own limitations. At that point, we'll probably need some new math to get different creative coding techniques working, so expect some updates!
+
+<script type="text/javascript" src="%root%/scripts/manage_sketches.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
