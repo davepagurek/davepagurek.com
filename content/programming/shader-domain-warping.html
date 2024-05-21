@@ -87,15 +87,15 @@ We'll tackle the problem in three steps:
 
 Let's say you have two different vectors <math>\\hat{u}</math> and <math>\\hat{v}</math> that are tangent to the surface of your original mesh, <math>M</math>, at some point <math>\\vec{p}</math>. The original normal is just <math>\\hat{n} = \\hat{u} \\times \\hat{v}</math>. On the warped mesh, one can approximate <math>\\hat{n}'</math> by finding the result of the warp function (we'll call it <math>w</math>) on points near <math>\\vec{p}</math>, shifted slightly along a linear approximation of the surface by a small value <math>h</math>:
 
-<p align="center"><math>n' \\approx \\operatorname{normalize}\\left(\\frac{w(\\vec{p} + h\\hat{u}) - w(\\vec{p})}{h} \\times \\frac{w(\\vec{p} + h\\hat{v}) - w(\\vec{p})}{h}\\right)</math></p>
+<p align="center"><math>\\hat{n}' \\approx \\operatorname{normalize}\\left(\\frac{w(\\vec{p} + h\\hat{u}) - w(\\vec{p})}{h} \\times \\frac{w(\\vec{p} + h\\hat{v}) - w(\\vec{p})}{h}\\right)</math></p>
 
 If you're writing a one-off shader, you can stop here and skip to step 2. You'll have to trial-and-error a good value for <math>h</math>, but that's pretty feasible for a single shader. <a href="https://iquilezles.org/articles/normalsSDF/">Inigo Quilez has some tips on that.</a> I'm interested in making something that generalizes better, so we're going to continue on without approximations. Taking the limit as <math>h \\rightarrow 0</math>, this is equivalent to taking directional derivatives:
 
-<p align="center"><math>n' = \\operatorname{normalize}\\left(\\frac{\\partial w(\\vec{p})}{\\partial \\hat{u}} \\times \\frac{\\partial w(\\vec{p})}{\\partial\\hat{v}}\\right)</math></p>
+<p align="center"><math>\\hat{n}' = \\operatorname{normalize}\\left(\\frac{\\partial w(\\vec{p})}{\\partial \\hat{u}} \\times \\frac{\\partial w(\\vec{p})}{\\partial\\hat{v}}\\right)</math></p>
 
 We can break this down further: we know our warp function just takes the original point and adds an offset. If we call that offset function <math>f</math>, that means <math>w(\\vec{x}) = \\vec{x} + f(\\vec{x})</math>:
 
-<p align="center"><math>n' = \\operatorname{normalize}\\left(\\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial \\hat{u}} \\times \\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial\\hat{v}}\\right)</math></p>
+<p align="center"><math>\\hat{n}' = \\operatorname{normalize}\\left(\\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial \\hat{u}} \\times \\frac{\\partial (\\vec{p} + f(\\vec{p}))}{\\partial\\hat{v}}\\right)</math></p>
 
 Since, by definition, <math>\\hat{u}</math> and <math>\\hat{v}</math> are tangent to the surface at <math>\\vec{p}</math>, the directional derivative of <math>\\vec{p}</math> in the direction of <math>\\hat{u}</math> or <math>\\hat{v}</math> will be <math>\\hat{u}</math> or <math>\\hat{v}</math> itself, respectively:
 
