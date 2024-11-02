@@ -14,6 +14,10 @@
         <a href="https://github.com/davepagurek/" class="button external" target="_blank">GitHub</a>
       </span>
       <span class="avoid_wrap">
+        <a href="<%= $params<root> %>/rss.xml" class="button">RSS</a>
+        <a rel="me" href="https://genart.social/@davepagurek" class="button">Mastodon</a>
+      </span>
+      <span class="avoid_wrap">
         <a href="http://www.instagram.com/dpagurek" class="button external" target="_blank">Instagram</a>
         <a href="http://www.youtube.com/pahgawk" class="button external" target="_blank">YouTube</a>
       </span>

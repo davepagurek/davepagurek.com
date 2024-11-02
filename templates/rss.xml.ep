@@ -1,0 +1,19 @@
+% use DateTime::Format;
+% my ($params) = @_;
+% my @posts = $params<content>.get-category(["blog"]).all-pages.sort(-> $v { $v.meta<date> }).reverse
+<rss version="2.0">
+  <channel>
+    <title>Dave Pagurek's Blog</title> 
+    <link>https://www.davepagurek.com</link>
+    <description>I'm a programmer with an interest in computer graphics. I spend my time working on animation software, developing p5.js, and working with the creative coding community to make better tools.</description>
+    <language>en-ca</language>
+% for @posts[0..^10] -> $post {
+    <item>
+      <title><%= $post.meta<title> %></title>
+      <link><%= $post.meta<external> || $post.link %></link>
+        <description><%= $post.meta<excerpt> %></description>
+      <pubDate><%= strftime("%a, %d %b %Y %H:%M:%S GMT", DateTime.new(date => $post.meta<date>)) %></pubDate>
+    </item>
+% }
+  </channel>
+</rss>

@@ -2,6 +2,7 @@ use v6;
 use lib "{$?FILE.IO.dirname}/../Cantilever/lib";
 use Cantilever;
 use Template::Mojo;
+use Shell::Command;
 
 my $header = "{$?FILE.IO.dirname}/templates/header.html.ep".IO.slurp;
 my $footer = "{$?FILE.IO.dirname}/templates/footer.html.ep".IO.slurp;
@@ -11,6 +12,7 @@ my $category-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templa
 my $archives-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/archives.html.ep".IO.slurp ~ $footer);
 my $error-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/error.html.ep".IO.slurp ~ $footer);
 my $links-template = Template::Mojo.new($header ~ "{$?FILE.IO.dirname}/templates/links.html.ep".IO.slurp ~ $footer);
+my $rss-template = Template::Mojo.new("{$?FILE.IO.dirname}/templates/rss.xml.ep".IO.slurp);
 
 my $regenerate-after = 0;
 for qw<header footer home page category archives error> -> $page {
@@ -173,7 +175,15 @@ $app.generate(
       $c<title> = "Links";
       $c<type> = "links";
       $links-template.render($c);
-    }
+    },
+    "rss" => -> $c {
+      $rss-template.render($c);
+    },
   },
   regenerate-after => $regenerate-after
 );
+
+say $app.export-dir;
+# Convert rss html from Cantilever into an xml file
+cp("{$app.export-dir}/rss/index.html", "{$app.export-dir}/rss.xml");
+#rmdir("{$app.export-dir}/rss")

@@ -6,6 +6,7 @@
   <title>
     <%= $params<type> eq 'home' ?? $params<title> !! "{$params<title>} - Dave Pagurek" %>
   </title>
+  <link rel="alternate" type="application/rss+xml" title="Dave Pagurek's Blog" href="<%= $params<root> %>/rss.xml" />
   <link href="https://fonts.googleapis.com/css?family=EB+Garamond:400,400i,700" rel="stylesheet">
   <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
   <meta name='theme-color' content='#e74c3c' />
