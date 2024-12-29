@@ -196,6 +196,9 @@ iframe.sketch.hidden {
 .row.expanded {
   padding: 3rem;
 }
+.row.flush {
+  max-width: 66rem;
+}
 .column {
   display: flex;
   flex-direction: column;

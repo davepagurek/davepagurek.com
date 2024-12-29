@@ -1,0 +1,137 @@
+<!--
+{
+	"title": "A philosophy of p5.js 2.0",
+	"category": "blog",
+	"date": "2025-01-01",
+	"thumbnail": "%root%/content/images/2015/3/IMG_9919-thumbnail.jpg",
+	"excerpt": "Some thoughts after working on p5.js and its 2.0 release."
+}
+-->
+
+Work on the 2.0 release of p5.js is entering its final phase! This has been a massive effort spanning over a year, which has coalesced thanks to the hard work of a number of contributors. Along with the project leads, I've had the privilege of helping guide this process.
+
+<img src="%root%/content/images/2024/12/contributors.jpg" full="%root%/content/images/2024/12/contributors.jpg" caption="All the avatars of p5.js contributors on GitHub, from 2013 to December 2024" />
+
+This has been a pretty new experience for me. 
+
+Five years ago, I was not a contributor to the project at all. I was a relatively new user, too&mdash;I learned Processing in the past, and briefly used Processing.js when porting some sketches to the web, and dabbled in other graphics frameworks for a while before noticing p5.js around its 1.0 release. For me, the pendulum between making tools for art and making art with those tools is always in motion. I had first gone down the rabbit hole of learning 3D graphics without libraries to understand what was going on. Once understood, I started using more minimal wrappers for convenience, before eventually getting back into more batteries-included systems to make it as easy as possible to do creative work. p5.js felt very productive for me in that regard. I was spurred on by a <a href="https://openprocessing.org/curation/78544">lively, friendly community that encouraged new creative work.</a> I started fixing bugs as I encountered them while using more niche features. I started filling out the WebGL API as my work pushed more in that direction, and I gained trust from maintainers and stewards as these small, incremental changes snowballed. 
+
+I started with technical contributions, working largely on my own. Over time, as I started adding new things instead of just fixing bugs, I'd consult with more people to figure out what needs to be made. Now, for p5.js 2.0, I've been working with an even larger community of contributors, starting by reading proposals for what should go into the release, refining the proposals into APIs, reviewing code, and collaborating on writing the code.
+
+## Why 2.0?
+
+p5.js was started in 2013 by Lauren McCarthy to imagine what Processing would look like if Processing were invented at the time instead of in 2001, when it started. Both p5.js and Processing aimed to open up creative coding to a wider audience, both by making it easy to get started writing code, and by making it easy to see those creations via the web. In 2001, that meant creating Java applets. By 2013, the web had evolved&mdash;Processing too had evolved and now served slightly different needs, and a JavaScript-based project would better serve those initial web-based goals.
+
+In addition to the underlying technologies the project is built on, the general economic landscape of software was a factor. Who makes software, and who can access software, had changed by 2013. The p5.js project was also set up to put a greater emphasis on its community, prioritizing both accessibility of sketches and inclusivity in the software development process itself.
+
+Now, it's 2025, **exactly as far away from the start of p5.js as the start of p5.js was from the launch of Processing.** The landscape of the web has definitely changed since 2013. We also wanted to make sure the community could have a say in the changes, and strengthen itself for the future. So we took the time to prepare p5.js for the next 12 years.
+
+## What's changing?
+
+p5.js exists in a wider JavaScript ecosystem. While often p5 is taught as its own thing, it is intentionally a step for its users into web technology as a whole. JavaScript looks a little different now: more things are built directly into JavaScript than before, so rather than providing its own unique solutions to those problems, p5 will now start to use those standards, such as `async`/`await` for asset loading, and string and array manipulation functions.
+
+<div class="row flush">
+  <div class="column uncentered">
+    <p>Typography support on the web has also been advancing, with font format standards changing, and variable fonts starting to get wider support. While widespread support on the canvas is not quite there yet cross-browser, we're starting to change how typography works in p5 to better leverage native canvas support as it's added. As it stands, p5 2.0 will now support variable font weight on the 2D canvas, with more variable axes coming as support grows.</p>
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/12/variable.gif" full="%root%/content/images/2024/12/variable.gif" caption="Animated variable fonts in p5.js 2.0." />
+  </div>
+</div>
+
+Rendering technology is also changing. Chrome supports WebGPU now, and support is being actively developed by other browsers. While not new, interest in SVG output has also increased, as it has become easier than ever to get into pen plotter printing. A big goal of p5 2.0 is to make it easier to create new renderers that get first-class support, including a new base class to extend and a new p5.Shape class to handle shape geometry processing for you. In the next year we hope to start working on some new renderers&mdash;if you're interested in helping out, let us know!
+
+<div class="row flush">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2024/12/raphsicle.gif" full="%root%/content/images/2024/12/raphsicle.gif" caption="A 3D scan of Rapha&euml;l de Courville, rendererd as an ice sculpture using the Shader Hooks API" />
+  </div>
+  <div class="column uncentered">
+    <p>Related, computers in general have pretty powerful GPUs compared to 12 years ago. WebGL is still the easiest way to start taking advantage of that, with lots of opportunities for creative coding in shaders. So another goal of 2.0 is to reduce the barrier of entry to shader programming by letting you modify bits of the built-in shaders rather than starting from scratch, providing easier starting points for fill, stroke, and image shaders instead of just fills, and we're starting work on a shader building API that will let you build your shaders with a p5 API instead of additionally learning GLSL.</p>
+  </div>
+</div>
+
+All of the changes we decided to go ahead with came from proposals from the community, after extensive discussion from the community, and with community contributions for implementation. While the changes to the code are the public face of the 2.0 release, the collective creation of 2.0 represents an important change too. We have goals about what it should feel like to work on p5, and we've codified that into the release process so that we can continue to grow our tapestry of contributors into the future.
+
+## A p5.js philosophy
+
+The p5.js project feels to me like a pretty unique one. On its face, it is a graphics and interactive media library. It's used by artists trying to express themselves with code, developers creating visual applications, teachers teaching CS fundamentals to young students, and students themselves making their first creations. The library aims to grow with you across that spectrum. The wide net it casts is already a little different from many other projects, but there's more: its ultimate goal is not *just* to produce a graphics library that grows with you as you learn and progress. It also aims, perhaps just as importantly, <a href="https://www.artistsandhackers.org/programming-radical-community">to be a *community* that supports your growth.</a> In addition to providing a track along which one can level up their programming and art skills, it provides an equally important track towards becoming a contributor into p5.js itself. **We want p5 to be made by the people who use it, and we want p5 to be the place where you learn how to do make those contributions.**
+
+The result is that, when you look at p5.js, it shouldn't appear like a hyper-polished corporate product; it should appear like a scrappy but effective work made by *people.* It should look like something you could see yourself helping out on, not something made by some mythical engineers elsewhere. This isn't accidental; it's a conscious, calculated choice. If there's something that can be updated or improved, we hope people feel encouraged and empowered to help make changes themselves.
+
+Contributions can take many forms. A great first contribution for users of the library is to weigh in when new ideas are proposed. Especially given the diverse usage of p5, it's very helpful to get more perspectives into the conversation when deciding on future directions for the library. You don't have to touch the library internals to imagine how it would feel to use the library with a new API!
+
+Code contributions in open source typically have a large barrier to entry, with potential contributors worrying that they don't know enough or aren't contributing correctly. We try to design our contributor flow to be as friendly as possible. For example, we don't want to be code snobs: we're OK with the fact that the codebase will not look completely uniform. But we also want to keep the codebase approachable for newcomers, and sometimes that means refactoring code to have more consistency. I don't think that's a contradiction: it just means we try not to ask too much of new contributors and still let them merge code, and then leave room for even more contributions to help polish code. All of those are valid levels to contribute at, and all are appreciated.
+
+So, how do you make a big overhaul of an open source project with the goal of turning users into contributors?
+
+## Lessons
+
+After slowly working on more and more contributions over the years, I've found myself as one of the maintainers of p5.js. Over time, seeing what does and doesn't work, I've tried to distill a few principles about how to manage contributions, all of which we've tried to bring into the 2.0 development process.
+
+**It's good to leave a certain amount of small issues open.** These are the sorts of issues that are feasible for newcomers to tackle, aren't urgent, and make it feel like contribution isn't an unachievable goal. The intention is that they still get fixed eventually, but rather than a maintainer fixing them, leaving behind just the fixed bug, a new contributor can fix them, leaving behind both a fixed bug and someone who might be able to fix *more* bugs in the future. Even if they don't fix anything else, they've gained a little more confidence in their software career, and the project has given something back while also receiving the fix. The 2.0 release is a perpetual work-in-progress, and encourages more people to get excited about what we're building and join in.
+
+**It's often better in the long run to mentor someone who will implement a feature rather than writing it yourself.** Similar to the above, the goal is to get not just a feature implemented, but also gain a new contributor. While small issues are good for new contributors, this point is about helping contributors gain confidence and reach your level. Sure, I *could* implement something myself, but there is only so much of me to go around, and I'd rather gain a new collaborator in the process. In 2.0, we've ramped up many new contributors into subject-matter experts within the project, strengthening our ability to maintain the project in the future.
+
+**We try to do whatever we can to shield contributors from blame.** People write buggy code. We're all human. That's what tests and code review are there to help with. If a bug does slip through, the response should not be to blame the contributor for that bug, but rather, to figure out how to give better signal to contributors and reviewers for next time. Sometimes this means making it easier to write tests: we have a snapshot testing system in place now in addition to unit tests. You can write a small sketch, and then whenever changes to the library are made, it will automatically verify that the sketch runs the same after those changes, making it easier than ever to prevent regressions. Aside from tests, sometimes this means refactoring a section of code to be less complicated and easier to reason about: we refactored our mouse/touch handling system, which was quite complex in how it tried to make both work together, to instead use a single system built on the JavaScript Pointer API.
+
+<img src="%root%/content/images/2024/12/visualtests.jpg" full="%root%/content/images/2024/12/visualtests.jpg" caption="Snapshots of a bunch of tiny p5.js sketches, used to catch regressions. A lot of snapshots that look the same are rendered in different ways&mdash;for example, rendering shapes in 2D and WebGL mode." />
+
+**We try to design for a changing, growing API.** We generally try not to make breaking changes. But we also can't feasibly build a complete solution all at once. Sometimes a user makes a reasonable feature request, but to implement it, we end up bogged down in the details of how to squeeze it in alongside existing API constraints. So instead, we try to design APIs that we can add to in the future without breaking things. One small example of this: some functions have long signatures, such as `bezierVertex(x1, y1, z1, x2, y2, z2, x3, y3, z3)`. It's not really feasible to pack any more into that without it becoming too hard to read, but there are already extra properties that users want to add per control point, such as per-vertex colors. Instead, in 2.0, we're adopting a pattern where every `*Vertex()` function has just one `x, y, z` at a time. This gives us room to change state between calls, e.g. by calling `fill()` between vertices, or any new state we want to add.
+
+**Design ways to remove bottlenecks in the contribution process.** Sometimes it's hard to have a discussion about a potential new feature&mdash;it can often take place in the abstract, which makes it hard to weigh the tradeoffs. It's also frustrating for people who have the motivation to contribute and want to solve their own problem. What we're doing in p5 2.0 is to refactor the codebase into modular pieces, which can exist within or outside the core build. The idea is that features can be prototyped as addons, but implemented in basically the same way as the core. Once prototyped, an addon can be useful to users regardless of whether or not it becomes a core feature. Addons are showcased on the website, and are greatly valued by the community. Since the structure of an addon and a core feature is now exactly the same, when it becomes clear that we do want a feature, it becomes a very simple process to merge an addon into the core.
+
+## What we accomplished
+
+<div class="row flush">
+  <div class="column double">
+
+<p>In the past few months, contributors have worked on these updates for 2.0:</p>
+
+<ul>
+<li>A revamped addon system and a refactor of the core codebase to use it by Kenneth Lim</li>
+<li>A refactoring of the DOM module by Silas Morgan</li>
+<li>The ability to have custom shader attributes by Luke Plowden</li>
+<li>New build, test, and documentation parsing systems by Kenneth Lim</li>
+<li>A cleanup of the shader API so that you can have custom line, fill, and image shaders, by Garima, mentored by Perminder Singh</li>
+<li>A refactor of the typography system to be smaller, support variable fonts, and have more precise text measurement by Daniel Howe</li>
+<li>An approximately 350% performance improvement to `textToPoints` and 3D text extrusion support by me</li>
+<li>Support for `async` asset loading by Kenneth Lim</li>
+<li>A new public Matrix class and an update to the internals of the math module to support more underlying math libraries by Cristian Ba&ntilde;uelos</li>
+<li>A new API for shape drawing by Greg Stanton</li>
+<li>Functions to get the current world coordinates given the applied transformations by Garima</li>
+<li>An API for modifying pieces of built-in shaders by me</li>
+<li>An update to color module internals to support many more color spaces by Kenneth Lim and Diana Galindo</li>
+<li>Added API consistency for all functions that change modes by Jules Kris</li>
+<li>A fast simple-line rendering mode for WebGL by Perminder Singh</li>
+<li>A refactor of 2D mode to be able to run filter shaders without the full WebGL module by Perminder Singh</li>
+<li>A new implementation of shape processing leading up to a p5.Shape class by Greg Stanton</li>
+<li>A refactor of mouse and touch handling to use the JavaScript Pointer API by Diya Solanki</li>
+<li>Support for `display-p3` canvases by Kenneth Lim</li>
+<li>A new benchmarking system for more informed implementation choices by Cristian Ba&ntilde;uelos</li>
+<li>Support for loading filter shaders from files by Rishab Kumar Jha</li>
+<li>A refactor of the Friendly Error System to be able to identify and catch errors better by Miaoye Que</li>
+</ul>
+
+  </div>
+  <div class="column">
+    <img src="%root%/content/images/2024/12/interp.jpg" full="%root%/content/images/2024/12/interp.jpg" caption="Color interpolation in the OKLCH color space in p5.js 2.0" />
+
+    <img src="%root%/content/images/2024/12/squiggle.jpg" full="%root%/content/images/2024/12/squiggle.jpg" caption="A squiggle rendered with a stroke shader in p5.js 2.0 to add thickness variation and stippling" />
+  </div>
+</div>
+
+These changes implement, by my count, 28 proposals from the community. In addition to the contributors above, we had discussion on the proposals from an additional 35, and this does not include proposals that we still intend to implement in a follow-up 2.x release and the discussion on those proposals.
+
+It has been incredibly rewarding to work with these contributors and see their skills grow. These are all people who have been fun to work with, and who bring skills different from and complementary to my own. I'm so, so pleased to see people who started making changes with my mentorship grow their confidence, take on bigger changes, and then start mentoring others, both by helping maintain the repository, and by guiding others' changes in much the same way I used to guide theirs.
+
+I'd like to thank Lauren Lee McCarthy, Stalgia Grigg, cypress evelyn masso, Nat Decker, and Daniel Shiffman for helping give a final review all the proposals; Kenneth Lim for all the fundamental system refactoring he spearheaded; Karen Abe for keeping such a large team organized; and to Qianqian Ye and Kit Kuksenok for leading the project and putting in countless behind-the-scenes hours guiding everything.
+
+## Here's to the next 12 years
+
+Long before I got into p5.js or computer graphics in general, I've been a user of open source projects. When I was young and on a shoestring budget, I mostly liked that it was free. When I started learning more, I appreciated the learning opportunities provided by being able to see exactly how things work on the inside. When I gained competence and confidence, I appreciated the do-it-yourself ethos that empowered me to fix my own problems. When I became a student in this field, I looked up to maintainers of the high quality, useful projects I learned to use. When I was working, I became more and more astounded that these sorts of projects are able to keep up momentum when it is so hard to go home from writing code all day and continue writing *more* code. The more people I had to work with, the less I looked at open source projects merely as technical accomplishments, but also as human accomplishments: while the engineering feats are undoubtedly impressive, the more impressive feat became the fact that these projects leapt over social and economic hurdles to coordinate people to will these projects into existence.
+
+Open-source projects with a large, active community are, perhaps necessarily, slower to smooth out rough edges. Unlike a company, contributors pop in and pop out as their schedules allow. It involves meeting contributors where they're at and embracing that heterogeny.
+
+The health of the community is just as important as the end product in the long run.
+
+I'm incredibly proud of what our community has come together to build, and I look forward to seeing where it will go from here!
