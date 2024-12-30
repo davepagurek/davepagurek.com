@@ -1,28 +1,28 @@
 <!--
 {
-	"title": "A philosophy of p5.js 2.0",
+	"title": "p5.js 2.0 and an open source philosophy",
 	"category": "blog",
-	"date": "2025-01-01",
-	"thumbnail": "%root%/content/images/2015/3/IMG_9919-thumbnail.jpg",
-	"excerpt": "Some thoughts after working on p5.js and its 2.0 release."
+	"date": "2024-12-29",
+	"thumbnail": "%root%/content/images/2024/12/2.0-thumb.jpg",
+  "og-image": "%root%/content/images/2024/12/2.0-thumb.jpg",
+  "art": "%root%/content/images/2024/12/2.0-worm.jpg",
+	"excerpt": "As we wrap up work on p5.js 2.0, I've coalesced some thoughts on what open source means for this project."
 }
 -->
 
-Work on the 2.0 release of p5.js is entering its final phase! This has been a massive effort spanning over a year, which has coalesced thanks to the hard work of a number of contributors. Along with the project leads, I've had the privilege of helping guide this process.
-
-<img src="%root%/content/images/2024/12/contributors.jpg" full="%root%/content/images/2024/12/contributors.jpg" caption="All the avatars of p5.js contributors on GitHub, from 2013 to December 2024" />
+Work on the 2.0 release of <a href="https://p5js.org/">p5.js</a> is entering its final phase! This has been a massive effort spanning over a year, which has coalesced thanks to the hard work of a number of contributors. Along with the project leads, I've had the privilege of helping guide this process.
 
 This has been a pretty new experience for me. 
 
-Five years ago, I was not a contributor to the project at all. I was a relatively new user, too&mdash;I learned Processing in the past, and briefly used Processing.js when porting some sketches to the web, and dabbled in other graphics frameworks for a while before noticing p5.js around its 1.0 release. For me, the pendulum between making tools for art and making art with those tools is always in motion. I had first gone down the rabbit hole of learning 3D graphics without libraries to understand what was going on. Once understood, I started using more minimal wrappers for convenience, before eventually getting back into more batteries-included systems to make it as easy as possible to do creative work. p5.js felt very productive for me in that regard. I was spurred on by a <a href="https://openprocessing.org/curation/78544">lively, friendly community that encouraged new creative work.</a> I started fixing bugs as I encountered them while using more niche features. I started filling out the WebGL API as my work pushed more in that direction, and I gained trust from maintainers and stewards as these small, incremental changes snowballed. 
+Five years ago, I was not a contributor to the project at all. I was a relatively new user, too&mdash;I learned Processing in the past, and briefly used Processing.js when porting some sketches to the web, and dabbled in other graphics frameworks for a while before noticing p5.js around its 1.0 release. For me, the pendulum between making tools for art and making art with those tools is always in motion. I had first gone down the rabbit hole of learning 3D graphics without libraries to understand what was going on. Once understood, I started using more minimal wrappers for convenience, before eventually getting back into more batteries-included systems to make it as easy as possible to just be creative. p5.js felt very productive for me in that regard. I was spurred on by a <a href="https://openprocessing.org/curation/78544">lively, friendly community that encouraged new creative work.</a> I started fixing bugs as I encountered them while using more niche features. The pendulum then started to swing more the other way. I started filling out the WebGL API as my work pushed more in that direction, and I gained trust from maintainers and stewards as these small, incremental changes snowballed. 
 
 I started with technical contributions, working largely on my own. Over time, as I started adding new things instead of just fixing bugs, I'd consult with more people to figure out what needs to be made. Now, for p5.js 2.0, I've been working with an even larger community of contributors, starting by reading proposals for what should go into the release, refining the proposals into APIs, reviewing code, and collaborating on writing the code.
 
 ## Why 2.0?
 
-p5.js was started in 2013 by Lauren McCarthy to imagine what Processing would look like if Processing were invented at the time instead of in 2001, when it started. Both p5.js and Processing aimed to open up creative coding to a wider audience, both by making it easy to get started writing code, and by making it easy to see those creations via the web. In 2001, that meant creating Java applets. By 2013, the web had evolved&mdash;Processing too had evolved and now served slightly different needs, and a JavaScript-based project would better serve those initial web-based goals.
+p5.js was started in 2013 by Lauren McCarthy to imagine what <a href="https://anthology.rhizome.org/processing">Processing</a> would look like if Processing were invented then, instead of in 2001. Both p5.js and Processing aimed to open up creative coding to a wider audience, both by making it easy to get started writing code, and by making it easy to see those creations via the web. In 2001, that meant creating Java applets. By 2013, the web had evolved&mdash;Processing too had evolved and now served slightly different needs, and a JavaScript-based project would better serve those initial web-based goals.
 
-In addition to the underlying technologies the project is built on, the general economic landscape of software was a factor. Who makes software, and who can access software, had changed by 2013. The p5.js project was also set up to put a greater emphasis on its community, prioritizing both accessibility of sketches and inclusivity in the software development process itself.
+In addition to the underlying technologies the project is built on, the general economic landscape of software was a factor. Who makes software, and who can access software, had changed by 2013, with less control over how we interact with software, and less involvement in its creation. The p5.js project was set up to put a greater emphasis on its community, prioritizing both accessibility of sketches and inclusivity in the software development process itself.
 
 Now, it's 2025, **exactly as far away from the start of p5.js as the start of p5.js was from the launch of Processing.** The landscape of the web has definitely changed since 2013. We also wanted to make sure the community could have a say in the changes, and strengthen itself for the future. So we took the time to prepare p5.js for the next 12 years.
 
@@ -52,9 +52,9 @@ Rendering technology is also changing. Chrome supports WebGPU now, and support i
 
 All of the changes we decided to go ahead with came from proposals from the community, after extensive discussion from the community, and with community contributions for implementation. While the changes to the code are the public face of the 2.0 release, the collective creation of 2.0 represents an important change too. We have goals about what it should feel like to work on p5, and we've codified that into the release process so that we can continue to grow our tapestry of contributors into the future.
 
-## A p5.js philosophy
+## An open source philosophy for p5.js
 
-The p5.js project feels to me like a pretty unique one. On its face, it is a graphics and interactive media library. It's used by artists trying to express themselves with code, developers creating visual applications, teachers teaching CS fundamentals to young students, and students themselves making their first creations. The library aims to grow with you across that spectrum. The wide net it casts is already a little different from many other projects, but there's more: its ultimate goal is not *just* to produce a graphics library that grows with you as you learn and progress. It also aims, perhaps just as importantly, <a href="https://www.artistsandhackers.org/programming-radical-community">to be a *community* that supports your growth.</a> In addition to providing a track along which one can level up their programming and art skills, it provides an equally important track towards becoming a contributor into p5.js itself. **We want p5 to be made by the people who use it, and we want p5 to be the place where you learn how to do make those contributions.**
+The p5.js project feels to me like a pretty unique one. On its face, it is a graphics and interactive media library. It's used by artists trying to express themselves with code, developers creating visual applications, teachers teaching CS fundamentals to young students, and students themselves making their first creations. The library aims to grow with you across that spectrum. The wide net it casts is already a little different from many other projects, but there's more: its ultimate goal is not *just* to produce a graphics library that grows with you as you learn and progress. It also aims, perhaps just as importantly, <a href="https://www.artistsandhackers.org/programming-radical-community">to be a *community* that supports your growth.</a> In addition to providing a track along which one can level up their programming and art skills, it provides an equally important track towards becoming a contributor to p5.js itself. **We want p5 to be made by the people who use it, and we want p5 to be the place where you learn how to do make those contributions.**
 
 The result is that, when you look at p5.js, it shouldn't appear like a hyper-polished corporate product; it should appear like a scrappy but effective work made by *people.* It should look like something you could see yourself helping out on, not something made by some mythical engineers elsewhere. This isn't accidental; it's a conscious, calculated choice. If there's something that can be updated or improved, we hope people feel encouraged and empowered to help make changes themselves.
 
@@ -66,7 +66,7 @@ So, how do you make a big overhaul of an open source project with the goal of tu
 
 ## Lessons
 
-After slowly working on more and more contributions over the years, I've found myself as one of the maintainers of p5.js. Over time, seeing what does and doesn't work, I've tried to distill a few principles about how to manage contributions, all of which we've tried to bring into the 2.0 development process.
+After slowly working on more and more contributions over the years, I've found myself as one of the maintainers of p5.js. Over time, seeing what does and doesn't work, I've tried to distill a few ideas about how to manage contributions. I'm just one person, and not the lead of the project, but at least on a personal level, I've tried to bring these into my work on the 2.0 development process.
 
 **It's good to leave a certain amount of small issues open.** These are the sorts of issues that are feasible for newcomers to tackle, aren't urgent, and make it feel like contribution isn't an unachievable goal. The intention is that they still get fixed eventually, but rather than a maintainer fixing them, leaving behind just the fixed bug, a new contributor can fix them, leaving behind both a fixed bug and someone who might be able to fix *more* bugs in the future. Even if they don't fix anything else, they've gained a little more confidence in their software career, and the project has given something back while also receiving the fix. The 2.0 release is a perpetual work-in-progress, and encourages more people to get excited about what we're building and join in.
 
@@ -120,18 +120,20 @@ After slowly working on more and more contributions over the years, I've found m
   </div>
 </div>
 
-These changes implement, by my count, 28 proposals from the community. In addition to the contributors above, we had discussion on the proposals from an additional 35, and this does not include proposals that we still intend to implement in a follow-up 2.x release and the discussion on those proposals.
+These changes implement, by my count, 28 proposals from the community. In addition to the contributors above, we had discussion on the proposals from an additional 35 members of the community, and this does not include proposals that we still intend to implement in a follow-up 2.x release and the discussion on those proposals.
 
 It has been incredibly rewarding to work with these contributors and see their skills grow. These are all people who have been fun to work with, and who bring skills different from and complementary to my own. I'm so, so pleased to see people who started making changes with my mentorship grow their confidence, take on bigger changes, and then start mentoring others, both by helping maintain the repository, and by guiding others' changes in much the same way I used to guide theirs.
 
-I'd like to thank Lauren Lee McCarthy, Stalgia Grigg, cypress evelyn masso, Nat Decker, and Daniel Shiffman for helping give a final review all the proposals; Kenneth Lim for all the fundamental system refactoring he spearheaded; Karen Abe for keeping such a large team organized; and to Qianqian Ye and Kit Kuksenok for leading the project and putting in countless behind-the-scenes hours guiding everything.
+I'd like to thank Lauren McCarthy, Stalgia Grigg, cypress evelyn masso, Nat Decker, and Daniel Shiffman for helping give a final review to all the proposals; Kenneth Lim for all the fundamental system refactoring he spearheaded; Karen Abe for keeping such a large team organized; and to Qianqian Ye and Kit Kuksenok for leading the project and putting in countless behind-the-scenes hours facilitating everything.
 
 ## Here's to the next 12 years
 
-Long before I got into p5.js or computer graphics in general, I've been a user of open source projects. When I was young and on a shoestring budget, I mostly liked that it was free. When I started learning more, I appreciated the learning opportunities provided by being able to see exactly how things work on the inside. When I gained competence and confidence, I appreciated the do-it-yourself ethos that empowered me to fix my own problems. When I became a student in this field, I looked up to maintainers of the high quality, useful projects I learned to use. When I was working, I became more and more astounded that these sorts of projects are able to keep up momentum when it is so hard to go home from writing code all day and continue writing *more* code. The more people I had to work with, the less I looked at open source projects merely as technical accomplishments, but also as human accomplishments: while the engineering feats are undoubtedly impressive, the more impressive feat became the fact that these projects leapt over social and economic hurdles to coordinate people to will these projects into existence.
+Long before I got into p5.js or computer graphics in general, I've been a user of open source projects. When I was young and on a shoestring budget, I mostly liked that they were often free to use. When I started learning more, I appreciated the learning opportunities provided by being able to see exactly how things work on the inside. When I gained competence and confidence, I appreciated the do-it-yourself ethos that empowered me to fix my own problems. When I became a student in this field, I looked up to maintainers of the high quality, useful projects I learned to use. When I was working, I became more and more astounded that these sorts of projects are able to keep up momentum when it is so hard to go home from writing code all day and continue writing *more* code. The more people I had to work with, the less I looked at open source projects merely as technical accomplishments, but also as human accomplishments: while the engineering feats are undoubtedly impressive, the more impressive feat became the fact that these projects leapt over social and economic hurdles to coordinate people to will these projects into existence.
 
 Open-source projects with a large, active community are, perhaps necessarily, slower to smooth out rough edges. Unlike a company, contributors pop in and pop out as their schedules allow. It involves meeting contributors where they're at and embracing that heterogeny.
 
 The health of the community is just as important as the end product in the long run.
 
 I'm incredibly proud of what our community has come together to build, and I look forward to seeing where it will go from here!
+
+<img src="%root%/content/images/2024/12/contributors.jpg" full="%root%/content/images/2024/12/contributors.jpg" caption="All the avatars of p5.js contributors on GitHub, from 2013 to December 2024" />
