@@ -498,6 +498,9 @@ div.img p {
   caption-side: bottom;
   color: #999;
 }
+div.img p em {
+  font-style: normal;
+}
 
 section > iframe.youtube, section > iframe.sketch {
   max-width: 66rem;

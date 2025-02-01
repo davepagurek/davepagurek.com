@@ -1,0 +1,125 @@
+<!--
+{
+	"title": "My cat broke my WiFi",
+	"category": "blog",
+	"date": "2025-02-01",
+	"thumbnail": "%root%/content/images/2025/02/pigeon-computer.jpeg",
+  "og-image": "%root%/content/images/2025/02/pigeon-computer.jpeg",
+	"excerpt": "I got a cat in January! One month later, she caused an internet problem that took me a day to figure out!"
+}
+-->
+
+This past week, I've had an internet issue that has been driving me up the wall. It took my a whole day to figure out, so I'm going to describe it here in excruciating detail to make it all feel worth it.
+
+My WiFi connection has been super flaky in my office. When it's connected, it generally stays working for a while, but it will randomly completely stop being connected to the internet even though my Mac claims it's still connected to our WiFi network. When I reboot my Mac, it starts out in that weird limbo state where it's connected but not really, and it could take 15 minutes or so to get a real connection, if it ever does. My phone occasionally also falls back onto data, although seemingly less often than my Mac.
+
+Some troubleshooting revealed it was getting an IP address from somewhere. It just couldn't reach the outside world. In case it was a DNS issue, I tried some alternative public DNS servers, like Google's 8.8.8.8, to no avail.
+
+My partner works in the room next to my office. Her computer works fine! Her phone works fine! The Chromecast works fine! It's just affecting *me!*
+
+<img src="%root%/content/images/2025/02/desk.jpeg" full="%root%/content/images/2025/02/desk.jpeg" caption="My desk. This setup hasn't changed in a year. Why the problems now?" />
+
+## Is it a networking driver?
+
+In the fall I updated my Mac to MacOS 15 Sequoia. This was required so I could fix a bug for work that only appeared on that version (transparent ProRes video outputted from older ffmpeg builds wouldn't be recognized as valid by Apple. An update to ffmpeg in September fixed it though!) However, in addition to being able to reproduce that bug, I also gained a new bug of my own: every time I unplugged my Mac from my desk to take it on the go, it would crash after around 30 seconds and have to reboot.
+
+The crash report said something about a kernel panic due to a networking driver. I used to plug into Ethernet via a joint USB hub/Ethernet dongle that required a third-party driver, and a while ago I discovered that it was disconnecting from *that* that was probably causing my crashes. Since I have just been using WiFi recently, I uninstalled the driver mid January to try to curb the crashes. It seemed to work! But now I'm having new networking-related issues. Did the uninstall mess something up? Maybe my phone's slight flakiness was unrelated.
+
+I tried installing/uninstalling the driver a few times (there was also an updated one since I last checked, which actually seems to fix the crashing.) Installed or uninstalled, my WiFi continued to be flaky.
+
+I remembered that my Thunderbolt Display also has an Ethernet port on the back that I never use. Could this other network interface be the cause? I assumed the issue was from unplugging my dongle, but I generally plug in my monitor at the same time, so it could be the cause too.
+
+Unfortunately, leaving my monitor unplugged had the same results.
+
+## Is a heated blanket causing electromagnetic interference?
+
+After unplugging my monitor and seeing the same results, I tried keeping *everything* unplugged, with my laptop just sitting on my desk. Same results! So nothing actually needed to be connected to my Mac for it to be messed up. But, seemingly, it's just on my home WiFi&mdash;I've had no problems at the co-working space I go to.
+
+I tried picking up my laptop and walking around my office a bit. Mostly same results, except when I got a little far from my chair, where it was flaky, but started to work more often!
+
+I recently got a heated blanket that I have on my lap while working (our cat loves it too!) My problems started around the same time I got it. I thought this was coincidental at first, but maybe it could be related? I googled it and <a href="https://discussions.apple.com/thread/2790333?sortBy=rank">people do seem to notice them affecting WiFi.</a> I guess any circuit causes electromagnetic interference? Hopeful, I tried moving it out of my office.
+
+Same result, unfortunately: at my desk, the WiFi was still not working.
+
+<img src="%root%/content/images/2025/02/pigeon-blanket.jpeg" full="%root%/content/images/2025/02/pigeon-blanket.jpeg" caption="The blanket, moved back to the couch. At least someone was still using it there." />
+
+## Is my office haunted?
+
+The signal did seem to get better a bit when I was away from my chair. It wasn't because of the heated blanket. Maybe it was something else?
+
+I tried other spots in the office. I was using my laptop like a dowsing rod: I'd take a few steps, stop, reboot, connect to WiFi, test the internet, repeat. It seemed better the closer I was to the doorframe. Once I stepped out of the doorframe, *everything worked perfectly!* The problem only happened inside my office. I brought my partner's computer into my office and it behaved the same as mine! So it was not related to my computer, it was something about my office.
+
+Continuing on with the heated blanket hypothesis, I started unplugging everything electric from the office. The standing desk made no difference. Power bars made no difference. The sewing machine made no difference. The old 1998 iMac made no difference. But then, the iMac's internet connection did.
+
+<img src="%root%/content/images/2025/02/imac.jpeg" full="%root%/content/images/2025/02/imac.jpeg" caption="My iMac. The cables going off the desk is because the landlord glued in a desk unit right next to the wall, right over all the outlets. One of these days I'll drill a hole so that the cables can cleanly go through." />
+
+## Is it the Ethernet-over-power unit the problem?
+
+The iMac in the back of my office is from 1998, when WiFi was not really a common thing yet. It just has an Ethernet port. For me to still connect it to the internet, I needed to run Ethernet to it from the router. However, the router moved to another room last year, and my apartment doesn't have Ethernet in the walls.
+
+There's a type of device made for this scenario: Ethernet-over-power units. They effectively turn the wiring of your home into Ethernet. They come in two parts: the first unit connect your router to power, and the second connects an outlet elsewhere on the circuit to the device you want to connect.
+
+<div class="row flush">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/02/eop-router-thumb.jpeg" full="%root%/content/images/2025/02/eop-router.jpeg" caption="Behind the couch, this bit connects our router to our power circuit." />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/02/eop-imac-thumb.jpeg" full="%root%/content/images/2025/02/eop-imac.jpeg" caption="This bigger unit connects from power to my iMac. An extension cable adds interference, but the landlord permanently installed a cabinet <em>right</em> in front of the outlet, so this is the best we can do." />
+  </div>
+</div>
+
+So last summer I set up one of these to get wired Ethernet to my office, and this worked great for my iMac ever since. Except just this week I started having problems, and unplugging the iMac side fixed all my problems. What changed?
+
+## It <em>was</em> the blanket! Kind of!
+
+The first change was that the other end of the Ethernet-over-power setup, the one connecting the router to power, was unplugged. This also happened exactly when I got the heated blanket... because I wanted to use the heated blanket on the couch too, and needed to unplug something in order to plug it in. The Ethernet-over-power unit was just for my iMac, and I wasn't actively using the iMac, so unplugging it seemed harmless.
+
+If I plugged the Ethernet-over-power system back together fully on both ends, everything kind of worked again! What's going on?
+
+## Doppelg&auml;nger WiFi
+
+<div class="row flush">
+  <div class="column double uncentered">
+    <p>On Android, you can download apps that show you what channel different WiFi SSIDs are being broadcast on and at what strength. This is really helpful for picking a channel that minimizes interference if you live somewhere with a lot of interference, like an apartment building. I had one of these apps installed from when I was last setting up WiFi in the fall.</p>
+
+    <p>When I opened it up again, I noticed our SSID was showing up double. Normally it's being broadcast on three channels, one at 2.4 GHz, one at 5 GHz, and one at 6 GHz. But this time, I noticed it *twice* on 2.4 and 5 GHz, on channels I didn't tell it to be on. When I was in my office, my Mac was connecting to the bonus 5 GHz one instead of the real one. When I got out of my office, the real one was stronger, so it connected to that.</p>
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/02/channel-graph.jpg" full="%root%/content/images/2025/02/channel-graph.jpg" caption="The channel graph as it is supposed to look: our network, the eyes emoji, stronger than everything else, and without anything else also called the eyes emoji" />
+  </div>
+</div>
+
+
+It turns out that my Ethernet-over-power unit also can broadcast its connection over WiFi, and the unit connected to my old iMac was the source of the extra network. This is also why it all seems to work when the Ethernet-over-power is fully connected: it doesn't matter which channel you connect to, both end up connected to the router somehow. But when it's disconnected, one channel is a dead end while the other works.
+
+But why was it doing this network mirroring at all?
+
+I think I played around with mirroring when I first set it up to see if it would be useful. The throughput over power is fine for my old iMac at 50 Mbps, but not nearly as fast as our main WiFi at 300 Mbps. My apartment isn't huge, so the main WiFi goes everywhere already and needs no range extension. I turned off the mirroring and carried on.
+
+## Enter the cat
+
+Early January, my partner and I adopted a kitten! Her name is Pigeon.
+
+<img src="%root%/content/images/2025/02/pigeon.jpeg" full="%root%/content/images/2025/02/pigeon.jpeg" caption="There she is!!!" />
+
+Pigeon is very curious, jumps onto every surface she can, and also munches on things sometimes.
+
+The Ethernet-over-power unit has a button on it that you can press to turn on WiFi mirroring.
+
+The Ethernet-over-power unit was placed at munching height.
+
+Somebody munched on the button and turned it back on.
+
+## The full story
+
+So here's what I've pieced together.
+
+First, our cat hit the button that turned on WiFi mirroring, and then we had double the networks. Initially this wasn't super noticeable, as both were connected&mdash;one network was just a lot faster than the other, but both worked.
+
+Then, I unplugged the other end of the Ethernet-over-power setup in order to plug in a heated blanket so I could be nice and cozy watching Buffy the Vampire Slayer. At this point, if a device connected to the wrong WiFi, it would look connected, but it would not have access to anything. If it happened to reconnect to the other network, things would work again. The doorframe of my office marked the boundary between the area where you're more likely to connect to the good network and the area where you're more likely to connect to the bad network.
+
+To fix it all, I just turned off WiFi mirroring on the Ethernet-over-power unit again.
+
+And now I know to keep an eye out when the cat's under the desk, just in case *somebody* turns it back on once more.
+
+<img src="%root%/content/images/2025/02/pigeon-mac.jpeg" full="%root%/content/images/2025/02/pigeon-mac.jpeg" caption="I've got to keep an eye on this one." />
