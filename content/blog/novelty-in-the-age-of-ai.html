@@ -1,0 +1,66 @@
+<!--
+{
+	"title": "Novelty in the age of AI",
+	"category": "blog",
+	"date": "2025-03-23",
+	"excerpt": "I was asked to give some advice for graduating high school students on how to thrive given the Current State Of Things."
+}
+-->
+
+I was asked to give some advice for graduating high school students on how to thrive given the Current State Of Things. Here are my thoughts so far.
+
+<hr />
+
+Have you ever been in school and asked "when will I use this in the real world?"
+
+The only constant is change, and our economy right now is in a spot where we're going to see a lot of change: lack of stable jobs in favour of the gig economy, rapid automation of previously-"safe" jobs. The most useful thing you can do is give yourself tools you can use to adapt to new things being thrown at you in order to find something novel. I think that's the most important thing regardless of where things go from here. School tries (and sometimes succeeds!) to give you an initial set of those tools, but it's on you to find new and interesting ways to use them.
+
+As humans we're chasing the things that are hardest to do. At first, this means making sure our basic needs are met more reliably, more sustainably. Then, this means searching for new and interesting things outside of our current capabilities. Then, it means creating deeper, more textured culture. Something that I think gets lost easily is that it's always about humanity: raising the standard of living, connecting with other humans, finding meaning.
+
+The elephant in the room is AI. What can you do to make a living in a world where AI automates everything? First, I want to say that it's not actually agreed that this will happen, but we can think about the hypotheticals where it does and where it doesn't.
+
+## What if AI does change everything?
+
+Let's say everything does get automated away, and we don't need human labour to cover our needs as a society. That's going to be a big change, but there will still be hard things that need doing. They'll just be less about survival, and more about how to thrive and have a rich culture.
+
+Having all basic needs met without our involvement will still mean some systemic changes are required. Maybe we'll need to adopt universal basic income, where you don't need to work in order to have food and shelter, but can make more on top of that if you do more. It's a way to keep us alive while still incentivizing contribution to society. This has the potential to let more people take more leaps of faith&mdash;things like starting your own business, doing research and tinkering on things that may not work out, creative pursuits&mdash;without worrying about having a roof to sleep under. So in this scenario, we're still trying to figure out what new things we can do. It just, ideally, lets us chase riskier or more philosophical goals.
+
+We'll probably need a lot of help to shift society in that direction! This is a social problem, not a technological one, and helping get us there is also a noble goal.
+
+## What if we're at the peak of the AI hype cycle?
+
+For a dousing of cold water: it's not at all certain that AI will automate everything. Have you ever wondered why AI can write like a human but can't do math reliably? At a fundamental level, current language models work by predicting the next word, like an advanced form of autocomplete. It is not trained to perform reasoning and deduction and then produce an answer, or even to produce the best output from a prompt. It just predicts the next word.
+
+Let's say every word is outputted with 99% confidence. That sounds really good. But if the second word is also 99% confident, then building off of the first word, the total confidence is 0.99 &times; 0.99 = 0.9801. Imagine you're outputting a sentence with 100 words. That's 0.99<sup>100</sup> = 0.366, or just 37% confidence. Mathematically, this scales really poorly.
+
+It is also what you could call a "greedy" algorithm: it's taking the best option locally, not globally. Imagine you want to get around a wall. A greedy algorithm would have you walk straight into the wall because that's always the direction to the destination. A global optimization would recognize that the optimal approach is to deviate a bit from facing the goal in order to go around the wall. So you could maybe imagine a better prediction process: could you output the sentence that, taken as a whole, has the highest confidence? This would definitely be better, but it is super hard to do this optimization. You've learned how to find the minimum of a parabola; that's an equation on one variable. Current LLMs have trillions of variables already, which adds tons of local minima. If you try to optimize over whole sentences, raise the number of possibilities to the power of a hundred. With current technology, it's still not feasible.
+
+In summary, it's honestly more astounding that it gets anything correct at all.
+
+### Why is it good at *some* things?
+
+There are a lot of different ways you can decide what's true, like deductive reasoning. A more recently popular approach is crowdsourcing: by collecting lots of opinions, even if they're not all from experts, you arrive pretty close to the truth. That's the idea powering things like business star ratings, and they're the result of lots of debate to arrive at a conclusion. AI follows in these footsteps by training on basically the entire internet, and outputting what it thinks is the average result. You may remember from probability that the most likely outcome, or the expected value of a probabilistic variable, is best estimated by the average of the samples you've seen. So for cases where it has been exposed to a lot of debate and consensus building, its text prediction works like crowdsourcing, by outputting an average. This has pretty little to do with reasoning, which is why it's bad at math. It also super easily succumbs to bias, which is why we don't currently live in the peaceful utopia that 90s technologists thought connecting the world would bring.
+
+(It also turns out that always outputting the average sounds pretty robotic, so to make outputs sound more human, a bit of randomness is added to the prediction process&mdash;"temperature" in AI parlance.)
+
+### So AI has limits, now what?
+
+Ok, so to bring things back: how do you make a living in the scenario where AI is everywhere but has some fundamental limits?
+
+The answer, I think, is still do look for the things that are hard to do. So we've got AI that's pretty good at sounding human, if not being correct. What are the things that AI fails at that we can do better at?
+
+A big one, of course, is deductive reasoning. While AI is bad at this, it's very good at parsing messy natural language input, which is why connecting ChatGPT to WolframAlpha (a non-AI tool!) could be pretty powerful. AI isn't writing the next WolframAlpha for some other problem domain&mdash;it can write code but not with any consistency or reliability once you go off the beaten path. So there are lots of opportunities for technical innovation still, where AI can be a building block, but not the whole thing.
+
+AI will also lag behind when using new technologies. AI can't figure out how to get software to run on a new kind of chip, it has to be shown examples of how it works first. It won't know how to write an encryption algorithm that's safe from quantum computers, it hasn't seen enough of those. Work on the bleeding edge will inevitably involve humans until they have established a pattern.
+
+AI also does not know what it is like to be a human in the physical world. Design of the real-word things we interact with will always be an area that AI will lag behind in. It can pattern match once best practices have been established, but humans have to try things out and establish those best practices. AI hasn't helped figure out how best to make use of two screens on a folding phone, it hasn't encountered that before. AI hasn't figured out how to avoid motion sickness in VR, it doesn't feel motion sickness.
+
+AI can be a useful tool while doing these things that still need humans, since nothing is entirely new or unprecedented. But you need to know how to use it critically. This is sort of what you do in English classes for literature and media: look at a work, examine where it came from, what interesting perspective it has, where it fails. AI will not be useful to you unless you can step back and see where it succeeds and where it fails, where it's a helpful tool and where it will not be reliable.
+
+## Takeaways
+
+Always remember that a benefit you have as a human is having a perspective, and the ability to find new perspectives. Your unique voice is the thing that people connect with when you do something creative. Hone that, and use it to your advantage. Tell stories that the world hasn't heard yet, not a rehash of what it already knows. Remember that not every problem is a technical problem; some problems are social problems, that need perspective to be solved.
+
+Finally, use your ability to change and improvise. You'll need the drive to keep trying new things, because what is new won't stay new. Keep learning things that might not seem immediately useful, because by combining things you've learned, or by applying old ideas in new places, that's how you keep finding those new things.
+
+And remember that, on the whole, everything that matters is about *humanity.*
