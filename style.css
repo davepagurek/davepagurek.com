@@ -284,6 +284,9 @@ span.code {
   vertical-align:middle;
   word-wrap: normal;
 }
+ul span.code, ol span.code {
+  font-size: 0.83em;
+}
 
 /* Post lists */
 article.post {
