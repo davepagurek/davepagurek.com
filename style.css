@@ -221,7 +221,10 @@ iframe.sketch.hidden {
 }
 @media all and (max-width: 1000px) {
   .row {
-    flex-direction: column;
+    display: block;
+    display: block;
+    width: 100%;
+    width: 100%;
   }
   .column {
     padding-right: 0;
@@ -485,6 +488,7 @@ div.img-container {
 div.img {
   display: table;
   width: auto !important;
+  margin: 0 auto;
 }
 div.img img {
   max-width: 100%;
