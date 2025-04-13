@@ -11,6 +11,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=Edge'/>
   <meta name='theme-color' content='#e74c3c' />
   <meta name='viewport' content='width=device-width' />
+  <meta charset="UTF-8" />
   <link rel="shortcut icon" href="/favicons/favicon.ico">
   <link rel="icon" sizes="16x16 32x32 64x64" href="/favicons/favicon.ico">
   <link rel="icon" type="image/png" sizes="196x196" href="/favicons/favicon-192.png">
