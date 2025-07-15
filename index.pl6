@@ -25,6 +25,7 @@ for qw<header footer home page category archives error> -> $page {
 my $local = %*ENV<ENV> && %*ENV<ENV> eq "local";
 
 my $export-dir = $local ?? "/sites" !! "/var/www/html";
+my $sketchId = 0;
 my $app = Cantilever.new(
   dev => True,
   port => 80,
@@ -112,6 +113,28 @@ my $app = Cantilever.new(
         $t.children.map(*.to-html(%options)).join("") ~
         "</table></div>";
       }
+    ),
+    Cantilever::Page::CustomTag.new(
+      matches-fn => -> $t { $t.type eq "sketch" },
+      render-fn => -> $t, %options {
+        my $code = "<script src='/sketchEmbed.js'></script>" ~
+          "<iframe class='inlineSketch' border='0' width='" ~ $t.attributes<width> ~ "' height='" ~ $t.attributes<height> ~ "' id='sketch" ~ $sketchId ~ "'></iframe>" ~
+          "<script>sketchEmbed('sketch" ~ $sketchId ~ "', `" ~
+          $t.children[0].children[0].src ~
+          "`, '" ~
+          $t.attributes<version> ~
+          "')</script>";
+        $sketchId++;
+
+        if $t.attributes<code> {
+          $code = $t.children[0].to-html(%options) ~ $code;
+        }
+
+        $code = "<div class='row full flush'><div class='sketchContainer'>" ~ $code ~ "</div></div>";
+
+        $code;
+      },
+      block => True
     )
   ]
 );
@@ -122,6 +145,7 @@ my %copy-paths := {
   "style.css" => "style.css",
   ".htaccess.export" => ".htaccess",
   "./bundle.js" => "bundle.js",
+  "./sketchEmbed.js" => "sketchEmbed.js",
 };
 if $local {
   my @entries = "./content/images".IO;

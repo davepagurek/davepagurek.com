@@ -164,11 +164,35 @@ iframe.soundcloud {
 iframe.instagram-media {
   flex: none;
 }
-iframe.sketch {
+iframe.sketch, iframe.inlineSketch {
   border: 0;
 }
 iframe.sketch.hidden {
   visibility: hidden;
+}
+.sketchContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  background: rgba(0,0,0,0.1);
+  border-radius:10px;
+  flex: 1;
+  padding: 20px;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+.sketchContainer pre {
+  flex: 1;
+  flex-basis: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 20px;
+}
+.sketchContainer iframe {
+  margin: 0;
+  padding: 0;
+  flex: 0;
 }
 .row {
   max-width: 63rem;
@@ -756,6 +780,17 @@ nav a.toggle {
     height: 4rem;
     text-align: center;
     padding-left: 0;
+  }
+}
+@media all and (max-width: 800px) {
+  .sketchContainer {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .sketchContainer pre {
+    padding-right: 0;
+    padding-bottom: 20px;
   }
 }
 
