@@ -2,10 +2,8 @@
 {
   "title": "I'm unsatisfied with easing functions",
   "category": "blog",
-  "date": "2025-07-20",
-  "excerpt": "TODO",
-  "thumbnail": "%root%/content/images/2024/05/principles.jpg",
-  "og-image": "%root%/content/images/2024/05/principles.jpg"
+  "date": "2025-07-15",
+  "excerpt": "Easing functions have always seemed a little too cookie-cutter, and don't quite allow for the full range of expression in the 12 Principles of Animation. I think something better is out there. Maybe you can help?"
 }
 -->
 
@@ -32,30 +30,101 @@ function draw() {
 </code>
 </sketch>
 
-This looks pretty mechanical. Animators may be able to articulate exactly why. A book written by Disney animators outlines the **12 principles of animation**, and these have become an essential part of an animation education. They're a set of things to think about as you animate to help bring characters believably to life (or, as rules to break at opportune moments for shock or comedy.) One of the principles is **slow in, slow out.** Basically: an object starting from rest takes some time to accelerate, and an object coming to a stop has to take time to decelerate. It's a high-level consequence of laws of physics, really. And our initial code violates it by suddenly jolting our circle to a constant speed, before suddenly stopping it again.
+This looks pretty mechanical. Animators may be able to articulate exactly why. A book written by Disney animators outlines the <a href="https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation">**12 principles of animation**</a>, and these have become an essential part of an animation education. They're a set of things to think about as you animate to help bring characters believably to life (or, as rules to break at opportune moments for shock or comedy.) One of the principles is **slow in, slow out.** Basically: an object starting from rest takes some time to accelerate, and an object coming to a stop has to take time to decelerate. It's a high-level consequence of laws of physics, really. And our initial code violates it by suddenly jolting our circle to a constant speed, before suddenly stopping it again.
 
 So what do you do about it? The answer for many is to slap an easing function on it! An easing function takes in a linear progress value, and returns a new progress value, but converted to nonlinear motion. Say you've <a href="https://openprocessing.org/sketch/2676129">copy-and-pasted in a stock easing function with an ease in and ease out.</a> Now, your code could look like this:
 
-```js
-let progress = map(millis(), 0, 2000, 0, 1, true);
-progress = easeInOutCubic(progress);
-let x = lerp(-width/3, width/3, progress);
-circle(x, 0, 20);
-```
+<sketch code="true" version="2.0.3" width="200" height="200">
+<code lang="js">
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background('white');
+  fill('red');
+
+  let progress = map(millis() % 3000, 1000, 2000, 0, 1, true);
+  progress = easeInOutCubic(progress);
+  let x = lerp(50, 150, progress);
+  circle(x, height/2, 20);
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5
+    ? (t * 2) ** 3 * 0.5
+    : (1 - Math.abs(((t * 2) - 2) ** 3)) * 0.5 + 0.5;
+}
+</code>
+</sketch>
 
 Now, it looks a little more natural!
 
-You've got some other options, too. If you want to add **overshoot**, another principle of animation, you could use `easeOutElastic`:
+You've got some other options, too. If you want to add **overshoot**, related to another principle of animation, **follow through.** You could use `easeOutElastic`:
 
-TODO
+<sketch code="true" version="2.0.3" width="200" height="200">
+<code lang="js">
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background('white');
+  fill('red');
+
+  let progress = map(millis() % 3000, 1000, 2000, 0, 1, true);
+  progress = easeOutElastic(progress);
+  let x = lerp(50, 150, progress);
+  circle(x, height/2, 20);
+}
+
+function easeOutElastic(t, magnitude = 0.7) {
+  const p = 1 - magnitude;
+  const scaledTime = t * 2;
+
+  if ( t === 0 || t === 1 ) {
+    return t;
+  }
+
+  const s = p / (2 * Math.PI) * Math.asin(1);
+  return 2 ** (-10 * scaledTime)
+    * Math.sin((scaledTime - s)
+    * (2 * Math.PI) / p) + 1;
+}
+</code>
+</sketch>
 
 If you want one that also adds some **anticipation**, you could maybe use `easeInOutBack`:
 
-TODO
+<sketch code="true" version="2.0.3" width="200" height="200">
+<code lang="js">
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background('white');
+  fill('red');
+
+  let progress = map(millis() % 3000, 1000, 2000, 0, 1, true);
+  progress = easeInOutBack(progress);
+  let x = lerp(50, 150, progress);
+  circle(x, height/2, 20);
+}
+
+function easeInOutBack(t, magnitude = 0.7) {
+  const c1 = 1.70158
+  const c2 = c1 * 1.525
+  return t < 0.5
+    ? (pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
+    : (pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+}
+</code>
+</sketch>
 
 All of these look way less mechanical than the original, and all set a different tone. Nice!
 
-## It's not always easy street
+## Easing is not so easy
 
 If you're a programmer, you may even be able to clock specific easing functions by looking at them. That's maybe where the problems begin for me. There's just too few of them!
 
@@ -65,20 +134,227 @@ Some other alternatives have been proposed, though.
 
 ### Apple's kinematic easing functions
 
-<a href="https://jcgt.org/published/0011/03/02/paper.pdf">A paper from Apple</a> describe a **parameterizable** easing function. It's a single function, but it lets you tweak some of its properties, including whether or not it includes anticipation, and if there's overshoot, how many oscillations it has. It's a great idea, but there are some papercuts I run into when using it.
+<a href="https://jcgt.org/published/0011/03/02/paper.pdf">A paper from Apple</a> describe a **parameterizable** easing function. It's a single function, but it lets you tweak some of its properties, including whether or not it includes anticipation, and if there's overshoot, how many oscillations it has.
 
-- The workflow is, I set up a base linear motion with approximate timing. I then wrap the linear progress in this kinematic easing function, and tweak its parameters. When I adjust properties such as the number of oscillations, it also affects other properties I would want to hold constant, such as the size of the anticipation, so I end up having to twiddle with multiple parameters at once to narrow down on the intended result.
+<sketch version="2.0.3" width="250" height="300">
+<code lang="js">
+// A demo of animation timing curves from
+// this paper: https://jcgt.org/published/0011/03/02/
+
+let taSlider
+let tMidslider
+let bSlider
+let kSlider
+
+function setup() {
+  createCanvas(250, 200);
+  taSlider = createSlider(0, 0.5, 0, 0.001)
+    .position(80, 200)
+  tMidSlider = createSlider(0.2, 0.8, 0.5, 0.001)
+    .position(80, 220)
+  bSlider = createSlider(0, 5, 2, 1)
+    .position(80, 240)
+  kSlider = createSlider(4, 10, 5, 0.001)
+    .position(80, 260)
+  createP('Anticipation').position(0, 190)
+  createP('Acceleration').position(0, 210)
+  createP('Oscillations').position(0, 230)
+  createP('Damping').position(0, 250)
+}
+
+function draw() {
+  background(255);
+  fill('red')
+  const loopLength = 1500
+  const t = map(
+    (millis() % loopLength) / loopLength,
+    0.2,
+    0.8,
+    0,
+    1,
+    true
+  )
+  const progress = KinematicTiming(t, taSlider.value(), 1 - tMidSlider.value(), bSlider.value(), kSlider.value())
+  
+  circle(
+    lerp(0.3, 0.7, progress) * width,
+    height / 2,
+    20
+  )
+}
+
+// Smooth timing curve value
+function Xs(t, ta, tmid) {
+  const tam = ta - tmid - tmid; // ta - 2tmid
+  const xa = (2.0 * t * (ta - t)) / (ta * tmid + tam);
+  let xd = (t - 2.0) * t * tam + (ta - 2.0) * tmid * tmid;
+  xd /= (tmid - 1.0) * (ta * tmid + tam);
+  return t < tmid ? xa : xd;
+}
+
+// Overshoot timing curve value
+function Xo(t, ta, tmid, B, k) {
+  // Terms independent of t: can be precomputed
+  const tma = tmid - ta;
+  const td = 1.0 - tmid;
+  // Time-dependent part
+  if (t < tmid) {
+    return (t * (t - ta)) / (tmid * tma);
+  }
+  // amp can be precomputed
+  const amp = (td * (tmid + tma)) / (tmid * tma * B * PI);
+  let xd = amp * sin((B * PI * (t - tmid)) / td);
+  xd *= exp(-k * (t - tmid) * (B / (4.0 * td)));
+  xd += 1.0;
+  return xd;
+}
+// Timing curve with anticipation, ta, midpoint, tmid, and bounces, B
+function KinematicTiming(t, ta, tmid, B, k) {
+  return B >= 1 ? Xo(t, ta, tmid, B, k) : Xs(t, ta, tmid);
+}
+
+</code>
+</sketch>
+
+It's a great idea, but there is some friction that I run into when using it.
+
+- The workflow is, I set up a base linear motion with approximate timing. I then wrap the linear progress in this kinematic easing function, and tweak its parameters. When I adjust properties such as the number of oscillations, it also affects other properties I would want to hold constant, such as the how far it overshoots. Adjusting the acceleration brings it back, but then affects the size of the anticipation too. I end up having to twiddle with multiple parameters at once to narrow down on the intended result.
 - Changing the number of oscillations also changes the *frequency* of the system: more oscillations makes the animation play faster unless you manually adjust the duration of the animation too. This gets at a fundamental issue with regular easing functions, too: you have to specify the timing and make it look good. What looks decent for cubic ease-in-ease-out may look unnaturally fast for elastic ease out.
-- With no damping, the overshoot tends to feel like it comes to a sudden stop. If you look at a graph of progress over time, it looks like there is a slight kink at the end of the curve as it hits a steady state value of 1 at the end. This can be addressed by multiplying the easing function with an exponential fade out, but again it's a little tricky to get this right in general without having to change other properties of the function, like the size of the overshoot.
+- Try setting damping to 0 and adding a single oscillation. The overshoot tends to feel like it comes to a sudden stop. If you look at a graph of progress over time, it looks like there is a slight kink at the end of the curve as it hits a steady state value of 1 at the end. This can be addressed with damping, but adjusting this also adjusts the size of the overshoot, meaning I have to mess with the acceleration, which causes more updates to be required.
 
 <img src="%root%/content/images/2025/07/kinematic.png" full="%root%/content/images/2025/07/kinematic.png" caption="A diagram from the paper showing oscillations, damping-free. If you extend the diagram out to the right at the steady state value, you can see where a visual jump will occur due to a kink in the motion curve." />
 
-<a href="https://editor.p5js.org/davepagurek/sketches/WpwTr6_lZ">Here's a p5 web editor version</a>, if you want to play around yourself.
-
 ### Convolution filter
 
-<a href="https://courses.cs.washington.edu/courses/cse464b/18wi/assignments/assignment_1/wang_2006.pdf">Another paper</a> describes an approach that breaks from easing functions: use the convolution of the original motion with a filter that adds an anticipation and overshoot. This is also a cool idea! It works on any stream of input, not just a single 0-1 transition progress. In the paper, they show a filtered version of simple linear motion. The resulting motion curve does in fact have anticipation and overshoot. The main issue I see is that the motion *speeds up* into the overshoot. This misunderstands something about overshoot, I think. Why would the object speed up there? Overshoot generally occurs because an object didn't start slowing down early enough, not because it sped up to go further. So I think this approach isn't quite practical; overshoot speed needs to be consistent with the speed going into the overshoot.
+<a href="https://courses.cs.washington.edu/courses/cse464b/18wi/assignments/assignment_1/wang_2006.pdf">Another paper</a> describes an approach that breaks from easing functions: use the convolution of the original motion with a Laplacian-of-Gaussian filter that adds an anticipation and overshoot. This is also a cool idea! It works on any stream of input, not just a single 0-1 transition progress. Here's what a simple linear motion looks like when filtered:
+
+<sketch version="2.0.3" width="200" height="230">
+<code lang="js">
+let raw, updated
+let useFiltered
+
+function setup() {
+  createCanvas(200, 200);
+  raw = new Array(4 * 60).fill(0).map((_, i) => map(i, 60, 120, 0, 1, true))
+  updated = filtered(raw, 15, 0.25)
+  useFiltered = createCheckbox('Use filter', true)
+}
+
+function draw() {
+  background(255);
+  const f = frameCount % updated.length
+  const progress = useFiltered.checked() ? updated[f] : raw[f]
+  fill('red')
+  circle(
+    lerp(width * 0.25, width * 0.75, progress),
+    height / 2,
+    20
+  )
+}
+
+function filtered(signal, A, sigma) {
+  const speed = signal.map((v, i) => (i < signal.length-1 ? signal[i+1] : signal.at(-1)) - v)
+  const accel = speed.map((v, i) => (i < signal.length-1 ? speed[i+1] : speed.at(-1)) - v)
+  const accel2 = accel.map((_, i) => accel.map((v, j) => v * A * exp(
+    -pow((j/60 - i/60)/sigma, 2)
+  )).reduce((acc, next) => acc + next))
+  return signal.map((v, i) => v - accel2[i])
+}
+</code>
+</sketch>
+
+It definitely has anticipation and overshoot, but something looks... off.
+
+In the paper, they show a filtered version of simple linear motion curve, like what we've got above. The main issue I see is that the motion *speeds up* into the overshoot:
+
+<img src="%root%/content/images/2025/07/convolution.png" full="%root%/content/images/2025/07/convolution.png" caption="A diagram from the paper showing filtered linear motion. The slope of the curve changes at the anticipation and overshoot, though." />
+
+This misunderstands something about overshoot, I think. Why would the object speed up there? Overshoot generally occurs because an object didn't start slowing down early enough, not because it sped up to go further. So I think this approach isn't quite practical; overshoot speed needs to be consistent with the speed going into the overshoot.
 
 ### Feedback control
 
-Another non-easing-function approach that's decades old is to use a feedback control system to make an object follow a target.
+Another non-easing-function approach that's decades old is to use a feedback control system to make an object follow a target. A feedback controller, as the name suggests, controls some variables in a system based on observations of the output of the system. In our case, a controller can apply something akin to force on an object by observing its position and velocity.
+
+Here's a demo of proportional + derivative (PD) control over motion. (Often, there will also be an integral term and it will be called a <a href="https://en.wikipedia.org/wiki/Proportional%E2%80%93integral%E2%80%93derivative_controller">PID controller</a>; I've omitted that for simplicity and to mimic a mass + spring + damper system.) Try adjusting the frequency and damping and frequency and then tapping on canvas to change the target:
+
+<sketch version="2.0.3" width="300" height="300">
+<code lang="js">
+let freq
+let damping
+let target
+let position
+let vel
+
+function setup() {
+  createCanvas(300, 200)
+  freq = createSlider(1, 5, 3, 0.0001).position(100, height)
+  damping = createSlider(0.5, 1.5, 1, 0.0001).position(100, height + 30)
+  createP('Frequency').position(0, height - 15)
+  createP('Damping').position(0, height + 30 - 15)
+  createP('Try tapping on the canvas to move the target!').position(0, height + 60 - 15)
+  target = createVector(width/2, height/2)
+  position = createVector(0, 0)
+  vel = createVector(0, 0)
+}
+
+function draw() {
+  background(255)
+  
+  const dt = deltaTime / 1000
+  const error = target.copy().sub(position)
+  
+  const omega = freq.value() * TWO_PI
+  const Kp = pow(omega, 2)
+  const Kd = 2 * damping.value() * omega
+  const prevPosition = position.copy()
+  const dVel = (error.copy().mult(Kp))
+    .sub(vel.copy().mult(Kd))
+  
+  position.add(vel.copy().mult(dt))
+  vel.add(dVel.copy().mult(dt))
+  
+  fill('red')
+  circle(
+    position.x,
+    position.y,
+    20
+  )
+  
+  noFill()
+  circle(
+    target.x,
+    target.y,
+    20
+  )
+}
+
+function mousePressed() {
+  if (mouseX < 0 || mouseY < 0 || mouseX > width || mouseY > height) return
+  target.x = mouseX
+  target.y = mouseY
+}
+function mouseDragged() {
+  if (mouseX < 0 || mouseY < 0 || mouseX > width || mouseY > height) return
+  target.x = mouseX
+  target.y = mouseY
+}
+</code>
+</sketch>
+
+By setting the damping above the midpoint value, you get a smooth ease out as it reaches the target value. By setting it lower, you get an overshoot and oscillation. The frequency slider affects how fast the movement and oscillations happen.
+
+This setup is nice in that you don't control the timing at all: the timing is just a result of the parameters of the controller. If you make it follow something farther away, it will naturally take longer and overshoot more. I still have some issues with using it for programmatic animation though.
+
+- It's still a little finnicky to control. Both the damping and frequency affect how fast it reaches a target, leading to twiddling. Not as much as before though!
+- More fundamentally, this type of system does not try to do any anticipation. You could manually move your target back first before going forward. That could be something?
+- This also requires a simulation of sorts. One really nice property of regular easing functions is that you can seek anywhere in time and know exactly where everything should be. With a simulation, you must start from time 0 and step forwards to compute where everything should be.
+
+## Future easing?
+
+I don't have any alternative to propose just yet. And clearly the existing options have been working well enough for people! One can certainly be productive with them, and one can pick the right tool for the job.
+
+That said, I think it's possible to do something better. All the approaches I've mentioned have their merits, but also have drawbacks that make them not quite the full system I want. Maybe each could be modified in some way to get some more desirable properties? It could just take some time and some tinkering to explore more.
+
+I probably will get around to this eventually since I keep ranting to my sister about how I think this could be improved. But it hasn't been so pressing that I've made the time to really look into it. So I figured, maybe I can start by just writing up my rant, and maybe someone else will read this and find a Research Project in here and will make the time before me. If that sounds like you, feel free to <a href="mailto:dave@davepagurek.com">reach out to me</a>, I'm happy to consult and provide some direction!
+
+And if not, maybe in a year or so I'll get around to tinkering more and I'll post a follow-up with some new system.
