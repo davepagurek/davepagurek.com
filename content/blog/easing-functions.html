@@ -347,7 +347,7 @@ This setup is nice in that you don't control the timing at all: the timing is ju
 
 - It's still a little finnicky to control. Both the damping and frequency affect how fast it reaches a target, leading to twiddling. Not as much as before though!
 - More fundamentally, this type of system does not try to do any anticipation. You could manually move your target back first before going forward. That could be something?
-- This also requires a simulation of sorts. One really nice property of regular easing functions is that you can seek anywhere in time and know exactly where everything should be. With a simulation, you must start from time 0 and step forwards to compute where everything should be.
+- This also generally implemented with a simulation of sorts. One really nice property of regular easing functions is that you can seek anywhere in time and know exactly where everything should be. With a simulation, you must start from time 0 and step forwards to compute where everything should be. For inputs to a controller that are known ahead of time (e.g. if your target is always a linear ramp from 0-1), then there are closed-form formulas for the response, so a simulation would no longer be necessary. So a potentially promising approach could be to see if you can make an easing function out of the response to a (maybe parameterized?) fixed input, or possibly splicing two responses together to handle anticipation + overshoot. Thanks to <a href="https://github.com/GregStanton">Greg Stanton</a> for pointing out the opportunity here!
 
 ## Future easing?
 
