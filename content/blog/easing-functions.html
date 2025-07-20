@@ -32,7 +32,7 @@ function draw() {
 
 This looks pretty mechanical. Animators may be able to articulate exactly why. A book written by Disney animators outlines the <a href="https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation">**12 principles of animation**</a>, and these have become an essential part of an animation education. They're a set of things to think about as you animate to help bring characters believably to life (or, as rules to break at opportune moments for shock or comedy.) One of the principles is **slow in, slow out.** Basically: an object starting from rest takes some time to accelerate, and an object coming to a stop has to take time to decelerate. It's a high-level consequence of laws of physics, really. And our initial code violates it by suddenly jolting our circle to a constant speed, before suddenly stopping it again.
 
-So what do you do about it? The answer for many is to slap an easing function on it! An easing function takes in a linear progress value, and returns a new progress value, but converted to nonlinear motion. Say you've <a href="https://openprocessing.org/sketch/2676129">copy-and-pasted in a stock easing function with an ease in and ease out.</a> Now, your code could look like this:
+So what do you do about it? The answer for many is to slap an easing function on it! They're a useful set of functions to add character to your motion <a href="https://robertpenner.com/easing/">created in 2001 by Robert Penner</a>. An easing function takes in a linear progress value, and returns a new progress value, but converted to nonlinear motion. Say you've <a href="https://openprocessing.org/sketch/2676129">copy-and-pasted in a stock easing function with an ease in and ease out.</a> Now, your code could look like this:
 
 <sketch code="true" version="2.0.3" width="200" height="200">
 <code lang="js">
@@ -130,7 +130,7 @@ If you're a programmer, you may even be able to clock specific easing functions 
 
 There's really nothing wrong with them. But you just end up picking one out of a couple stock choices, and that means you end up repeating them. In traditional animation, the principles are just guidelines; you still end up creating new unique motion each time based on what acting the scene calls for. Easing functions in code don't quite give you the flexibility to do that.
 
-I should also mention that I'm coming from the context of motion graphics and procedural animation. I know these are also used on, for example, websites, as transitions between states, and maybe you don't need as much nuance there, and responsiveness to user input is more important. But for animation in general, <a href="https://youtu.be/6G3O60o5U7w?si=uot6rqrIATLzKH3e">movement alone is enough to give a simple object a sense of character</a>, and if you're trying to do that through code, stock easing functions don't give me enough to work with.
+I should also mention that I'm coming from the context of motion graphics and procedural animation. I know these are also used on, for example, websites, as transitions between states. You maybe don't need as much nuance there, and responsiveness to user input is more important. But for animation in general, <a href="https://youtu.be/6G3O60o5U7w?si=uot6rqrIATLzKH3e">movement alone is enough to give a simple object a sense of character</a>, and if you're trying to do that through code, stock easing functions don't give me enough to work with.
 
 Some other alternatives have been proposed, though.
 
