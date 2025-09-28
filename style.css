@@ -194,6 +194,7 @@ iframe.sketch.hidden {
   margin: 0;
   padding: 0;
   flex: 0;
+  flex-basis: initial;
   border-radius:10px;
 }
 .row {

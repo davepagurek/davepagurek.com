@@ -1,0 +1,674 @@
+<!--
+{
+  "title": "Tall Tales: Tangent-Aligned Text Stretching",
+  "category": "programming",
+  "date": "2025-09-28",
+  "excerpt": "Stretching a font generally doesn't look very good. Instead, we can find the most stretchable areas automatically and preserve the details in the rest!",
+  "details": "Slices of a font stretch proportional to how well the tangents at that slice align with the stretch direction. This technique works for standard outline fonts, so you can try it on just about any font!",
+  "featured": true,
+  "thumbnail": "%root%/content/images/2025/10/stretch.png",
+  "og-image": "%root%/content/images/2025/10/stretch.png",
+  "buttons": [
+    {
+      "url": "https://openprocessing.org/sketch/2716638",
+      "text": "Try it!"
+    }
+  ],
+  "languages": [
+    "p5.js"
+  ]
+}
+-->
+
+You've probably seen examples of graphic design with tastefully stretched text in it. It's a great effect, adding personality to the typography, and making good use of space.
+
+<img width="400" src="%root%/content/images/2025/10/thefall.jpg" full="https://rakkanooukoku4k.jp/" caption="A cool Japanese poster for 4K digital remaster of <em>The Fall</em>" />
+
+It's a little tricky to pull off, though! A general rule of graphic design is that you shouldn't be stretching your text unless you know what you're doing (<a href="https://en.wikipedia.org/wiki/Brat_(album)#/media/File:Charli_XCX_-_Brat_(album_cover).png">rules are meant to be broken</a>, after all.) The easiest approach, simply stretching a whole block of text vertically and horizontally to fill a target area, can lead to its thoughtful curve tapering becoming offbalance, and doesn't look great more often than not.
+
+<!-- <img width="500" src="%root%/content/images/2025/10/simple.png" full="%root%/content/images/2025/10/simple.png" caption="Stretched Montserrat. The top of curves looks a lot thicker than the sides." /> -->
+
+<sketch version="2.0.5" width="400" height="220">
+<code lang="js">
+let font
+async function setup() {
+  font = await loadFont('https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf')
+  //font = await loadFont('https://fonts.gstatic.com/s/bodonimoda/v28/aFT67PxzY382XsXX63LUYL6GYFcan6NJrKp-VPjfJMShrpsGFUt8oU7awIBytVjMYwE.ttf')
+  createCanvas(400, 220)
+}
+function draw() {
+  background(0);
+  fill(255);
+  noStroke();
+  const progress = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+  textAlign(CENTER, CENTER);
+
+  push();
+  textFont(font);
+  translate(width/2, height/2);
+  textSize(80);
+  scale(1, map(progress, 0, 1, 1, 3));
+  text('STRETCH', 0, 5);
+  pop();
+}
+</code>
+</sketch>
+
+So what is actually going on when it's executed well? The most important thing is that *only some parts of the text stretch* while others stay as-is. The question then becomes, what parts should stretch?
+
+## Background
+
+This sounded to me a little like <a href="https://web.archive.org/web/20060618000832/https://www.adobe.com/support/documentation/en/flashplayer/8/releasenotes.html" target="_blank">a feature introduced in Flash 8</a> called *9-slice scaling.* This was useful for creating reusable components that could fit different sizes without a similar sort of unwanted distortion as we saw in text. Basically: you slice a graphic into three parts vertically and three parts horizontally. In each axis, the first and last chunks don't stretch, and the middle one does. This lets you preserve things like rounded corners when scaling.
+
+<!-- <img width="500" src="%root%/content/images/2025/10/9slice.svg" full="https://commons.wikimedia.org/wiki/File:Traditional_scaling_vs_9-slice_scaling.svg" caption="The corners don't stretch in 9-slice scaling, just the bits in between. Image courtesy of Alwik on Wikimedia Commons. CC SA 4.0" /> -->
+
+
+<sketch version="2.0.5" width="420" height="430">
+<code lang="js">
+function setup() {
+  createCanvas(420, 430)
+}
+function draw() {
+  clear();
+  rectMode(CENTER);
+  const r = 64;
+  fill('#EEE');
+  stroke('#777');
+  strokeWeight(2);
+  const progress = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+
+  push();
+  translate(width/2, 110);
+  scale(map(progress, 0, 1, 1, 2), 1);
+  rect(0, 0, 200, 200, r);
+  pop();
+
+  push();
+  translate(width/2, 320);
+  rect(0, 0, map(progress, 0, 1, 200, 400), 200, r);
+  strokeWeight(1);
+  stroke(255, 0, 0, 100);
+  line(map(progress, 0, 1, -100, -200), -100 + r, map(progress, 0, 1, 100, 200), -100 + r)
+  line(map(progress, 0, 1, -100, -200), 100 - r, map(progress, 0, 1, 100, 200), 100 - r)
+  line(map(progress, 0, 1, -100, -200) + r, -100, map(progress, 0, 1, -100, -200) + r, 100)
+  line(map(progress, 0, 1, 100, 200) - r, -100, map(progress, 0, 1, 100, 200) - r, 100)
+  pop();
+}
+</code>
+</sketch>
+
+This also sounds a bit like the CSS flexbox model. In a flex container, you can assign a `flex` number to each child (let's call it <math>f_i</math>) representing what proportion of the stretch the child is allowed to take on. Item <math>i</math> ends up gaining the fraction <math>\\frac{f_i}{\\sum_{n} f_n}</math> of the additional size left over in the container. This means that if all items have a value of 1, they fill the space evenly. If one has a value of 1 and the other has a value of 2, one gets a third of the space and the other gets two thirds. A child with a value of 0 does not stretch at all. The three chunks in one axis of 9-slice scaling can be described as having the values 0, 1, and 0. So you can think of 9-slice scaling as like a special case of flexbox where all the cells have a flex of 1 or 0, and in a specific pattern. But flexbox has freedom to do more!
+
+<sketch version="2.0.5" width="420" height="430">
+<code lang="js">
+let parents = []
+function setup() {
+  noCanvas();
+  makeFlex([0, 1]);
+  makeFlex([1, 2, 0]);
+}
+
+function makeFlex(flexes) {
+  const parent = createDiv()
+    .style('display', 'flex')
+    .style('background', '#EEE')
+    .style('border', '2px solid #777')
+    .style('border-radius', '64px')
+    .style('overflow', 'hidden')
+    .style('margin-top', '10px')
+
+  flexes.forEach((flex, i) => {
+    createDiv()
+      .style('flex', flex)
+      .style('line-height', '200px')
+      .style('text-align', 'center')
+      .style('height', '200px')
+      .style('background', `rgba(255, 0, 0, ${flex * 0.1})`)
+      .style('font-family', 'monospace')
+      .style('white-space', 'nowrap')
+      .style('font-size', '10px')
+      .style('color', 'black')
+      .html(`flex: ${flex}`)
+      .parent(parent);
+  });
+
+  parents.push(parent)
+}
+
+function draw() {
+  const progress = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+  parents.forEach(function(p) {
+    p.style('width', map(progress, 0, 1, 200, 400) + 'px')
+    p.style('margin-left', map(progress, 0, 1, 100, 0) + 'px')
+  })
+}
+</code>
+</sketch>
+
+So for text, I kind of want different layouts of the slices for different letters. For the capital letter T, in each axis, I basically want the beams to not change thickness, leading to slices like this:
+
+<sketch version="2.0.5" width="400" height="400">
+<code lang="js">
+let font
+let g
+async function setup() {
+  //font = await loadFont('https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf')
+  font = await loadFont('https://fonts.gstatic.com/s/bodonimoda/v28/aFT67PxzY382XsXX63LUYL6GYFcan6NJrKp-VPjfJMShrpsGFUt8oU7awIBytVjMYwE.ttf')
+  createCanvas(400, 400)
+  g = createGraphics(400, 400)
+  g.background(0)
+  g.textFont(font)
+  g.fill(255)
+  g.noStroke()
+  g.textAlign(CENTER, CENTER)
+  g.textSize(500)
+  g.text('T', g.width / 2, g.height / 2 + 60)
+}
+const slicesX = [{ size: 80, flex: 0 }, { size: 30, flex: 1 }, { size: 180, flex: 0 }, { size: 30, flex: 1 }, { size: 80, flex: 0 }]
+const slicesY = [{ size: 130, flex: 0 }, { size: 220, flex: 1 }, { size: 50, flex: 0 }]
+function draw() {
+  clear();
+  fill(255);
+  noStroke();
+  const progressX = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+  const w = map(progressX, 0, 1, 200, 400)
+  const progressY = map(sin(millis() / 2000 * TWO_PI + 1), -1, 1, 0, 1);
+  const h = map(progressY, 0, 1, 200, 400)
+  const origW = 200
+  const origH = 200
+  const s = 0.5
+  const newW = w - origW
+  const newH = h - origH
+  const totalFlexX = slicesX.reduce((acc, next) => acc + next.flex, 0)
+  const totalFlexY = slicesY.reduce((acc, next) => acc + next.flex, 0)
+  const widths = slicesX.map(v => ({ ...v, newSize: v.size * s + newW * v.flex / totalFlexX }))
+  const heights = slicesY.map(v => ({ ...v, newSize: v.size * s + newH * v.flex / totalFlexY }))
+  
+  push()
+  translate((width - w) / 2, (height - h) / 2)
+  {
+    let y = 0
+    let origY = 0
+    for (const segmentY of heights) {
+      let x = 0
+      let origX = 0
+      for (const segmentX of widths) {
+        image(g, x, y, segmentX.newSize + 1, segmentY.newSize + 1, origX, origY, segmentX.size, segmentY.size)
+        fill(255, 0, 0, (segmentX.flex + segmentY.flex) * 50)
+        rect(x, y, segmentX.newSize, segmentY.newSize)
+        x += segmentX.newSize
+        origX += segmentX.size
+      }
+      y += segmentY.newSize
+      origY += segmentY.size
+    }
+  }
+  {
+    stroke(255, 0, 0)
+    strokeWeight(1)
+    noFill()
+    let y = 0
+    for (const segmentY of heights) {      
+      if (y > 0) {
+        line(0, y, w, y)
+      }
+      y += segmentY.newSize
+    }
+    let x = 0
+    for (const segmentX of widths) {
+      if (x > 0) {
+        line(x, 0, x, h)
+      }
+      x += segmentX.newSize
+    }
+  }
+  pop()
+}
+</code>
+</sketch>
+
+This looks pretty good, although also there are some kinks that are introduced along the curved serifs of the T. And you know me, <a href="%root%/blog/easing-functions">I can't have any of those kinks.</a> It gets a little smoother if we make a lot more slices, and gradually ease the flex value rather than having a sudden shift.
+
+<sketch version="2.0.5" width="400" height="400">
+<code lang="js">
+let font
+let g
+async function setup() {
+  //font = await loadFont('https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf')
+  font = await loadFont('https://fonts.gstatic.com/s/bodonimoda/v28/aFT67PxzY382XsXX63LUYL6GYFcan6NJrKp-VPjfJMShrpsGFUt8oU7awIBytVjMYwE.ttf')
+  createCanvas(400, 400)
+  g = createGraphics(400, 400)
+  g.background(0)
+  g.textFont(font)
+  g.fill(255)
+  g.noStroke()
+  g.textAlign(CENTER, CENTER)
+  g.textSize(500)
+  g.text('T', g.width / 2, g.height / 2 + 60)
+}
+const slicesX = [{ size: 80, flex: 0 }, { size: 5, flex: 0.02 }, { size: 5, flex: 0.15 }, { size: 20, flex: 1 }, { size: 180, flex: 0 }, { size: 20, flex: 1 }, { size: 5, flex: 0.15 }, { size: 5, flex: 0.02 }, { size: 80, flex: 0 }]
+const slicesY = [{ size: 130, flex: 0 }, { size: 220, flex: 1 }, { size: 50, flex: 0 }]
+function draw() {
+  clear();
+  fill(255);
+  noStroke();
+  const progressX = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+  const w = map(progressX, 0, 1, 200, 400)
+  const progressY = map(sin(millis() / 2000 * TWO_PI + 1), -1, 1, 0, 1);
+  const h = map(progressY, 0, 1, 200, 400)
+  const origW = 200
+  const origH = 200
+  const s = 0.5
+  const newW = w - origW
+  const newH = h - origH
+  const totalFlexX = slicesX.reduce((acc, next) => acc + next.flex, 0)
+  const totalFlexY = slicesY.reduce((acc, next) => acc + next.flex, 0)
+  const widths = slicesX.map(v => ({ ...v, newSize: v.size * s + newW * v.flex / totalFlexX }))
+  const heights = slicesY.map(v => ({ ...v, newSize: v.size * s + newH * v.flex / totalFlexY }))
+  
+  push()
+  translate((width - w) / 2, (height - h) / 2)
+  {
+    let y = 0
+    let origY = 0
+    for (const segmentY of heights) {
+      let x = 0
+      let origX = 0
+      for (const segmentX of widths) {
+        image(g, x, y, segmentX.newSize + 1, segmentY.newSize + 1, origX, origY, segmentX.size, segmentY.size)
+        fill(255, 0, 0, (segmentX.flex + segmentY.flex) * 50)
+        rect(x, y, segmentX.newSize, segmentY.newSize)
+        x += segmentX.newSize
+        origX += segmentX.size
+      }
+      y += segmentY.newSize
+      origY += segmentY.size
+    }
+  }
+  {
+    stroke(255, 0, 0)
+    strokeWeight(1)
+    noFill()
+    let y = 0
+    for (const segmentY of heights) {      
+      if (y > 0) {
+        line(0, y, w, y)
+      }
+      y += segmentY.newSize
+    }
+    let x = 0
+    for (const segmentX of widths) {
+      if (x > 0) {
+        line(x, 0, x, h)
+      }
+      x += segmentX.newSize
+    }
+  }
+  pop()
+}
+</code>
+</sketch>
+
+So that's starting to look smoother, but still not quite there. We started at 9-slice scaling, and we've done more slices... maybe what we need is <math>\\lim_{n \\rightarrow \\infty} n</math>-slice scaling, where we can have a truly smooth transition?
+
+<img width="400" src="%root%/content/images/2025/10/t-slices.png" full="%root%/content/images/2025/10/t-slices.png" caption="The red channel represents the stretchiness vertically, and the blue channel represents the stretchiness horizontally." />
+
+If we're going to do it this way, that's... let me see... <math>\\infty</math> different slice weights I'll have to define. Aint got time for that. So we'll need a way to generate the weights automatically.
+
+## To stretch, or not to stretch
+
+We're going to define a flex amount for each column <math>x</math> and each row <math>y</math> describing how horizontally and vertically stretchy that column and row should be. This means we'll be working one line at a time. At a high level, I'm looking for:
+
+<ul>
+  <li>A value of 0 when some part of the letter intersecting with the line is moving perpendicular to the stretch direction, so it doesn't get stretched</li>
+  <li>A value of 1 when all the parts of the letter intersecting with the line are moving parallel to the stretch direction, so it does get stretched</li>
+  <li>A value of 1 when there are no intersections at all. Nothing to get distorted by stretching!</li>
+</ul>
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/10/aligned.svg" width="400" full="%root%/content/images/2025/10/aligned.svg" caption="The stretch and font directions are parallel, so it has a value of 1." />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/10/misaligned1.svg" width="400" full="%root%/content/images/2025/10/misaligned1.svg" caption="The stretch and font directions are perpendicular, so it has a value of 0." />
+  </div>
+</div>
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/10/misaligned2.svg" width="400" full="%root%/content/images/2025/10/misaligned2.svg" caption="Although some font directions are parallel, as long as any are perpendicular, the strip shouldn't stretch, and it gets a flex value of 0." />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2025/10/semialigned.svg" width="400" full="%root%/content/images/2025/10/semialigned.svg" caption="When parts of the font direction are in between perpendicular and parallel, the flex value should be something between 0 and 1." />
+  </div>
+</div>
+
+For a point <math>x</math>, let's call the tangent at that point <math>\\tau(x)</math>, and the stretch direction <math>s</math>. An easy way to see how aligned <math>\\tau</math> and <math>s</math> are is to take the dot product between them, <math>\\tau(x) \\cdot s</math>. Two identical unit vectors will have a dot product of 1, two facing totally opposite directions have a value of -1, and perpendicular ones have a value of 0. We don't care about the difference between moving left and moving right (both are horizontal!), so we can take the absolute value, <math>|\\tau(x) \\cdot s|</math>, and we've got a number between 0 and 1.
+
+For values between 0 and 1, we'll want some control over the magnitude of the flex value to give us control over what should count as stretchy. A quick way to do that is to add a power <math>k</math> into the mix: <math>|\\tau(X) \\cdot s|^k</math>. For numbers between 0 and 1, raising them to a power has the effect of bringing them closer to zero.
+
+<sketch version="2.0.5" width="400" height="440">
+<code lang="js">
+let k
+let label
+let padding = 40
+function setup() {
+  createCanvas(400, 400)
+  k = createSlider(1, 50, 2, 0.1)
+    .position(40, 412)
+    .style('width', '350px')
+
+  label = createP()
+    .position(0, 400)
+  noLoop()
+  k.input(redraw)
+
+  createP().position(padding - 10, padding - 15).html(`1`)
+  createP().position(padding - 10, height - 2 * padding).html(`0`)
+  createP().position(padding, height - padding - 15).html(`0`)
+  createP().position(width - padding, height - padding - 15).html(`1`)
+  createP().position(5, padding + (height - 2 * padding) / 2).html(`<em>x</em><sup><em>k</em></sup>`)
+  createP().position(padding + (width - 2 * padding) / 2, height - padding).html(`<em>x</em>`)
+}
+function draw() {
+  label
+  .html(`<em>k</em> = ${round(k.value())}`)
+  background(255)
+  stroke(170)
+  line(padding, height - padding, width - padding, height - padding)
+  line(padding, padding, padding, height - padding)
+  stroke(0)
+  push()
+  noFill()
+  stroke(0)
+  beginShape()
+  for (let x = padding; x <= width - padding; x++) {
+    const t = map(x, padding, width - padding, 0, 1, true)
+    const out = pow(t, k.value())
+    vertex(x, map(out, 0, 1, height - padding, padding, true))
+  }
+  endShape()
+  pop()
+}
+</code>
+</sketch>
+
+The zeroed out strips of a letter won't stretch as much, so it redistributes the weight just to the remaining strips. So the lower <math>k</math> is, the more evenly distributed the stretch (closer to simple uniform stretching), and the higher <math>k</math> is, the more the stretch will be concentrated to just the most direction-aligned parts of the letter.
+
+<sketch version="2.0.5" width="400" height="440" include="%root%/content/images/2025/10/stretch.js">
+<code lang="js">
+content = 'e'
+shapeW = 45
+let k
+let label
+renderSampleFactor = 1
+sampleFactor = 1
+async function setup() {
+  fontOptions = ['Playfair Display']
+	const families = await Promise.all(
+		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
+	)
+	for (const [i, f] of fontOptions.entries()) {
+		fonts[f] = families[i]
+	}
+	createCanvas(400, 400, WEBGL)
+	setAttributes({ antialias: true, depth: false })
+  noLoop()
+
+  k = createSlider(1, 100, 2, 0.1)
+    .position(50, 412)
+    .style('width', '340px')
+
+  label = createP()
+    .position(0, 400)
+
+  noLoop()
+  k.input(redraw)
+}
+
+function draw() {
+  label
+    .html(`<em>k</em> = ${round(k.value())}`)
+  weight = k.value()
+	background(0)
+  push()
+  translate(-width * 0.25, 0)
+  debug = true
+  drawText()
+  pop()
+  push()
+  debug = false
+  translate(width * 0.25, 0)
+  drawText()
+  pop()
+}
+</code>
+</sketch>
+
+Since we want to stretch as much as the least stretchy part of the font for a given slice, that means we'll have to take the <em>minimum</em> flex value across the slice. If you've got a letter glyph <math>G</math>, and a slice line <math>L</math>, we have to look at all the parts of the line that are inside of the glyph, <math>L \\cap S</math>, and take the minimum flex value for every point in the intersecting regions. And if there are no intersections, then we'll default that strip to being maximum stretchy.
+
+Putting that all together, for a slice line <math>L</math> across the bounding box of a letter glyph <math>G</math>, the flex value is:
+
+<p align="center"><math>f(L; G, s, k) = \\begin{cases}1,&amp;L \\cap S = \\emptyset\\\\\\displaystyle\\min_{x \\in L \\cap S}\\left|\\tau(x) \\cdot s\\right|^{k},&amp;\\text{otherwise}\\end{cases}</math></p>
+
+## Finding tangents
+
+I skimmed over a sneakily annoying question we need to answer. What direction is a part of the shape "moving" in? You'd think you could just take the tangent of the curve of the font, but although it <em>looks</em> like a glyph is just a line drawn with some thickness, fonts (<a href="https://github.com/LingDong-/p5-hershey-js">generally</a>) are not actually represented that way.
+
+A signed distance function (SDF) for a glyph would let you take the tangent along the current isoline, whichever one your point is on. That would work, but there just aren't that many SDF fonts. You can convert a regular font to an SDF, but that's a <a href="https://github.com/Chlumsky/msdfgen?tab=readme-ov-file">whole active area of research</a>, and it's a generally heavier optation.
+
+Most fonts you encounter are actually represented by the <em>outline</em> of the shape. So for some point inside the shape, it's not immediately clear what line you're on, you're just somewhere between an inside and outside. Can we come up with a relatively light way to get a tangent for any spot inside the outline? If you can, then you can grab just about any font file you'd use in other software, which would be great! Almost 2000 stretchy fonts all at once from Google Fonts alone!
+
+I ended up constructing a <math>k</math>-d tree out of a number of sample points on the boundaries of the glyph. Each of these samples, being on a curve, has a well-defined tangent. Then, for any point inside the shape, I can find the closest sample point in the tree, and use its tangent. Works well enough, and doesn't make my browser lag!
+
+## Results
+
+This works pretty much how you'd expect for a letter like T!
+
+<sketch version="2.0.5" width="400" height="440" include="%root%/content/images/2025/10/stretch.js">
+<code lang="js">
+content = 'T'
+shapeW = 45
+let k
+let label
+renderSampleFactor = 1
+sampleFactor = 1
+async function setup() {
+  fontOptions = ['Playfair Display']
+	const families = await Promise.all(
+		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
+	)
+	for (const [i, f] of fontOptions.entries()) {
+		fonts[f] = families[i]
+	}
+	createCanvas(400, 400, WEBGL)
+	setAttributes({ antialias: true, depth: false })
+  noLoop()
+
+  k = createSlider(1, 100, 100, 0.1)
+    .position(50, 412)
+    .style('width', '340px')
+
+  label = createP()
+    .position(0, 400)
+
+  noLoop()
+  k.input(redraw)
+}
+
+function draw() {
+  label
+    .html(`<em>k</em> = ${round(k.value())}`)
+  weight = k.value()
+	background(0)
+  push()
+  translate(-width * 0.25, 0)
+  debug = true
+  drawText()
+  pop()
+  push()
+  debug = false
+  translate(width * 0.25, 0)
+  drawText()
+  pop()
+}
+</code>
+</sketch>
+
+For round letters, at the middle of each side, there's generally a stretch-aligned part. The higher the <math>k</math>, the more this starts to resemble 9-slice scaling, stretching out that middle bit only and keeping the corners intact.
+
+<sketch version="2.0.5" width="400" height="440" include="%root%/content/images/2025/10/stretch.js">
+<code lang="js">
+content = 'O'
+shapeW = 45
+let k
+let label
+renderSampleFactor = 1
+sampleFactor = 1
+async function setup() {
+  fontOptions = ['Playfair Display']
+	const families = await Promise.all(
+		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
+	)
+	for (const [i, f] of fontOptions.entries()) {
+		fonts[f] = families[i]
+	}
+	createCanvas(400, 400, WEBGL)
+	setAttributes({ antialias: true, depth: false })
+  noLoop()
+
+  k = createSlider(1, 100, 100, 0.1)
+    .position(50, 412)
+    .style('width', '340px')
+
+  label = createP()
+    .position(0, 400)
+
+  noLoop()
+  k.input(redraw)
+}
+
+function draw() {
+  label
+    .html(`<em>k</em> = ${round(k.value())}`)
+  weight = k.value()
+	background(0)
+  push()
+  translate(-width * 0.25, 0)
+  debug = true
+  drawText()
+  pop()
+  push()
+  debug = false
+  translate(width * 0.25, 0)
+  drawText()
+  pop()
+}
+</code>
+</sketch>
+
+For letters without any fully tangent-aligned segments, you end up with every slice being equally misaligned, all getting basically the same flex value. When this happens, the space is distributed evenly throughout the slices, and you get a result that looks the same as uniform stretching.
+
+<sketch version="2.0.5" width="400" height="400" include="%root%/content/images/2025/10/stretch.js">
+<code lang="js">
+content = 'V'
+shapeW = 45
+renderSampleFactor = 1
+sampleFactor = 0.5
+fontOptions = ['Montserrat']
+fontName = 'Montserrat'
+async function setup() {
+	const families = await Promise.all(
+		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
+	)
+	for (const [i, f] of fontOptions.entries()) {
+		fonts[f] = families[i]
+	}
+	createCanvas(400, 400, WEBGL)
+	setAttributes({ antialias: true, depth: false })
+  noLoop()
+}
+
+function draw() {
+  weight = 5
+	background(0)
+  push()
+  translate(-width * 0.25, 0)
+  scale(0.85)
+  debug = true
+  drawText()
+  pop()
+  push()
+  debug = false
+  translate(width * 0.25, 0)
+  drawText()
+  pop()
+}
+</code>
+</sketch>
+
+Because this works on outline fonts, you can drop in basically any font and it'll do something reasonable! Here are a few Google Fonts to try out.
+
+<sketch version="2.0.5" width="400" height="440" include="%root%/content/images/2025/10/stretch.js">
+<code lang="js">
+content = 'STReTCH'
+shapeW = 90
+renderSampleFactor = 0.8
+sampleFactor = 0.8
+fontOptions = ['Playfair Display', 'Bodoni Moda', 'Montserrat', 'Lexend']
+fontName = 'Lexend'
+baseSize = 80
+
+let fontSelect
+async function setup() {
+	const families = await Promise.all(
+		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
+	)
+	for (const [i, f] of fontOptions.entries()) {
+		fonts[f] = families[i]
+	}
+	createCanvas(400, 400, WEBGL)
+	setAttributes({ antialias: true, depth: false })
+
+  fontSelect = createSelect()
+  for (const option of fontOptions) {
+    fontSelect.option(option)
+  }
+  fontSelect.selected(fontName)
+  fontSelect.input(redraw)
+  fontSelect.position(0, height)
+}
+
+function draw() {
+  fontName = fontSelect.value()
+  weight = fontName === 'Lexend' ? 80 : 100
+  const progress = map(sin(millis() / 2000 * TWO_PI), -1, 1, 0, 1);
+  shapeH = map(progress, 0, 1, 30, 90)
+	background(0)
+  push()
+  debug = false
+  drawText()
+  pop()
+}
+</code>
+</sketch>
+
+Here's a more full version where you can play around with the text, fonts, weights, and more!
+
+<iframe class="sketch" src="https://openprocessing.org/sketch/2716638/embed/" width="700" height="600"></iframe>
+
+## Future work
+
+There are a few implementation-specific things that could be smoothed out a little still.
+- My implementation is sample-based, and sometimes my slices don't quite align with the cusps on the font, leading to slight visual jank around those points. One could crank up the sample count a lot, but there's probably something smarter you could do.
+- Similarly, the very first/last slice in a direction often has a flex value of 0 because the outline is perpendicular to the stretch direction. But then the next slice may be aligned. Because of this, when stretched, there's a slight bend at the very edge. Better sampling could probably remove that.
+- I was a little lazy with my intersection calculation. Some fonts cross over themselves multiple times when drawing a shape. Those internal overlapping bits are not visible in a filled glyph, but their tangents do mess up this algorithm (try using a W in Playfair Display.)
+- Despite being known as a Shader Guy™, I've implemented this all in JavaScript. One could probably calculate the slices in parallel in a shader if you've got the patience to pack curve or sample info into a texture to be read in the shader!
+
+Algorithmically, some other things that would be cool to try on top of this:
+- The stretch, currently, is entirely bounding box based. In theory this could also work if you stretch to a non-rectangular size if you do it one row or column at a time!
+- Could you generalize this further to not be slice-based? Instead of taking the minimum across a slice, could you nonuniformly warp the shape so that you can give every <math>dx dy</math> fragment its own flex value?
+
+If anyone wants to try something out, feel free to branch off of my code. <a href="https://openprocessing.org/sketch/2716638">It's open source on OpenProcessing</a> if you'd like to fork the sketch and mess around!
+
+<script type="text/javascript" src="%root%/scripts/manage_sketches.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>

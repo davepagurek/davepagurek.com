@@ -120,7 +120,10 @@ my $app = Cantilever.new(
         my $code = "<script src='/sketchEmbed.js'></script>" ~
           "<iframe class='inlineSketch' border='0' width='" ~ $t.attributes<width> ~ "' height='" ~ $t.attributes<height> ~ "' id='sketch" ~ $sketchId ~ "'></iframe>" ~
           "<script>sketchEmbed('sketch" ~ $sketchId ~ "', `" ~
-          $t.children[0].children[0].src ~
+          ($t.attributes<include>
+            ?? $t.attributes<include>.subst('%root%/', '', :g).IO.slurp.subst(/\`/, '\\`', :g).subst(/\$\{/, '\\${', :g)
+            !! '') ~
+          $t.children[0].children[0].src.subst(/\`/, '\\`', :g).subst(/\$\{/, '\\${', :g) ~
           "`, '" ~
           $t.attributes<version> ~
           "')</script>";
