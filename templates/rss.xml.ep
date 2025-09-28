@@ -1,6 +1,6 @@
 % use DateTime::Format;
 % my ($params) = @_;
-% my @posts = $params<content>.get-category(["blog"]).all-pages.sort(-> $v { $v.meta<date> }).reverse
+% my @posts = $params<content>.get-category(["blog"]).all-pages.append($params<content>.get-category(["programming"]).all-pages.grep(*.meta<featured>)).sort(-> $v { $v.meta<date> }).reverse
 <rss version="2.0">
   <channel>
     <title>Dave Pagurek's Blog</title> 
