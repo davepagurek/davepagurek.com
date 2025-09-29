@@ -344,7 +344,7 @@ We're going to define a flex amount for each column <math>x</math> and each row 
 
 For a point <math>x</math>, let's call the tangent at that point <math>\\tau(x)</math>, and the stretch direction <math>s</math>. An easy way to see how aligned <math>\\tau</math> and <math>s</math> are is to take the dot product between them, <math>\\tau(x) \\cdot s</math>. Two identical unit vectors will have a dot product of 1, two facing totally opposite directions have a value of -1, and perpendicular ones have a value of 0. We don't care about the difference between moving left and moving right (both are horizontal!), so we can take the absolute value, <math>|\\tau(x) \\cdot s|</math>, and we've got a number between 0 and 1.
 
-For values between 0 and 1, we'll want some control over the magnitude of the flex value to give us control over what should count as stretchy. A quick way to do that is to add a power <math>k</math> into the mix: <math>|\\tau(X) \\cdot s|^k</math>. For numbers between 0 and 1, raising them to a power has the effect of bringing them closer to zero.
+For values between 0 and 1, we'll want some control over the magnitude of the flex value to give us control over what should count as stretchy. A quick way to do that is to add a power <math>k</math> into the mix: <math>|\\tau(x) \\cdot s|^k</math>. For numbers between 0 and 1, raising them to a power has the effect of bringing them closer to zero.
 
 <sketch version="2.0.5" width="400" height="440">
 <code lang="js">
