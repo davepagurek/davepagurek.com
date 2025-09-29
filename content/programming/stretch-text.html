@@ -458,7 +458,6 @@ A signed distance function (SDF) for a glyph would let you take the tangent alon
 
 Most fonts you encounter are actually represented by the <em>outline</em> of the shape. So for some point inside the shape, it's not immediately clear what line you're on, you're just somewhere between an inside and outside. Can we come up with a relatively light way to get a tangent for any spot inside the outline? If you can, then you can grab just about any font file you'd use in other software, which would be great! Almost 2000 stretchy fonts all at once from Google Fonts alone!
 
-
 I ended up constructing a <math>k</math>-d tree out of a number of sample points on the boundaries of the glyph. Each of these samples, being on a curve, has a well-defined tangent. Then, for any point inside the shape, I can find the closest sample point in the tree, and use its tangent. Works well enough, and doesn't make my browser lag!
 
 ## Results
