@@ -795,6 +795,9 @@ nav a.toggle {
     padding-right: 0;
     padding-bottom: 20px;
   }
+  .sketchContainer iframe {
+    margin: 0 auto;
+  }
 }
 
 /* Intro */

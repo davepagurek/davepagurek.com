@@ -1,5 +1,28 @@
 function sketchEmbed(id, code, version) {
   const iframe = document.getElementById(id);
+  const iframeContainer = iframe.parentElement;
+  const targetWidth = parseFloat(iframe.getAttribute('width'));
+  const targetHeight = parseFloat(iframe.getAttribute('height'));
+  const codeElt = iframeContainer.querySelector('pre');
+
+  const updateContainerSize = () => {
+    const parentSize = iframeContainer.getBoundingClientRect();
+    const parentRoom = parentSize.width - 40;
+    if (parentRoom >= targetWidth) {
+      iframe.style.transform = undefined;
+      iframeContainer.style.height = undefined;
+      return;
+    }
+    const scale = parentRoom / targetWidth;
+    iframe.style.transform = `scale(${scale.toFixed(4)})`;
+    iframe.style.transformOrigin = 'top left';
+    if (!codeElt) {
+      iframeContainer.style.height = `${(scale * targetHeight).toFixed(2)}px`;
+    }
+    // iframe.style.transformOrigin = `${(parentSize.width / 2).toFixed(2)}px ${(parentSize.height / 2).toFixed(2)}px`;
+  };
+  updateContainerSize();
+  window.addEventListener('resize', updateContainerSize);
 
   const wrapSketch = (sketchCode) => {
     if (sketchCode !== "" && !sketchCode.includes("setup")) {
