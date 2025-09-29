@@ -404,9 +404,9 @@ renderSampleFactor = 1
 sampleFactor = 1
 async function setup() {
   fontOptions = ['Playfair Display']
-	const families = await Promise.all(
-		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
-	)
+	const families = await Promise.all([
+    loadFont('https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf'), // Playfair Display
+	])
 	for (const [i, f] of fontOptions.entries()) {
 		fonts[f] = families[i]
 	}
@@ -474,9 +474,9 @@ renderSampleFactor = 1
 sampleFactor = 1
 async function setup() {
   fontOptions = ['Playfair Display']
-	const families = await Promise.all(
-		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
-	)
+	const families = await Promise.all([
+    loadFont('https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf'), // Playfair Display
+	])
 	for (const [i, f] of fontOptions.entries()) {
 		fonts[f] = families[i]
 	}
@@ -526,9 +526,9 @@ renderSampleFactor = 1
 sampleFactor = 1
 async function setup() {
   fontOptions = ['Playfair Display']
-	const families = await Promise.all(
-		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
-	)
+	const families = await Promise.all([
+    loadFont('https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf'), // Playfair Display
+	])
 	for (const [i, f] of fontOptions.entries()) {
 		fonts[f] = families[i]
 	}
@@ -577,9 +577,9 @@ sampleFactor = 0.5
 fontOptions = ['Montserrat']
 fontName = 'Montserrat'
 async function setup() {
-	const families = await Promise.all(
-		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
-	)
+	const families = await Promise.all([
+    loadFont('https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'), // Montserrat
+	])
 	for (const [i, f] of fontOptions.entries()) {
 		fonts[f] = families[i]
 	}
@@ -620,9 +620,12 @@ baseSize = 80
 
 let fontSelect
 async function setup() {
-	const families = await Promise.all(
-		fontOptions.map((f) => loadFont(`https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}&display=swap`))
-	)
+	const families = await Promise.all([
+    loadFont('https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf'), // Playfair Display
+    loadFont('https://fonts.gstatic.com/s/bodonimoda/v28/aFT67PxzY382XsXX63LUYL6GYFcan6NJrKp-VPjfJMShrpsGFUt8oU7awIBytVjMYwE.ttf'), // Bodoni Moda
+    loadFont('https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-Y3tcoqK5.ttf'), // Montserrat
+    loadFont('https://fonts.gstatic.com/s/lexend/v26/wlptgwvFAVdoq2_F94zlCfv0bz1WCzsW_LBte6KuGEo.ttf'), // Lexend
+	])
 	for (const [i, f] of fontOptions.entries()) {
 		fonts[f] = families[i]
 	}
