@@ -1,0 +1,30 @@
+<!--
+{
+	"title": "AI and Open Source",
+	"category": "blog",
+	"date": "2025-10-26",
+	"excerpt": "AI is changing how contributors and maintainers interact. I wouldn't say these changes have been positive."
+}
+-->
+
+The day-to-day activity of a professional software engineer is changing a lot these days, as we're collectively figuring out how to adapt to new tools. There's a lot one could talk about there, and I'm not going to talk about most of it here. Instead, I want to touch on one aspect in particular: the development of trust in open source contributors.
+
+To put it succinctly, I think AI is damaging the ability for contributors to *grow* by working on open source.
+
+I help maintain p5.js. <a href="%root%/blog/p5-2.0-philosophy/">One of the project's explicit goals</a> is to not only be a graphics library, but to put its users in control of their tool; to be built by the community that uses it. When you see a thing that needs fixing, the barrier to entry should be so low that trying to fix it yourself should feel natural. The community needs to be welcoming and patient for this to work. So far, I think it largely succeeds on the whole!
+
+For that to work long-term, it means p5.js is not just interested in contributors as agents to make changes in code. **Working with contributors is like gardening.** Contributors grow over time, gain responsibility and trust, and truly join the community.
+
+In order for that to work, it means maintainers have to be really active, replying to questions and reviewing code quickly, as it's expected that new contributors will need a lot of back-and-forth to reach a point of understanding. The idea is that they pick up knowledge incrementally. They slowly gain confidence to tackle more issues, and get a fuller picture of how the codebase works.
+
+While that has worked reasonably well for a while, AI is shaking up almost every aspect of that, and not in a positive direction.
+
+Contributors relying on AI may on the surface level appear to be able to tackle more complex problems, but secretly lack a lot of context required to make a change successfully. This can result in large amounts of code being submitted with lots of subtle issues, requiring a thorough review. That takes a lot of maintainer time, and a lot of maintainer energy to redirect their solution. There may be many more rounds of iteration than there normally would because of this. The feedback ends up not only explaining how things currently work, but also takes more time to explain how the PR's own approach works, since that may not actually be obvious to the contributor either, in order to explain why it doesn't fit with the reality of the codebase. If after rounds of this, a change is ready to be merged, it's not because anyone gained any understanding; it's because the iterations of prompting have effectively been done by the code reviewer, just with a lot of indirection. While AI alone might be enough to get a contributor to a merged PR, **it does nothing for their abilities, responsibility, or trust.**
+
+That's not to say that one can't use AI to make great changes. Other contributors definitely use AI as a tool. I use it myself sometimes. You've got to be checked in though! You yourself have to understand what it's done in order to objectively judge the quality of the results. It really must be used *as a tool* and not as a shortcut if you want to gain understanding, and therefore trust.
+
+Unfortunately, when a number of people are not using AI in a way that enables personal growth, everybody loses out a bit. Because it takes more time to really consider and understand an issue, contributors who would do so don't get a chance to make their changes because the ones who just throw an AI at it will arrive faster. The fixes themselves still come in slower because AIs currently still aim to satisfy what's asked of them in the fastest, most obvious way, which is rarely what is actually needed, requiring more lengthy review cycles. There's simply a lot more for maintainers to deal with. With that extra workload, and when many contributors will not make use of patient feedback themselves, it becomes harder to dedicate the time for that, because it's also not clear upfront which contributors are the ones who would actually benefit.
+
+It's not a particularly optimistic state of affairs right now. We're making some changes to `AGENTS.md` to heavily encourage the humans making use of AI tools to really consider their approach and discuss with maintainers before ever submitting code. Maybe that'll help. At the very least, it adds one new step (deleting `AGENTS.md`) into the process of people who really don't want to participate in good faith. Hopefully it helps though!
+
+I just wish AI tools weren't so heavily targeting *technical* problems with brute-force strength. Open source is primarily a *social* activity.
