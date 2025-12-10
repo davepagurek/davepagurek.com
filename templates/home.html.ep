@@ -115,8 +115,10 @@
     </article>
 % }
     <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/programming/">Major programming projects</a>
-      <a class="button primary" href="https://www.davepagurek.com/side-projects/">Side projects</a>
+      <p style="text-align: center">
+        <a class="button" href="https://www.davepagurek.com/programming/">Major programming projects</a>
+        <a class="button" href="https://www.davepagurek.com/side-projects/">Side projects</a>
+      </p>
     </div>
   </section>
   <section>
@@ -124,9 +126,11 @@
     <p>In my spare time, I <a href="https://www.davepagurek.com/art">draw</a>, make <a href="https://www.davepagurek.com/film">animations</a>, and write music. I make a lot of <a href="http://soundcloud.com/dont-cross-me">sarcastic cover songs</a> as well as <a href="https://www.davepagurek.com/music">serious music</a>.</p>
     <iframe class="youtube" src="//www.youtube.com/embed/Lx92QWPvUa0?rel=0" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>
     <div class="row">
-      <a class="button primary" href="https://www.davepagurek.com/art/">Art</a>
-      <a class="button primary" href="https://www.davepagurek.com/film/">Animations</a>
-      <a class="button primary" href="https://www.davepagurek.com/music/">Music</a>
+      <p style="text-align: center">
+        <a class="button" href="https://www.davepagurek.com/art/">Art</a>
+        <a class="button" href="https://www.davepagurek.com/film/">Animations</a>
+        <a class="button" href="https://www.davepagurek.com/music/">Music</a>
+      </p>
     </div>
   </section>
   <script type="text/javascript" src="bundle.js"></script>
