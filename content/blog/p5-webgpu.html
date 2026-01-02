@@ -58,7 +58,7 @@ We've done this because a goal of the p5.js project is to provide an accessible 
   <source src="%root%/content/images/2025/12/ComponentFields.mp4" type="video/mp4" />
 </video>
 
-The next clear step, now that it's at feature parity with WebGL mode, is to start to offer new APIs for those new uniquely WebGPU tools. Earlier this year we launched <a href="%root%/blog/writing-shaders-in-js/">p5.strands</a>, a way to create shaders in JavaScript. The next step will be to start creating compute shaders in p5.strands so that, within JavaScript, you can do calculations in parallel on the GPU, and then draw the results. Turn your `for` loop particle system into one on your GPU!
+The next clear step, now that it's at feature parity with WebGL mode, is to start to offer new APIs for those new uniquely WebGPU tools. Last year we launched <a href="%root%/blog/writing-shaders-in-js/">p5.strands</a>, a way to create shaders in JavaScript. The next step will be to start creating compute shaders in p5.strands so that, within JavaScript, you can do calculations in parallel on the GPU, and then draw the results. Turn your `for` loop particle system into one on your GPU!
 
 One side benefit of p5.strands is that you are writing your shaders in JavaScript, not GLSL. This means that if you wrote a p5.strands shader in WebGL mode, that same shader should also work in WebGPU mode. That's also how all of p5's internal filters work now! For example, here's the `POSTERIZE` filter shader:
 
