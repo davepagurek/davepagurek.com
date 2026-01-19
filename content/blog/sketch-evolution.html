@@ -1,0 +1,399 @@
+<!--
+{
+  "title": "Evolution of a Sketch",
+  "category": "blog",
+  "date": "2026-01-29",
+  "excerpt": "Today's Genuary prompt included the word evolution, so rather than programming an evolutionary algorithm, I've chosen to evolve a sketch manually by implementing it in a number of frameworks in the Processing family.",
+  "thumbnail": "%root%/content/images/2026/01/webgpu-thumb.jpg",
+  "og-image": "%root%/content/images/2026/01/webgpu.jpg"
+}
+-->
+
+So the prompt for Genuary 30 is "genetic evolution and mutation." I implemented some evolutionary mutation for for <a href="%root%/programming/genuary28-evolution/">a day in last year's Genuary</a> so this time I've chosen to creatively misinterpret the prompt. This time, I'm evolving the sketch code itself. I have <a href="%root%/blog/creative-coding-2002/">some old Macs lying around</a> and I thought maybe I'd start on the oldest Processing I can run, make a sketch, and then evolve it forward in time through newer versions (slightly cheating the evolutionary chain by jumping to p5.js eventually.)
+
+## Proce55ing alpha, Mac OS 9
+
+A while ago, Rapha&euml;l de Courville dug up some old Processing builds from a server. One of which, an alpha build from 2002, was old enough that I could run it on Mac OS 9! This build is also old enough that it's still called Proce55ing.
+
+<img src="%root%/content/images/2026/01/Proce55ing.jpg" full="%root%/content/images/2026/01/Proce55ing.jpg" caption="Proce55ing Alpha in Mac OS 9. The reference opens in IE 5." />
+
+I wanted to do something loosely inspired by <a href="https://openprocessing.org/sketch/2845379">my Genuary 12 sketch this year</a> with a grid of animated boxes mixed with <a href="https://openprocessing.org/sketch/2849641">p5.strands shader test</a> with some tasteful blur. The Proce55ing alpha can do some 3D, but slowly. Pretty sure this is doing software rasterization. So I'm definitely going to be skipping out on the shader, and instead just recreating the vibe loosely.
+
+<div class="row">
+  <div class="column uncentered">
+    <img src="%root%/content/images/2026/01/genuary-grid.jpg" full="%root%/content/images/2026/01/genuary-grid.jpg" caption="A grid of cubes for Genuary 12. This one used shader instancing." />
+  </div>
+  <div class="column uncentered">
+    <img src="%root%/content/images/2026/01/strands-shader.jpg" full="%root%/content/images/2026/01/strands-shader.jpg" caption="Some faux barrel blur done on one of our weekly p5.strands calls in the p5.js Discord." />
+  </div>
+</div>
+
+The only lighting control you have is the `lights()` function. It also appears to be slightly buggy when translations are applied. So I opted to not use any lighting, and just make unshaded magenta spheres. I couldn't actually fit that many spheres in a grid without the frame rate tanking either, so we've got a very sparse grid. Probably if I were to optimize this more, I'd try to just use circles always facing the camera rather than spheres.
+
+<video autoplay muted loop style="max-width: 400px">
+  <source src="%root%/content/images/2026/01/processing-alpha.mp4" type="video/mp4" />
+</video>
+
+The code should look pretty familiar to anyone using Processing or p5.js today. Notably different from p5.js, the origin in 3D mode is the top left instead of the center of the canvas. Also, you use `loop` instead of `draw` as the main function if you want it to animate. Also, helpers like `map` or `lerp` haven't been added yet, so I've opted to implement a quick and dirty `lerp`. You have to keep track of `frameCount` yourself.
+
+```js
+void setup() {
+  size(300, 300);
+  noStroke();
+}
+
+int n = 3;
+float frameCount = 0;
+void loop() {
+  background(20, 20, 220);
+  frameCount++;
+  
+  push();
+  translate(width/2, height/2, -400);
+  rotateY(frameCount * 0.01);
+  fill(255, 0, 255);
+  // lights();
+  
+  for (int x = 0; x < n; x++) {
+    for (int y = 0; y < n; y++) {
+      for (int z = 0; z < n; z++) {
+        push();
+        float off = x + y + z;
+        float fx = float(x);
+        float fy = float(y);
+        float fz = float(z);
+        float denom = float(n-1);
+        translate(
+          lerp(-200, 200, fx/denom),
+          lerp(-200, 200, fy/denom),
+          lerp(-200, 200, fz/denom)
+        );
+        sphere(15 * (1 + 0.5 * sin(frameCount * 0.1 + off * 2)));
+        pop();
+      }
+    }
+  }
+  
+  pop();
+}
+
+float lerp(float a, float b, float mix) {
+  return (1.0 - mix) * a + mix * b;
+}
+```
+
+## Processing Beta, Mac OS X 10.4
+
+So my G4 tower can boot into Mac OS X too. With that, I can run slightly newer Processings! I found that <a href="https://web.archive.org/web/20050507152451/http://processing.org/download/index.html">archive.org captured a Processing beta from 2005</a> that I've installed. This one is new enough that it's been renamed to Processing, without the 5s. There's syntax highlighting in the editor now, yay!
+
+<img src="%root%/content/images/2026/01/ProcessingScreenSnapz001.png" full="%root%/content/images/2026/01/ProcessingScreenSnapz001.png" caption="Processing Beta in Mac OS X 10.4" />
+
+3D is now in its own designated mode, `P3D`, that current Processing users are likely familiar with. It uses OpenGL, so it has a lot more 3D capability. We can set lights now! Although there seemed to be a bug with the blue channel of `ambientLight()` not working, so although I really wanted a blue-and-magenta-only look via a blue ambient light, I had to recreate something similar enough using just directional lights.
+
+The shading still looks fairly blocky. This is due to it using <a href="https://en.wikipedia.org/wiki/Gouraud_shading">Gouraud shading</a>, where lighting is calculated only per vertex for efficiency, and then those colors are blended across faces. Did you know you can also do this today in p5.js via <a href="https://p5js.org/reference/p5/setAttributes/">`setAttributes({ perPixelLighting: false })`</a>? It probably isn't necessary any more, and I'm guessing you didn't know this still existed. (Does that mean I can remove it and clean up the code? Please?) That said, this computer is still pretty graphically slow, so I've had to turn the number of sphere faces way down with the `sphereDetail()` function this version of Processing provides. But I can render more shapes than I could previously, and the lighting starts to give some depth!
+
+<video autoplay muted loop style="max-width: 400px">
+  <source src="%root%/content/images/2026/01/os10.mp4" type="video/mp4" />
+</video>
+
+The code looks fairly similar to before. Now, `lerp` exists for me to use (although `map` still does not exist.) `frameCount` is there too. Interestingly, `push()` and `pop()` from the alpha got renamed to `pushMatrix()` and `popMatrix()`, their current names to this day in Processing. In p5, these are just called `push()` and `pop()` still, maybe as a nod the nice and simple naming from the alpha.
+
+```js
+void setup() {
+  size(300, 300, P3D);
+  noStroke();
+}
+
+int n = 5;
+void draw() {
+  background(20, 20, 220);
+  sphereDetail(4);
+  
+  directionalLight(100, 0, 255, 0, 0, -1);
+  directionalLight(255, 0, 0, -1, 1, 0);
+  directionalLight(255, 0, 0, 0, 0, 1);
+  
+  pushMatrix();
+  translate(width/2, height/2, -400);
+  rotateY(frameCount * 0.01);
+  fill(255);
+  
+  for (int x = 0; x < n; x++) {
+    for (int y = 0; y < n; y++) {
+      for (int z = 0; z < n; z++) {
+        pushMatrix();
+        float off = x + y + z;
+        translate(
+          lerp(-200, 200, float(x)/float(n-1)),
+          lerp(-200, 200, float(y)/float(n-1)),
+          lerp(-200, 200, float(z)/float(n-1))
+        );
+        sphere(15 * (1 + 0.5 * sin(frameCount * 0.1 + off * 2)));
+        popMatrix();
+      }
+    }
+  }
+  
+  popMatrix();
+}
+```
+
+## Processing 2, Mac OS X 10.15
+
+<video autoplay muted loop style="max-width: 400px">
+  <source src="%root%/content/images/2026/01/processing2.mp4" type="video/mp4" />
+</video>
+
+```js
+PShader blur;
+
+void setup() {
+  size(600, 600, P3D);
+  noStroke();
+  blur = loadShader("blur.glsl");
+  blur.set("sketchSize", float(width), float(height));
+}
+
+int n = 10;
+void draw() {
+  background(20, 20, 220);
+  sphereDetail(8);
+  
+  directionalLight(100, 0, 0, 0, 0, -1);
+  directionalLight(200, 0, 0, -1, 1, 0);
+  ambientLight(20, 20, 220);
+  
+  pushMatrix();
+  translate(width/2, height/2, -400);
+  rotateY(frameCount * 0.002);
+  fill(255);
+  
+  for (int x = 0; x < n; x++) {
+    for (int y = 0; y < n; y++) {
+      for (int z = 0; z < n; z++) {
+        pushMatrix();
+        float off = x + y + z;
+        translate(
+          lerp(-300, 300, float(x)/float(n-1)),
+          lerp(-300, 300, float(y)/float(n-1)),
+          lerp(-300, 300, float(z)/float(n-1))
+        );
+        sphere(16 * (1 + 0.5 * sin(frameCount * 0.05 + off)));
+        popMatrix();
+      }
+    }
+  }
+  
+  popMatrix();
+  
+  filter(blur);
+}
+```
+
+```js
+// This line is optional from Processing 2.1 and up
+#define PROCESSING_TEXTURE_SHADER
+
+uniform sampler2D texture;
+
+uniform vec2 sketchSize;
+
+// Based on https://github.com/stegu/webgl-noise/blob/22434e04d7753f7e949e8d724ab3da2864c17a0f/src/noise3D.glsl
+// MIT licensed, adapted for p5.strands
+
+vec3 mod289(vec3 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 mod289(vec4 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 permute(vec4 x) {
+  return mod289(((x*34.0)+10.0)*x);
+}
+
+vec4 taylorInvSqrt(vec4 r)
+{
+  return 1.79284291400159 - 0.85373472095314 * r;
+}
+
+float baseNoise(vec3 v)
+{
+  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+
+  // First corner
+  vec3 i  = floor(v + dot(v, C.yyy) );
+  vec3 x0 =   v - i + dot(i, C.xxx) ;
+
+  // Other corners
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min( g.xyz, l.zxy );
+  vec3 i2 = max( g.xyz, l.zxy );
+
+  //   x0 = x0 - 0.0 + 0.0 * C.xxx;
+  //   x1 = x0 - i1  + 1.0 * C.xxx;
+  //   x2 = x0 - i2  + 2.0 * C.xxx;
+  //   x3 = x0 - 1.0 + 3.0 * C.xxx;
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
+
+  // Permutations
+  i = mod289(i);
+  vec4 p = permute( permute( permute(
+          i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+        + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+      + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+
+  // Gradients: 7x7 points over a square, mapped onto an octahedron.
+  // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+  float n_ = 0.142857142857; // 1.0/7.0
+  vec3  ns = n_ * D.wyz - D.xzx;
+
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+
+  vec4 x = x_ *ns.x + ns.yyyy;
+  vec4 y = y_ *ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+
+  vec4 b0 = vec4( x.xy, y.xy );
+  vec4 b1 = vec4( x.zw, y.zw );
+
+  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
+  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+
+  vec3 p0 = vec3(a0.xy,h.x);
+  vec3 p1 = vec3(a0.zw,h.y);
+  vec3 p2 = vec3(a1.xy,h.z);
+  vec3 p3 = vec3(a1.zw,h.w);
+
+  //Normalise gradients
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+
+  // Mix final noise value
+  vec4 m = max(0.5 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 105.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
+        dot(p2,x2), dot(p3,x3) ) );
+}
+
+float noise(vec3 st, int octaves, float ampFalloff) {
+  float result = 0.0;
+  float amplitude = 1.0;
+  float frequency = 1.0;
+
+  for (int i = 0; i < 8; i++) {
+    if (i >= octaves) break;
+    result += amplitude * baseNoise(st * frequency);
+    frequency *= 2.0;
+    amplitude *= ampFalloff;
+  }
+
+  return result;
+}
+
+void main()
+{   
+    vec2 uv=gl_FragCoord.xy/sketchSize.xy;
+    vec2 toCenter = vec2(0.5) - uv;
+    float distToCenter = pow(length(toCenter), 2.0);
+
+    vec4 col = texture2D(texture, uv + 0.05*distToCenter*vec2(
+      noise(vec3(uv*100., 0.), 2, 0.5),
+      noise(vec3(uv*100., 100.), 2, 0.5)
+    ));
+
+    gl_FragColor = col;
+}
+```
+
+<img src="%root%/content/images/2026/01/os10.15.jpg" full="%root%/content/images/2026/01/os10.15.jpg" caption="Processing Beta in Mac OS X 10.4" />
+
+## p5.js 2.2, MacOS 15.2
+
+<video autoplay muted loop style="max-width: 400px">
+  <source src="%root%/content/images/2026/01/p5.mp4" type="video/mp4" />
+</video>
+
+```js
+let fbo
+let blur
+
+function setup() {
+  createCanvas(600, 600, WEBGL)
+  fbo = createFramebuffer()
+  blur = baseMaterialShader().modify(() => {
+    const tex = uniformTexture(() => fbo.color)
+    const depth = uniformTexture(() => fbo.depth)
+    getPixelInputs((inputs) => {
+      noiseDetail(2, 0.5)
+      const offset = [
+        noise(inputs.texCoord.x * 1000, inputs.texCoord.y * 1000, 0),
+        noise(inputs.texCoord.x * 1000, inputs.texCoord.y * 1000, 100),
+      ]
+      let d = getTexture(depth, inputs.texCoord).r
+      for (let i = 0; i < 10; i++) {
+        let angle = i + inputs.texCoord.x + inputs.texCoord.y
+        let r = (i+1)/10 * 0.05
+        d = min(d, getTexture(depth, inputs.texCoord + r*[cos(angle), sin(angle)]).r)
+      }
+      const noiseScale = abs(d - 0.92) * 0.6
+      inputs.color = getTexture(tex, inputs.texCoord + offset * noiseScale)
+      return inputs
+    })
+  })
+  noStroke()
+}
+
+function draw() {
+  fbo.begin()
+  background(20, 20, 220)
+  directionalLight(200, 0, 0, 0, 0, -1)
+  directionalLight(250, 0, 0, -1, 1, 0)
+  ambientLight(20, 20, 220)
+  translate(0, 0, -500)
+  rotateY(frameCount * 0.002)
+  fill(255)
+
+  let n = 10;
+  for (let x = 0; x < n; x++) {
+    for (let y = 0; y < n; y++) {
+      for (let z = 0; z < n; z++) {
+        push()
+        let off = x + y + z;
+        translate(
+          map(x, 0, n-1, -1, 1) * 300,
+          map(y, 0, n-1, -1, 1) * 300,
+          map(z, 0, n-1, -1, 1) * 300,
+        )
+        sphere(16 * (1 + 0.5 * sin(frameCount * 0.05 + off)))
+        pop()
+      }
+    }
+  }
+  fbo.end()
+
+  push()
+  shader(blur)
+  plane(width, height)
+  pop()
+}
+```
+
+<img src="%root%/content/images/2026/01/p5-op.jpg" full="%root%/content/images/2026/01/p5-op.jpg" caption="p5.js in OpenProcessing" />
