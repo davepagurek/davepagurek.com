@@ -24,7 +24,7 @@ for qw<header footer home page category archives error> -> $page {
 
 my $local = %*ENV<ENV> && %*ENV<ENV> eq "local";
 
-my $export-dir = $local ?? "/sites" !! "/var/www/html";
+my $export-dir = $local ?? "/Users/dpagurek/Sites" !! "/var/www/html";
 my $sketchId = 0;
 my $app = Cantilever.new(
   dev => True,
