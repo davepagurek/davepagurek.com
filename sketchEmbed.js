@@ -1,9 +1,13 @@
-function sketchEmbed(id, code, version) {
+function sketchEmbed(id, code, version, { webgpu } = {}) {
   const iframe = document.getElementById(id);
   const iframeContainer = iframe.parentElement;
   const targetWidth = parseFloat(iframe.getAttribute('width'));
   const targetHeight = parseFloat(iframe.getAttribute('height'));
   const codeElt = iframeContainer.querySelector('pre');
+
+  const cdnBase = /\d+\.\d+\.\d+/.exec(version)
+    ? `https://cdn.jsdelivr.net/npm/p5@${version}/lib`
+    : `https://raw.esm.sh/pr/p5@${version}/lib`;
 
   const updateContainerSize = () => {
     const parentSize = iframeContainer.getBoundingClientRect();
@@ -54,7 +58,8 @@ canvas {
   display: block;
 }
 </style>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@${version}/lib/p5.min.js"></script>
+<script type="text/javascript" src="${cdnBase}/p5.min.js"></script>
+${webgpu ? `<script type="text/javascript" src="${cdnBase}/p5.webgpu.min.js"></script>` : ''}
 <body>
 <script id="code" type="text/javascript">${wrapSketch(code) || ""}</script>
 </body>`;

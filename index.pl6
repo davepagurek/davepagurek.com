@@ -126,7 +126,9 @@ my $app = Cantilever.new(
           $t.children[0].children[0].src.subst(/\`/, '\\`', :g).subst(/\$\{/, '\\${', :g) ~
           "`, '" ~
           $t.attributes<version> ~
-          "')</script>";
+          "', \{" ~
+            "webgpu: " ~ ($t.attributes<webgpu> ?? "true" !! "false") ~ "," ~
+          "\})</script>";
         $sketchId++;
 
         if $t.attributes<code> {

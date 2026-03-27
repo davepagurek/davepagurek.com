@@ -189,6 +189,7 @@ iframe.sketch.hidden {
   padding-bottom: 0;
   padding-left: 0;
   padding-right: 20px;
+  overflow: auto;
 }
 .sketchContainer iframe {
   margin: 0;
