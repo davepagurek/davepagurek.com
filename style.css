@@ -181,6 +181,7 @@ iframe.sketch.hidden {
   padding: 20px;
   margin-left: -20px;
   margin-right: -20px;
+  max-width: 100%;
 }
 .sketchContainer pre {
   flex: 1;
@@ -303,6 +304,10 @@ a:hover {
 }
 a img {
   border:0;
+}
+
+pre code {
+  max-height: calc(max(min(80vh, 600px), 400px));
 }
 
 span.code {

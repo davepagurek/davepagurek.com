@@ -1,22 +1,28 @@
 <!--
 {
-	"title": "Compute shaders in p5.js",
+	"title": "Teaching GPU programming in p5.js: now with compute shaders",
 	"category": "blog",
-	"date": "2026-03-20",
-	"excerpt": "TODO",
-  "thumbnail": "%root%/content/images/2026/01/webgpu-thumb.jpg",
-  "art": "%root%/content/images/2026/01/webgpu.jpg",
-  "og-image": "%root%/content/images/2026/01/webgpu.jpg"
+	"date": "2026-04-03",
+	"excerpt": "We're at a really challenging but interesting time for graphics where the technology is capable of so much more, but that adds a lot of complexity, so now the pedagogical side has to catch up. p5.strands hopes to provide scaffolding to take you from p5's 2D mode all the way up through compute shaders.",
+  "thumbnail": "%root%/content/images/2026/04/webgpu-thumb.jpg",
+  "art": "%root%/content/images/2026/04/webgpu.jpg",
+  "og-image": "%root%/content/images/2026/04/webgpu.jpg"
 }
 -->
 
-After <a href="%root%/programming/p5-webgpu">releasing an experimental WebGPU build of p5.js</a> earlier this year, the work on WebGPU in p5.js certainly wasn't done. That initial release was mostly just setting the stage for a lot of the new ideas that we want to try out next. Since then, we've worked a little on performance, fixed a lot of bugs, and iterated on the p5.strands API with the goal of making p5.js the easiest way to teach GPU programming. As a result, I've been able to start implementing compute shaders in p5!
+Computer graphics education is in a weird place right now. The graphical capabilities of computers have expanded tremendously. At this point, it's also hard to talk about "graphical" capabilities: your Graphics Processing Unit (GPU) is no longer just pushing triangles onto the screen; it's a platform for general parallel programming. That's fantastic for increasing the possibilities! But with so much potentially to learn, how do you get started?
 
-## Scaffolded learning of shaders
+There is a lot of background context generally required in order to do any programming for the GPU, which makes it notoriously hard to get into. Rendering a triangle in Vulkan from scratch takes <a href="https://github.com/KhronosGroup/Vulkan-Samples/blob/main/samples/api/hello_triangle_1_3/hello_triangle_1_3.cpp">thousands of lines of code.</a> This is a problem <a href="https://history.siggraph.org/learning-overview/siggraph-2024-educators-forum/">professors teaching computer graphics are currently grappling with.</a> The playbook that seems to be solidifying is to not teach everything at first, and provide a template to work within that hides the bits that aren't initially relevant to the learning. As students learn more, the scaffolding can incrementally be pulled away, and they can become aware of those initially hidden parts. But, importantly, those hidden bits are not necessary for making immediate initial progress. This technique is called *scaffolded learning.*
 
-There is a lot of background context generally required in order to do any programming for the GPU, which makes it notoriously hard to get into. <a href="https://github.com/KhronosGroup/Vulkan-Samples/blob/main/samples/api/hello_triangle_1_3/hello_triangle_1_3.cpp">Rendering a triangle in Vulkan from scratch</a> takes thousands of lines of code. <a href="https://history.siggraph.org/learning-overview/siggraph-2024-educators-forum/">A strategy used by professors teaching computer graphics</a> is to simply not teach everything at first, and provide a template to work in that hides the bits that aren't initially relevant to the learning. As students learn more, the scaffolding can incrementally be pulled away, and they can become aware of those initially hidden parts. But, importantly, they are not necessary for making immediate progress.
+Currently, everyone's wandering on their own trying to figure out what scaffolding to use. Often, scaffolding abstracts away many of the underlying graphics API, but leaves in place much of the "classic" shader pipeline: students still need to learn how data flows through vertex to fragment shaders, how data is passed from the CPU to the GPU, and how to write shader code in a new language. While this is still simplified compared to starting completely from scratch, that's still a lot to jump into.
 
-Often, scaffolding abstracts away many of the underlying graphics API, but leaves in place much of the shader pipeline: students still need to learn how data flows through vertex to fragment shaders, how data is passed from the CPU to the GPU, and how to write shader code in a new language. While this is still simplified compared to starting completely from scratch, that's still a lot to jump into. In p5.js, we are aiming to provide similar scaffolding, but at a different level, so that if you have made a p5.js sketch before and are familiar with, for example, the <a href="https://p5js.org/tutorials/">Introduction to p5.js</a> category of tutorials on the p5 site, you should be able to have an easy first step into GPU programming.
+## Teaching GPU with p5.js
+
+I help develop p5.js. Alongside being a tool for artists, it is often used as a computer science teaching tool, conveniently making it easy to visualize logic. That has mostly been done with its 2D mode, so introductory 3D and GPU teaching has tended to favour tools like three.js instead. Over the past few years, I've been trying to fill in the GPU gaps in p5.
+
+After <a href="%root%/programming/p5-webgpu">releasing an experimental WebGPU build of p5.js</a> earlier this year, working a little on performance, and fixing a lot of bugs, I've been able to start implementing compute shaders. That last puzzle piece brings p5 much closer to the goal of being the GPU learning system I'd like it to be. So let's talk about what that looks like!
+
+The emerging goal for p5.strands, our shader system, is to provide scaffolding such that if you have made a p5.js sketch before and are familiar with, for example, the <a href="https://p5js.org/tutorials/">Introduction to p5.js</a> category of tutorials on the p5 site, you should be able to have an easy first step into GPU programming. You should always be able to be productive and make interesting things at every skill level, and each incremental piece you learn helps you achieve a specific new capability on top of what you already could do. While abstractions can be simplifying, none should be misleading; you should not need to unlearn any bad habits in order to later jump from p5 to more engineering-oriented systems. That said, p5 should not *just* be a learning tool: the abstractions should be convenient and intuitive enough that you'd *want* to use them, regardless of skill level, until your project hits a scale and scope that turns it into a larger engineering project.
 
 We're pretty explicit about what we think you do and don't need to know to start using p5.strands:
 - You are familiar with looping and branching
@@ -27,7 +33,27 @@ We're pretty explicit about what we think you do and don't need to know to start
 
 The API has been carefully updated so that you don't need more than that to start. You do *not* need to know about the shader pipeline, uniforms, varying variables, or anything like that at first. You will still learn those things! But they are not required upfront like they would otherwise be; they stay out of the way until you need them.
 
-For example, after having used existing p5 filters such as `filter(BLUR)`, it is not a huge jump to create your own filters. Here's the boilerplate code to create and draw a filter, doing the "hello world" activity of turning the coordinates directly into colors. It involves creating a function, using arrays, and working with properties and methods of objects. The biggest thing to learn is the special `filterColor` object, which has a property `texCoord` saying what coordinate of the canvas texture you're on. The resulting gradient is illustrative of how the function gets run on each pixel with different inputs.
+## Making your own filter
+
+After having used existing p5 filters such as `filter(BLUR)`, it is not a huge jump to create your own filters. It involves creating a function, using arrays, and working with properties and methods of objects. The biggest thing to learn is the special `filterColor` object, which you can `.set()` with a color. Here's a filter that makes the canvas red! Nothing fancy yet, but you can see that colors go from 0 to 1.
+
+<sketch code="true" version="5a95725" width="200" height="200">
+<code lang="js">
+function setup() {
+  createCanvas(200, 200, WEBGL);
+  let myFilter = buildFilterShader(gradient);
+  filter(myFilter);
+}
+
+function gradient() {
+  filterColor.begin();
+  filterColor.set([1, 0, 0, 1]);
+  filterColor.end();
+}
+</code>
+</sketch>
+
+`filterColor` also has a property `texCoord` saying what coordinate of the canvas texture you're on. That conveniently also goes from 0 to 1 in both axes, so you can visualize it as a color easily. The resulting gradient is illustrative of how the function gets run on each pixel with different inputs.
 
 <sketch code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -43,13 +69,33 @@ function gradient() {
     filterColor.texCoord.x,
     filterColor.texCoord.y,
     0,
-  1]);
+    1
+  ]);
   filterColor.end();
 }
 </code>
 </sketch>
 
-You can even create animations by using p5.js time functions like `millis()` like you normally would. Under the hood, this involves some uniforms, but the learner does not need to be aware of this yet. They can instead focus on the biggest conceptual leap of writing a fragment shader, which is the fact that your same code needs to run on every pixel. This inversion from the usual way you draw in p5 can be the main focus, with surprisingly few limitations, until the learner feels comfortable.
+You can explore generative textures by passing those coordinates into `noise()`. Of course, you can also make your own noise function if you'd like to learn what it's doing under the hood. But it's a useful and productive construct that is already familiar from the rest of p5.
+
+<sketch code="true" version="5a95725" width="200" height="200">
+<code lang="js">
+function setup() {
+  createCanvas(200, 200, WEBGL);
+  let myFilter = buildFilterShader(gradient);
+  filter(myFilter);
+}
+
+function gradient() {
+  filterColor.begin();
+  let val = noise(filterColor.texCoord);
+  filterColor.set([val, val, val, 1]);
+  filterColor.end();
+}
+</code>
+</sketch>
+
+You can even create animations by using p5.js time functions like `millis()` like you normally would. For people who already know shaders: under the hood, this involves some uniforms, but the learner does not need to be aware of this yet. They can instead focus on the biggest conceptual leap of writing a fragment shader, which is the fact that your same code needs to run on every pixel. This inversion from the usual way you draw in p5 can be the main focus, with surprisingly few limitations, until the learner feels comfortable.
 
 <sketch code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -75,7 +121,39 @@ function draw() {
 </code>
 </sketch>
 
-A next step can be to show how shaders can be used on objects, not just on the pixels of the whole canvas. Every vertex (a term familiar already from `beginShape`/`endShape` drawing) also can be modified by a shader, if you do so in the right block. In p5.strands, ne way to do this is the `worldInputs` block, where you can modify vertex positions in world space. This can be used to move an object around:
+A natural point to introduce uniforms is when you want to reference a value from a slider. With `uniformFloat`, we can pass in a slider value and then use that to adjust the animation from before:
+
+<sketch code="true" version="5a95725" width="200" height="230">
+<code lang="js">
+let myFilter;
+let frequency;
+function setup() {
+  createCanvas(200, 200, WEBGL);
+  frequency = createSlider(1, 100, 30, 0.1);
+  myFilter = buildFilterShader(gradient);
+}
+
+function gradient() {
+  // Pass in slider value
+  let xScale = uniformFloat(() => frequency.value());
+  filterColor.begin();
+  filterColor.set(mix(
+    [1, 0, 0, 1], // Red
+    [0, 0, 1, 1], // Blue
+    sin(filterColor.texCoord.x*xScale + millis()*0.004)/2+0.5
+  ));
+  filterColor.end();
+}
+
+function draw() {
+  filter(myFilter);
+}
+</code>
+</sketch>
+
+## Shaders for shapes
+
+A next step can be to show how shaders can be used on objects, not just on the pixels of the whole canvas. Every vertex (a term familiar already from `beginShape`/`endShape` drawing) also can be modified by a shader, if you do so in the right block. In p5.strands, the way to do this is the `worldInputs` block, where you can modify vertex positions in world space. This can be used to move an object around:
 
 <sketch code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -106,9 +184,42 @@ function draw() {
 </code>
 </sketch>
 
-Of course, you don't need a shader to do the above in p5 already. But once you also introduce the ability to draw an object with multiple instances, it becomes extra useful.
+Of course, you don't need a shader to do the above in p5 already. But it then lets you do some additional things. For example, you can apply a different offset to each vertex. You could do this with a for loop and `beginShape`/`endShape`, but it's very tedious to do, and requires you to suddenly create all the vertices yourself. Here, I can just take the previous shader but use the vertex position in the math:
 
-If you're already drawing an object with a function, as I did above, you can create a reusable model out of it with `buildGeometry`. Then, you can draw it with `model()`, and pass in the number of *instances* of that model you want to draw. You can then position them differently in the shader based on which iteration is being drawn, accessible via `instanceID()`.
+<sketch code="true" version="5a95725" width="200" height="200">
+<code lang="js">
+let movement;
+function setup() {
+  createCanvas(200, 200, WEBGL);
+  movement = buildMaterialShader(wiggle);
+}
+
+function wiggle() {
+  worldInputs.begin();
+  worldInputs.position.y += 40 * sin(
+    millis() * 0.005 + worldInputs.position.x * 0.1
+  );
+  worldInputs.end();
+}
+
+function drawObject() {
+  sphere(50);
+}
+
+function draw() {
+  background('white');
+  noStroke();
+  lights();
+  fill('red');
+  shader(movement);
+  drawObject();
+}
+</code>
+</sketch>
+
+When you introduce the ability to draw an object with multiple instances, updating positions in a shader becomes extra useful.
+
+If you're already drawing an object with a function, as I did above, you can create a reusable model out of it with `buildGeometry`. Then, you can draw it with `model(geometry, count)`, and pass in the number of *instances* of that model you want to draw. You can then position them differently in the shader based on which iteration is being drawn, accessible via `instanceID()`.
 
 <sketch code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -165,9 +276,9 @@ function wiggle() {
   ) - 0.3;
   worldInputs.position.y += offset * height * 0.8;
 
-  let r = [1, 0, 0, 1/20];
-  let g = [0, 1, 0, 1/20];
-  let b = [0, 0, 1, 1/20];
+  let r = [1, 0, 0, 1/15];
+  let g = [0, 1, 0, 1/15];
+  let b = [0, 0, 1, 1/15];
   if (progress < 0.5) {
     worldInputs.color = mix(r, g, progress * 2);
   } else {
@@ -201,7 +312,11 @@ function draw() {
 
 But not every kind of motion can be driven by `noise()` or `sin()` or other predetermined functions. What if I have a bunch of specific locations I want to position points at? Or if each particle needs to move independently? See, for example, the <a href="https://natureofcode.com/autonomous-agents/">Nature of Code chapter on autonomous agents</a>. Lots of cool techniques in there!
 
-WebGPU starts to get us there. We can create **storage buffers** with `createStorage` that you can read in a shader with `uniformStorage`. Here's a simple version of that where we hard-code a few locations for objects. Note that we `await createCanvas(w, h, WEBGPU)` now!
+## WebGPU shader storage
+
+WebGPU starts to get us there. The examples from here on out will require you to use a browser with WebGPU support, which Chrome and Firefox on Windows and Mac should have now in their latest versions.
+
+We can create **storage buffers** with `createStorage` that you can read in a shader with `uniformStorage`. Here's a simple version of that where we hard-code a few locations for objects. Note that we `await createCanvas(w, h, WEBGPU)` now!
 
 <sketch code="true" webgpu="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -314,11 +429,13 @@ function draw() {
 </code>
 </sketch>
 
+## WebGPU compute shaders
+
 When you have data in a storage buffer, the next logical step is to ask how to update that data to make the particles move. That's how you would implement the agents described in Nature of Code. Interactions are described via how you would **incrementally update state** every frame rather than having a formula for the exact position given time.
 
 Typically that would be done with a for loop, but with WebGPU, you can now do that with a **compute shader** using `buildComputeShader`. Compute shaders are like for loops, but instead of doing one iteration after the other, they instead run all iterations at once in parallel, something that needs special hardware—your GPU—to accomplish.
 
-For comparison, here's some code to make a bunch of balls bounce off the walls of the canvas using a regular for loop. Afterwards, we'll show what this looks like in a compute shader.
+For comparison, here's some code to make a bunch of balls bounce off the walls of the canvas with **no compute shaders**, using a regular for loop. Afterwards, we'll show what this looks like in a compute shader.
 
 <sketch code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -465,7 +582,7 @@ function draw() {
 </code>
 </sketch>
 
-Compute shaders get interesting because, roughly, you can run a loop on thousands of things in the time it would normally take to run just one iteration of a regular for loop. This means you can do stuff that would otherwise take a lot of algorithmic complexity to run quickly. Let's say you wanted to make all the balls bounce off of each other? No problem. I'll also give them some different radii for the fun of it.
+Compute shaders get interesting because, roughly, you can run a loop on thousands of things in the time it would normally take to run just one iteration of a regular for loop. This means you can do stuff that would otherwise take a lot of algorithmic complexity to run quickly. Do you wanted to make all the balls bounce off of each other? The double-nested for loop approach can get slow in regular JavaScript. No problem in a WebGPU compute shader though. I'll also give them some different radii for the fun of it.
  
 <sketch webgpu="true" code="true" version="5a95725" width="200" height="200">
 <code lang="js">
@@ -744,3 +861,46 @@ function draw() {
 
 </code>
 </sketch>
+
+For another example, the header of this page was created using an *n*-body gravity simulation with points sampled from text, which you can <a href="https://openprocessing.org/sketch/2909418">run and inspect for yourself on OpenProcessing.</a>
+
+## Beyond p5.js
+
+We've built out a system that slowly exposes you to vertex shaders, fragment shaders, compute shaders, uniforms, varying variables, and textures as they become useful to you.
+
+You can also slowly expand into platform-native shader languages, too–every block in p5.strands can also be filled in via a function in GLSL or WGSL. The same animated gradient from earlier looks like this in GLSL:
+
+<sketch code="true" version="5a95725" width="200" height="200">
+<code lang="js">
+let myFilter;
+function setup() {
+  createCanvas(200, 200, WEBGL);
+  myFilter = buildFilterShader({
+    uniforms: {
+      'float millis': () => millis()
+    },
+    'vec4 getColor': `(FilterInputs inputs, sampler2D canvasContent) {
+      return mix(
+        vec4(1.0, 0.0, 0.0, 1.0),
+        vec4(0.0, 0.0, 1.0, 1.0),
+        sin(inputs.texCoord.x * 15.0 + millis * 0.004) / 2.0 + 0.5
+      );
+    }`
+  });
+}
+
+function draw() {
+  filter(myFilter);
+}
+</code>
+</sketch>
+
+If you wanted to see how a JavaScript shader would look as a native shader, you can call `.inspectHooks()` on it, and it will print the native implementation of your JavaScript.
+
+So, even when you outgrow the JS shader system, you can still hook into the p5 default shaders with native shader code, so you don't have to redo the entirety of p5's positioning and material systems. Then, of course, there are the `loadShader` and `createShader` functions you can call if you truly need to start from scratch, or want to learn how to make the whole thing yourself.
+
+I hope that at that point, you'll have all the understanding you'll need to fearlessly jump into whatever other GPU library or hardware platform you need. You'll still have some learning to do, but by that point, you won't be faced with a mountain of new things; instead, it'll be a matter of learning how the new system handles the concepts you already know.
+
+## Try it out!
+
+p5.strands in WebGL is <a href="https://beta.p5js.org/reference/p5/buildFilterShader/">already live</a>, and compute shaders will land in the next release of p5.js, version 2.3 (but you can test it out from <a href="https://github.com/processing/p5.js/pull/8531#issuecomment-4114439956">the build of the compute shader branch</a> right now.) If you start exploring GPU programming with these tools, please do join the <a href="https://discord.gg/SHQ8dH25r9">p5.js Discord server</a> and let us know how it goes! We are hoping to continuously refine and improve the experience, and hearing from you can help shape development. Similarly, if you're hoping to try teaching with p5, we'd also love to hear from you about how we can improve things for you and your students.
