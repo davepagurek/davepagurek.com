@@ -128,6 +128,7 @@ my $app = Cantilever.new(
           $t.attributes<version> ~
           "', \{" ~
             "webgpu: " ~ ($t.attributes<webgpu> ?? "true" !! "false") ~ "," ~
+            "library: " ~ ($t.attributes<library> ?? ("'" ~ $t.attributes<library> ~ "'") !! "undefined") ~ "," ~
           "\})</script>";
         $sketchId++;
 

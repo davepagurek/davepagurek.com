@@ -37,7 +37,7 @@ The API has been carefully updated so that you don't need more than that to star
 
 After having used existing p5 filters such as `filter(BLUR)`, it is not a huge jump to create your own filters. It involves creating a function, using arrays, and working with properties and methods of objects. The biggest thing to learn is the special `filterColor` object, which you can `.set()` with a color. Here's a filter that makes the canvas red! Nothing fancy yet, but you can see that colors go from 0 to 1.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 function setup() {
   createCanvas(200, 200, WEBGL);
@@ -55,7 +55,7 @@ function gradient() {
 
 `filterColor` also has a property `texCoord` saying what coordinate of the canvas texture you're on. That conveniently also goes from 0 to 1 in both axes, so you can visualize it as a color easily. The resulting gradient is illustrative of how the function gets run on each pixel with different inputs.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 function setup() {
   createCanvas(200, 200, WEBGL);
@@ -78,7 +78,7 @@ function gradient() {
 
 You can explore generative textures by passing those coordinates into `noise()`. Of course, you can also make your own noise function if you'd like to learn what it's doing under the hood. But it's a useful and productive construct that is already familiar from the rest of p5.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 function setup() {
   createCanvas(200, 200, WEBGL);
@@ -97,7 +97,7 @@ function gradient() {
 
 You can even create animations by using p5.js time functions like `millis()` like you normally would. For people who already know shaders: under the hood, this involves some uniforms, but the learner does not need to be aware of this yet. They can instead focus on the biggest conceptual leap of writing a fragment shader, which is the fact that your same code needs to run on every pixel. This inversion from the usual way you draw in p5 can be the main focus, with surprisingly few limitations, until the learner feels comfortable.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let myFilter;
 function setup() {
@@ -123,7 +123,7 @@ function draw() {
 
 A natural point to introduce uniforms is when you want to reference a value from a slider. With `uniformFloat`, we can pass in a slider value and then use that to adjust the animation from before:
 
-<sketch code="true" version="5a95725" width="200" height="230">
+<sketch code="true" version="2.3.0" width="200" height="230">
 <code lang="js">
 let myFilter;
 let frequency;
@@ -155,7 +155,7 @@ function draw() {
 
 A next step can be to show how shaders can be used on objects, not just on the pixels of the whole canvas. Every vertex (a term familiar already from `beginShape`/`endShape` drawing) also can be modified by a shader, if you do so in the right block. In p5.strands, the way to do this is the `worldInputs` block, where you can modify vertex positions in world space. This can be used to move an object around:
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let movement;
 function setup() {
@@ -186,7 +186,7 @@ function draw() {
 
 Of course, you don't need a shader to do the above in p5 already. But it then lets you do some additional things. For example, you can apply a different offset to each vertex. You could do this with a for loop and `beginShape`/`endShape`, but it's very tedious to do, and requires you to suddenly create all the vertices yourself. Here, I can just take the previous shader but use the vertex position in the math:
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let movement;
 function setup() {
@@ -221,7 +221,7 @@ When you introduce the ability to draw an object with multiple instances, updati
 
 If you're already drawing an object with a function, as I did above, you can create a reusable model out of it with `buildGeometry`. Then, you can draw it with `model(geometry, count)`, and pass in the number of *instances* of that model you want to draw. You can then position them differently in the shader based on which iteration is being drawn, accessible via `instanceID()`.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let movement;
 let instance;
@@ -255,7 +255,7 @@ function draw() {
 
 You can already do a lot with this! If you need to move things along prescribed paths, this will work just fine, and you can draw a lot more copies than you would be able to do with a for loop before it starts to lag. Here's an example of drawing a ton of lines with slightly different colors at slightly different positions to create the effect of light dispersion.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let movement;
 let instance;
@@ -318,7 +318,7 @@ WebGPU starts to get us there. The examples from here on out will require you to
 
 We can create **storage buffers** with `createStorage` that you can read in a shader with `uniformStorage`. Here's a simple version of that where we hard-code a few locations for objects. Note that we `await createCanvas(w, h, WEBGPU)` now!
 
-<sketch code="true" webgpu="true" version="5a95725" width="200" height="200">
+<sketch code="true" webgpu="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let particles;
 let particlesShader;
@@ -359,7 +359,7 @@ function draw() {
 
 Ok, three hardcoded positions for spheres isn't that exciting. Here's what that looks like with more complicated position data that I'm extracting from an SVG:
 
-<sketch code="true" webgpu="true" version="5a95725" width="200" height="200">
+<sketch code="true" webgpu="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 path.setAttribute('d', 'M121.073 1.76484C117.871 6.56818 114.669 11.3715 98.4089 41.265C82.1491 ' +
@@ -437,7 +437,7 @@ Typically that would be done with a for loop, but with WebGPU, you can now do th
 
 For comparison, here's some code to make a bunch of balls bounce off the walls of the canvas with **no compute shaders**, using a regular for loop. Afterwards, we'll show what this looks like in a compute shader.
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let particles;
 let count = 20;
@@ -502,7 +502,7 @@ function draw() {
 
 Now here's the compute shader version. Rather than using just an array, we use a storage buffer. The `update` function now just does one iteration of the loop, using `index.x` to keep track of the current iteration. Drawing all the particles is also done all at once with a shader and `instanceID()`. You run the update by calling `compute()` and passing in your shader.
 
-<sketch webgpu="true" code="true" version="5a95725" width="200" height="200">
+<sketch webgpu="true" code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let updateShader;
 let particles;
@@ -584,7 +584,7 @@ function draw() {
 
 Compute shaders get interesting because, roughly, you can run a loop on thousands of things in the time it would normally take to run just one iteration of a regular for loop. This means you can do stuff that would otherwise take a lot of algorithmic complexity to run quickly. Do you wanted to make all the balls bounce off of each other? The double-nested for loop approach can get slow in regular JavaScript. No problem in a WebGPU compute shader though. I'll also give them some different radii for the fun of it.
  
-<sketch webgpu="true" code="true" version="5a95725" width="200" height="200">
+<sketch webgpu="true" code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let updateShader;
 let particles;
@@ -683,7 +683,7 @@ function draw() {
 
 Going back to Nature of Code, here's an implementation of the boids flocking algorithm. This is just a little window with 100 agents, but <a href="https://editor.p5js.org/davepagurek/sketches/JoMhtXAR2">I've got a fullscreen sketch version</a> that runs nicely with ten thousand agents on my M1 Macbook Pro. Without having to think about spatial partitioning algorithms at all!
 
-<sketch webgpu="true" code="true" version="5a95725" width="200" height="300">
+<sketch webgpu="true" code="true" version="2.3.0" width="200" height="300">
 <code lang="js">
 let updateShader;
 let particles;
@@ -870,7 +870,7 @@ We've built out a system that slowly exposes you to vertex shaders, fragment sha
 
 You can also slowly expand into platform-native shader languages, too–every block in p5.strands can also be filled in via a function in GLSL or WGSL. The same animated gradient from earlier looks like this in GLSL:
 
-<sketch code="true" version="5a95725" width="200" height="200">
+<sketch code="true" version="2.3.0" width="200" height="200">
 <code lang="js">
 let myFilter;
 function setup() {

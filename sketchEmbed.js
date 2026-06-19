@@ -1,4 +1,4 @@
-function sketchEmbed(id, code, version, { webgpu } = {}) {
+function sketchEmbed(id, code, version, { webgpu, library } = {}) {
   const iframe = document.getElementById(id);
   const iframeContainer = iframe.parentElement;
   const targetWidth = parseFloat(iframe.getAttribute('width'));
@@ -60,6 +60,7 @@ canvas {
 </style>
 <script type="text/javascript" src="${cdnBase}/p5.min.js"></script>
 ${webgpu ? `<script type="text/javascript" src="${cdnBase}/p5.webgpu.min.js"></script>` : ''}
+${library ? `<script type="text/javascript" src="${library}"></script>` : ''}
 <body>
 <script id="code" type="text/javascript">${wrapSketch(code) || ""}</script>
 </body>`;
