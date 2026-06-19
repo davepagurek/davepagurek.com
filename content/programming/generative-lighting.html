@@ -1147,7 +1147,7 @@ I'm probably going to be using this from now on in scenarios where I would norma
 
 ## Addendum: p5.strands add-ons
 
-This is the first time I've tried making a p5.js add-on that specifically creates a new base shader for p5.strands. The good news is that it works! You can look at the source code for p5.env on GitHub to see how it's done.
+This is the first time I've tried making a p5.js add-on that specifically creates a new base shader for p5.strands. The good news is that it works! You can look at <a href="https://github.com/davepagurek/p5.env">the source code for p5.env on GitHub</a> to see how it's done.
 
 There are a number of things that could be smoothed out though:
 - The only way to make a shader with now hooks is to write GLSL or WGSL strings. The API for this is not super well documented. While it's also possible to write a different version for WebGL and WebGPU, it's slightly nontrivial how to do so (for example, the `RendererWebGPU` class may not exist at all if the WebGPU addon is not loaded, so patching methods onto it without checking for its existence first may throw an error.) Currently, p5.env is WebGL-only for this reason. We can definitely make an addon API easier for this!
