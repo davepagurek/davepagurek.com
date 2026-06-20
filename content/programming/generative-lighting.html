@@ -929,11 +929,11 @@ Here's a little example with abstract room ambiance, featuring a fire pit and a 
 
 <sketch code="true" library="https://cdn.jsdelivr.net/npm/p5.env@0.0.4/p5.env.js" version="2.3.0" width="200" height="240">
 <code lang="js">
-let env;
+let envMat;
 let gloss;
 async function setup() {
   createCanvas(200, 200, WEBGL);
-  env = buildEnvMaterial(myEnv);
+  envMat = buildEnvMaterial(myEnv);
   createP().html('shininess').position(0, 185);
   gloss = createSlider(1, 200, 150, 0.1).style('width', '125px').position(70, 200);
 }
@@ -961,7 +961,7 @@ function draw() {
   fill(255);
   specularMaterial(100);
   shininess(gloss.value());
-  shader(env);
+  shader(envMat);
   torus(50, 20, 32, 24);
 }
 </code>
@@ -973,12 +973,12 @@ Here's another example showing an animated day/night cycle:
 
 <sketch code="true" library="https://cdn.jsdelivr.net/npm/p5.env@0.0.4/p5.env.js" version="2.3.0" width="200" height="240">
 <code lang="js">
-let env;
+let envMat;
 let pano;
 let gloss;
 async function setup() {
   createCanvas(200, 200, WEBGL);
-  env = buildEnvMaterial(myEnv);
+  envMat = buildEnvMaterial(myEnv);
   pano = buildEnvPanorama(myEnv);
   createP().html('shininess').position(0, 185);
   gloss = createSlider(1, 200, 150, 0.1).style('width', '125px').position(70, 200);
@@ -1018,7 +1018,7 @@ function draw() {
   fill(255);
   specularMaterial(100);
   shininess(gloss.value());
-  shader(env);
+  shader(envMat);
   torus(50, 20, 32, 24);
 }
 </code>
@@ -1030,12 +1030,12 @@ While we're showing off panoramas, here's a cloudy sky. To simulate blur of the 
 
 <sketch code="true" library="https://cdn.jsdelivr.net/npm/p5.env@0.0.4/p5.env.js" version="2.3.0" width="200" height="240">
 <code lang="js">
-let env;
+let envMat;
 let pano;
 let gloss;
 async function setup() {
   createCanvas(200, 200, WEBGL);
-  env = buildEnvMaterial(myEnv);
+  envMat = buildEnvMaterial(myEnv);
   pano = buildEnvPanorama(myEnv);
   createP().html('shininess').position(0, 185);
   gloss = createSlider(1, 200, 150, 0.1).style('width', '125px').position(70, 200);
@@ -1061,7 +1061,7 @@ function draw() {
   fill(255);
   specularMaterial(100);
   shininess(gloss.value());
-  shader(env);
+  shader(envMat);
   torus(50, 20, 32, 24);
 }
 </code>
@@ -1078,7 +1078,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL)
   // pixelDensity(1)
 
-  const env = () => {
+  const envHooks = () => {
     envColor.begin()
     let ground = uniformVec3(color('#564943'))
 
@@ -1108,8 +1108,8 @@ function setup() {
     envColor.set(l.get())
     envColor.end()
   }
-  myShader = buildEnvMaterial(env)
-  pano = buildEnvPanorama(env)
+  myShader = buildEnvMaterial(envHooks)
+  pano = buildEnvPanorama(envHooks)
 }
 
 function draw() {
@@ -1150,10 +1150,22 @@ I'm probably going to be using this from now on in scenarios where I would norma
 This is the first time I've tried making a p5.js add-on that specifically creates a new base shader for p5.strands. The good news is that it works! You can look at <a href="https://github.com/davepagurek/p5.env">the source code for p5.env on GitHub</a> to see how it's done.
 
 There are a number of things that could be smoothed out though:
-- The only way to make a shader with now hooks is to write GLSL or WGSL strings. The API for this is not super well documented. While it's also possible to write a different version for WebGL and WebGPU, it's slightly nontrivial how to do so (for example, the `RendererWebGPU` class may not exist at all if the WebGPU addon is not loaded, so patching methods onto it without checking for its existence first may throw an error.) Currently, p5.env is WebGL-only for this reason. We can definitely make an addon API easier for this!
-- To work best with p5's existing shaders, you really want to extend the built-in ones rather than make something completely from scratch. This is mostly possible, but requires currently-undocumented knowledge of how to do so via the non-strands shader hook API. A tutorial could fix this though.
-- ...but also sometimes you specifically want to omit parts of the default shaders. Currently p5.env still includes all the GLSL for `imageLight` and Phong lighting even though they will go unused. We could maybe add some precompiler flags to make it easier to conditionally omit things.
-- Library code is not transpiled like regular p5.strands functions are: only the code directly in the function you pass to a `build*Shader` method gets transpiled. That means you can't create vectors with JavaScript array notation, and you can't use operator overloading. The library source code contains the line `let up = p5.strandsTernary(this.abs(center.y).lessThan(0.99), this.vec3(0, 1, 0), this.vec3(1, 0, 0))` since it can use neither ternaries nor comparators. On the plus side, it's helpful having the ability to use JavaScript control flow as a macro: p5.env inlines the logic for blurring a gradient with multiple colour stops rather than doing dynamic loops.
+<ul>
+<li>The only way to make a shader with now hooks is to write GLSL or WGSL strings. The API for this is not super well documented. While it's also possible to write a different version for WebGL and WebGPU, it's slightly nontrivial how to do so (for example, the `RendererWebGPU` class may not exist at all if the WebGPU addon is not loaded, so patching methods onto it without checking for its existence first may throw an error.) Currently, p5.env is WebGL-only for this reason. We can definitely make an addon API easier for this!</li>
+<li>To work best with p5's existing shaders, you really want to extend the built-in ones rather than make something completely from scratch. This is mostly possible, but requires currently-undocumented knowledge of how to do so via the non-strands shader hook API. A tutorial could fix this though.</li>
+<li>...but also sometimes you specifically want to omit parts of the default shaders. Currently p5.env still includes all the GLSL for `imageLight` and Phong lighting even though they will go unused. We could maybe add some precompiler flags to make it easier to conditionally omit things.</li>
+<li>Library code is not transpiled like regular p5.strands functions are: only the code directly in the function you pass to a `build*Shader` method gets transpiled. That means you can't create vectors with JavaScript array notation, and you can't use operator overloading. The library source code contains the line:
+
+<code class="js">
+let up = p5.strandsTernary(
+  this.abs(center.y).lessThan(0.99),
+  this.vec3(0, 1, 0),
+  this.vec3(1, 0, 0)
+)
+</code>
+
+...since it can use neither ternaries nor comparators. On the plus side, it's helpful having the ability to use JavaScript control flow as a macro: p5.env inlines the logic for blurring a gradient with multiple colour stops rather than doing dynamic loops.</li>
+</ul>
 
 If you are interested in making p5.strands add-ons too, or in improving the add-on API for future developers, join the <a href="https://discord.gg/SHQ8dH25r9">p5.js Discord server</a> and let me know in the p5.strands channel!
 
