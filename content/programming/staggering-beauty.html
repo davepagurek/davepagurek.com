@@ -1,0 +1,57 @@
+<!--
+{
+	"title": "Staggering Beauty",
+	"category": "programming",
+	"date": "2026-07-31",
+	"excerpt": "TODO",
+  "details": "TODO",
+  "thumbnail": "%root%/content/images/2026/06/sphere-grid-thumb.jpg",
+  "art": "%root%/content/images/2026/06/sphere-grid.jpg",
+  "og-image": "%root%/content/images/2026/06/sphere-grid.jpg",
+  "languages": [
+    "p5.js"
+  ],
+  "buttons": [
+    {
+      "url": "https://github.com/davepagurek/p5.env",
+      "text": "View Source on GitHub"
+    }
+  ],
+  "featured": true
+}
+-->
+
+Let's say you want to do some animation with code. You want users to bring their own content to be animated, and you want it to look good regardless of what they bring in. You could safely rely on rigid motion, translating or rotating a user-provided model, but it looks a bit too basic. Is there anything we can do about that?
+
+## The appeal of physics
+
+You may have heard of the <a href="https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation">Twelve Principles of Animation.</a> They're a set of things to keep in mind when designing motion to keep it looking appealing. Ultimately, though, they're applied physics: implications of laws of motion, distilled into some bite-sized, memorable rules. Here are a few examples:
+
+- *Slow in, slow out.* Things do not normally immediately go from rest to their full velocity; they accelerate from rest. This is basically what is said by <math>d = vt + \\frac{1}{2}at^2</math>.
+- *Arcs.* You're advised to move things in arcs instead of straight lines to appear more realistic. Similarly, acceleration due to gravity, plugged into the previous formula, will produce a parabolic arc if an object also has some horizontal velocity.
+- *Squash and stretch.* Most things are not entirely rigid, and will deform and bounce back when changing velocity. You could imagine these objects to be a bunch of little pieces connected by springs. When the object hits something, the springs are able to deform, and it's only through those spring forces that the change of velocity propagates from a point of impact through to the rest of an object.
+
+Physics is hard, though! There's a reason why animators prefer thinking about things in simple rules. They can't reasonably do a physics simulation in their heads while animating. But can we?
+
+Also no. Well, ok, we could in theory. But there are some reasons why I don't really want to. Non-rigid physics simulations in 3D can be slow, the more accurate you want them to be. A physics simulation is also hard to tweak: you can't easily test out a different parameter; you have to rerun it from the start. You also cannot easily rewind back or forward in time without stepping through the whole simulation and storing all the data for all the frames: a simulation does not have an easy closed form that can be evaluated at any point.
+
+Rather than trying to start from an expensive physics simulation and figure out how to chip away at it until it's lighter, let's start from something a lot simpler and reach up.
+
+## Stagger as simplified physics
+
+One of the Twelve Principles is **overlapping action.** The idea behind this one is that not everything about a character moves at the same rate. If you run and then come to a stop, your arms may swing out a bit; your hair may swish forward. One part *drives* the motion; other parts *follow*. In complex cases, there may be followers on followers on followers, like a chain.
+
+In motion graphics, dealing with more abstract forms rather than characters, this is distilled into the concept of **staggering.** A line of text may not animate in as a rigid whole. Instead, it may come in one line, word, or letter at a time, witha small offset between subsequent units. This provides a look resembling overlapping action. It is as if the first unit leads the motion, which pulls on the next unit, which pulls on the next. The more spaced out the units, the "stretchier" the material is; the less spaced out, the more rigid. When an <a href="%root%/blog/easing-functions">easing function</a> is used with the stagger, with details like overshoot and oscillation pairing with the stretchiness of the stagger, you can achieve some pretty appealing results.
+
+While this is obviously going to be less physically accurate than a true simulation, it addresses all the downsides from before: it is quick to evaluate, and you can evaluate it anywhere in time. That speed and flexibility, plus having a small number of parameters to tweak, means you can test out different options in a tight feedback loop without getting out of the creative flow.
+
+The big remaining question is how this can be applied to an arbitrary 3D model. The easiest solution is to apply staggering to vertices based on their location in Euclidean space. It is as if the model is suspended in jello, and motion propagates through the jello. This works, and can look decent, but starts to break down as you try it out on different shapes. For example, imagine having a ring, and then cutting it at the top so that it now resembles a horseshoe. If the left tip lead a motion, the right tip would quickly follow suit because of its proximity in space to the left tip. However, the motion would have travelled through the empty space between the tips. In reality, it should have travelled around the outside of the ring, making the right tip the most offset from the left tip.
+
+## A bonified classic
+
+The next step is to try to
+
+## Binary trees
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
