@@ -117,9 +117,10 @@ my $app = Cantilever.new(
     Cantilever::Page::CustomTag.new(
       matches-fn => -> $t { $t.type eq "sketch" },
       render-fn => -> $t, %options {
+        my $id = $sketchId;
         my $code = "<script src='/sketchEmbed.js'></script>" ~
-          "<iframe class='inlineSketch' border='0' width='" ~ $t.attributes<width> ~ "' height='" ~ $t.attributes<height> ~ "' id='sketch" ~ $sketchId ~ "'></iframe>" ~
-          "<script>sketchEmbed('sketch" ~ $sketchId ~ "', `" ~
+          "<iframe class='inlineSketch' border='0' width='" ~ $t.attributes<width> ~ "' height='" ~ $t.attributes<height> ~ "' id='sketch" ~ $id ~ "'></iframe>" ~
+          "<script>sketchEmbed('sketch" ~ $id ~ "', `" ~
           ($t.attributes<include>
             ?? $t.attributes<include>.subst('%root%', $?FILE.IO.dirname, :g).IO.slurp.subst(/\`/, '\\`', :g).subst(/\$\{/, '\\${', :g)
             !! '') ~
